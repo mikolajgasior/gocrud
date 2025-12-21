@@ -1,0 +1,49 @@
+package crud
+
+import (
+	"fmt"
+	"log/slog"
+
+	sqlbuilder "github.com/keenbytes/pgsql-builder"
+)
+
+type GetCountOptions struct {
+	Filters *sqlbuilder.Filters
+}
+
+// GetCount runs a 'SELECT COUNT(*)' query on the database with specified filters, order, limit and offset and returns count of rows
+func (c *CRUD) GetCount(obj interface{}, options GetCountOptions) (int64, error) {
+	builder, err := c.builder(obj)
+	if err != nil {
+		return 0, ErrCRUD{
+			Op:  "o.builder",
+			Err: err,
+		}
+	}
+
+	err = ValidateFilters(obj, options.Filters, c.tagName)
+	if err != nil {
+		return 0, err
+	}
+
+	query, err := builder.SelectCount(options.Filters)
+	if err != nil {
+		return 0, ErrCRUD{
+			Op:  "builder.SelectCount",
+			Err: err,
+		}
+	}
+	slog.Debug(fmt.Sprintf("builder query: %s", query))
+
+	row := c.db.QueryRow(query, sqlbuilder.Interfaces(options.Filters)...)
+	var cnt int64
+	err = row.Scan(&cnt)
+	if err != nil {
+		return 0, ErrCRUD{
+			Op:  "o.db.QueryRow",
+			Err: err,
+		}
+	}
+
+	return cnt, nil
+}

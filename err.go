@@ -1,24 +1,27 @@
-package structdbpostgres
+package crud
 
-// ErrController wraps original error that occurred in Err with name of the operation/step that failed, which is
-// in Op field
-type ErrController struct {
+import (
+	"errors"
+	"fmt"
+)
+
+type ErrCRUD struct {
 	Op  string
+	Tag string
 	Err error
 }
 
-func (e ErrController) Error() string {
+func (e ErrCRUD) Error() string {
 	return e.Err.Error()
 }
 
-func (e ErrController) Unwrap() error {
+func (e ErrCRUD) Unwrap() error {
 	return e.Err
 }
 
-// ErrValidation wraps error occurring during object validation
 type ErrValidation struct {
-	Fields map[string]int
-	Err    error
+	Violations map[string]int
+	Err        error
 }
 
 func (e ErrValidation) Error() string {
@@ -27,4 +30,21 @@ func (e ErrValidation) Error() string {
 
 func (e ErrValidation) Unwrap() error {
 	return e.Err
+}
+
+type ErrUniq struct {
+	Field string
+}
+
+func (e ErrUniq) Error() string {
+	return errors.New(fmt.Sprintf("uniq %s failed", e.Field)).Error()
+}
+
+func (e ErrUniq) Unwrap() error {
+	return errors.New(fmt.Sprintf("uniq %s failed", e.Field))
+}
+
+func (e ErrUniq) Is(target error) bool {
+	_, ok := target.(ErrUniq)
+	return ok
 }

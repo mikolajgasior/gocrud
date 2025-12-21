@@ -1,4 +1,4 @@
-package structdbpostgres
+package crud
 
 import (
 	"fmt"
@@ -6,6 +6,8 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+
+	sqlbuilder "github.com/keenbytes/pgsql-builder"
 )
 
 // TestGet tests if Get properly gets many objects from the database, filtered and ordered, with results limited to specific number
@@ -14,33 +16,50 @@ func TestGet(t *testing.T) {
 
 	// Insert some data that should be ignored by Get later on
 	for i := 1; i < 51; i++ {
-		ts := getTestStructWithData()
-		ts.ID = 0
+		ts := testStructWithData()
+		ts.Id = 0
 		ts.Age = 10 + i
 		ts.Price = 444
 		ts.PrimaryEmail = "another@example.com"
-		testController.Save(ts, SaveOptions{})
+		_ = testCRUD.Save(ts, SaveOptions{})
 	}
 
 	// Insert data that should be selected by filters
 	for i := 1; i < 51; i++ {
-		ts := getTestStructWithData()
-		ts.ID = 0
+		ts := testStructWithData()
+		ts.Id = 0
 		ts.Age = 30 + i
-		testController.Save(ts, SaveOptions{})
+		_ = testCRUD.Save(ts, SaveOptions{})
 	}
 
 	// Get the data from the database
-	testStructs, err := testController.Get(func() interface{} {
+	testStructs, err := testCRUD.Get(func() interface{} {
 		return &TestStruct{}
 	}, GetOptions{
-		Order:   []string{"Age", "asc", "Price", "asc"},
-		Limit:   10,
-		Offset:  20,
-		Filters: map[string]interface{}{"Price": 444, "PrimaryEmail": "primary@example.com"},
+		Order:  []string{"Age", "asc", "Price", "asc"},
+		Limit:  10,
+		Offset: 20,
+		Filters: &sqlbuilder.Filters{
+			"Price": {
+				Op:  sqlbuilder.OpEqual,
+				Val: 444,
+			},
+			"PrimaryEmail": {
+				Op:  sqlbuilder.OpEqual,
+				Val: "primary@example.com",
+			},
+			sqlbuilder.Raw: {
+				Op: sqlbuilder.OpAND,
+				Val: []interface{}{
+					".Price > ? AND .Price NOT IN (?)",
+					-200,
+					[]int{9999, 9998, 9997},
+				},
+			},
+		},
 	})
 	if err != nil {
-		t.Fatalf("Get failed to return list of objects: %s", err.(ErrController).Op)
+		t.Fatalf("Get failed to return list of objects: %s", err.(ErrCRUD).Op)
 	}
 	if len(testStructs) != 10 {
 		t.Fatalf("Get failed to return list of objects, want %v, got %v", 10, len(testStructs))
@@ -56,14 +75,14 @@ func TestGetWithoutFilters(t *testing.T) {
 
 	// Insert data to the database
 	for i := 1; i < 51; i++ {
-		ts := getTestStructWithData()
-		ts.ID = 0
+		ts := testStructWithData()
+		ts.Id = 0
 		ts.Age = 30 + i
-		testController.Save(ts, SaveOptions{})
+		_ = testCRUD.Save(ts, SaveOptions{})
 	}
 
 	// Get the data
-	testStructs, err := testController.Get(func() interface{} {
+	testStructs, err := testCRUD.Get(func() interface{} {
 		return &TestStruct{}
 	}, GetOptions{
 		Order:  []string{"Age", "asc", "Price", "asc"},
@@ -71,7 +90,7 @@ func TestGetWithoutFilters(t *testing.T) {
 		Offset: 14,
 	})
 	if err != nil {
-		t.Fatalf("Get failed to return list of objects: %s", err.(ErrController).Op)
+		t.Fatalf("Get failed to return list of objects: %s", err.(ErrCRUD).Op)
 	}
 	if len(testStructs) != 13 {
 		t.Fatalf("Get failed to return list of objects, want %v, got %v", 10, len(testStructs))
@@ -88,15 +107,15 @@ func TestGetWithRowObjTransformFunc(t *testing.T) {
 
 	// Insert data to the database
 	for i := 1; i < 3; i++ {
-		ts := getTestStructWithData()
-		ts.ID = 0
+		ts := testStructWithData()
+		ts.Id = 0
 		ts.Age = 30 + i
 		ts.FirstName = fmt.Sprintf("%s %d", ts.FirstName, i)
-		testController.Save(ts, SaveOptions{})
+		_ = testCRUD.Save(ts, SaveOptions{})
 	}
 
 	// Get the data
-	testCustomList, err := testController.Get(func() interface{} {
+	testCustomList, err := testCRUD.Get(func() interface{} {
 		return &TestStruct{}
 	}, GetOptions{
 		Order: []string{"Age", "asc"},
@@ -108,9 +127,15 @@ func TestGetWithRowObjTransformFunc(t *testing.T) {
 			i := reflect.Indirect(v)
 			s := i.Type()
 			for j := 0; j < s.NumField(); j++ {
-				out += "<td>"
 				field := s.Field(j)
 				fieldType := field.Type.Kind()
+
+				// print only few fields
+				if field.Name != "Id" && field.Name != "PrimaryEmail" {
+					continue
+				}
+
+				out += "<td>"
 				if fieldType == reflect.String {
 					out += html.EscapeString(elem.Field(j).String())
 				}
@@ -129,13 +154,13 @@ func TestGetWithRowObjTransformFunc(t *testing.T) {
 		},
 	})
 	if err != nil {
-		t.Fatalf("Get failed to return list of objects modified with transform func: %s", err.(ErrController).Op)
+		t.Fatalf("Get failed to return list of objects modified with transform func: %s", err.(ErrCRUD).Op)
 	}
 	if len(testCustomList) != 2 {
 		t.Fatalf("Get with transform func returned invalid number of objects, wanted %d got %d", 2, len(testCustomList))
 	}
 	// One of the columns is a random number so testing just the beginning
-	if !strings.HasPrefix(testCustomList[0].(string), "<tr><td>1</td><td>4</td><td>primary@example.com</td><td>secondary@example.com</td><td>John 1</td><td>Smith</td><td>31</td><td>444</td><td>00-000</td><td>11-111</td><td>yyy</td><td>4</td><td>") || !strings.HasPrefix(testCustomList[1].(string), "<tr><td>2</td><td>4</td><td>primary@example.com</td><td>secondary@example.com</td><td>John 2</td><td>Smith</td><td>32</td><td>444</td><td>00-000</td><td>11-111</td><td>yyy</td><td>4</td><td>") {
+	if !strings.HasPrefix(testCustomList[0].(string), "<tr><td>1</td><td>primary@example.com</td>") || !strings.HasPrefix(testCustomList[1].(string), "<tr><td>2</td><td>primary@example.com</td>") {
 		t.Fatalf("Get with transform func returned invalid objects")
 	}
 }
