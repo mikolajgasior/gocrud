@@ -7,7 +7,7 @@ import (
 )
 
 type ValidationTestStruct struct {
-	Id             int64
+	ID             int64
 	Flags          int64
 	PrimaryEmail   string `crud:"req email"`
 	EmailSecondary string `crud:"req email"`

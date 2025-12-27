@@ -37,7 +37,7 @@ func (c *CRUD) Get(newObjFunc func() interface{}, options GetOptions) ([]interfa
 		}
 	}
 
-	rows, err := c.db.Query(query, sqlbuilder.Interfaces(options.Filters)...)
+	rows, err := c.db.Query(query, sqlbuilder.FiltersInterfaces(options.Filters)...)
 	if err != nil {
 		return nil, ErrCRUD{
 			Op:  "o.db.Query",

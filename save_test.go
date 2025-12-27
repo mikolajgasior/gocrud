@@ -17,14 +17,14 @@ func TestSave(t *testing.T) {
 	}
 
 	objLoaded := &TestStruct{}
-	fieldsPtrs := []interface{}{&objLoaded.Id}
+	fieldsPtrs := []interface{}{&objLoaded.ID}
 	fieldsPtrs = append(fieldsPtrs, ObjFieldInterfaces(objLoaded, false)...)
 	err = testDB.QueryRow("SELECT * FROM test_struct ORDER BY id DESC LIMIT 1").Scan(fieldsPtrs...)
 	if err != nil {
 		t.Fatalf("Save failed to insert struct to the table: %s", err.Error())
 	}
 
-	if objLoaded.Id == 0 || objLoaded.Flags != objSaved.Flags || objLoaded.PrimaryEmail != objSaved.PrimaryEmail ||
+	if objLoaded.ID == 0 || objLoaded.Flags != objSaved.Flags || objLoaded.PrimaryEmail != objSaved.PrimaryEmail ||
 		objLoaded.EmailSecondary != objSaved.EmailSecondary || objLoaded.FirstName != objSaved.FirstName ||
 		objLoaded.LastName != objSaved.LastName || objLoaded.Age != objSaved.Age || objLoaded.Price != objSaved.Price ||
 		objLoaded.PostCode != objSaved.PostCode || objLoaded.PostCode2 != objSaved.PostCode2 ||
@@ -52,14 +52,14 @@ func TestSave(t *testing.T) {
 	}
 
 	objLoaded = &TestStruct{}
-	fieldsPtrs = []interface{}{&objLoaded.Id}
+	fieldsPtrs = []interface{}{&objLoaded.ID}
 	fieldsPtrs = append(fieldsPtrs, ObjFieldInterfaces(objLoaded, false)...)
 	err = testDB.QueryRow("SELECT * FROM test_struct ORDER BY id DESC LIMIT 1").Scan(fieldsPtrs...)
 	if err != nil {
 		t.Fatalf("Save failed to update struct in the table: %s", err.Error())
 	}
 
-	if objLoaded.Id == 0 {
+	if objLoaded.ID == 0 {
 		t.Fatalf("Save failed to update struct in the table")
 	}
 }
@@ -77,7 +77,7 @@ func TestSaveWithModifiedAt(t *testing.T) {
 	}
 
 	objLoaded := &TestStruct{}
-	fieldsPtrs := []interface{}{&objLoaded.Id}
+	fieldsPtrs := []interface{}{&objLoaded.ID}
 	fieldsPtrs = append(fieldsPtrs, ObjFieldInterfaces(objLoaded, false)...)
 	err = testDB.QueryRow("SELECT * FROM test_struct ORDER BY id DESC LIMIT 1").Scan(fieldsPtrs...)
 	if err != nil {
@@ -103,7 +103,7 @@ func TestSaveWithModifiedAt(t *testing.T) {
 	}
 
 	objLoaded = &TestStruct{}
-	fieldsPtrs = []interface{}{&objLoaded.Id}
+	fieldsPtrs = []interface{}{&objLoaded.ID}
 	fieldsPtrs = append(fieldsPtrs, ObjFieldInterfaces(objLoaded, false)...)
 	err = testDB.QueryRow("SELECT * FROM test_struct ORDER BY id DESC LIMIT 1").Scan(fieldsPtrs...)
 	if err != nil {
@@ -120,7 +120,7 @@ func TestSaveInsertWithID(t *testing.T) {
 	recreateTestStructTable()
 
 	objSaved := testStructWithData()
-	objSaved.Id = 99999
+	objSaved.ID = 99999
 	objSaved.FirstName = "ProvidedID"
 	err := testCRUD.Save(objSaved, SaveOptions{})
 	if err != nil {
@@ -134,7 +134,7 @@ func TestSaveInsertWithID(t *testing.T) {
 		t.Fatalf("Save failed to insert struct with provided ID in the table: %s", err.Error())
 	}
 
-	if objLoaded.Id != 99999 || objLoaded.FirstName != objSaved.FirstName {
+	if objLoaded.ID != 99999 || objLoaded.FirstName != objSaved.FirstName {
 		t.Fatalf("Save failed to insert struct with provided ID in the table")
 	}
 
@@ -151,7 +151,7 @@ func TestSaveInsertWithID(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Save failed to update struct previously inserted with provided ID in the table: %s", err.Error())
 	}
-	if objLoadedAgain.Id != 99999 || objLoadedAgain.FirstName != objLoaded.FirstName {
+	if objLoadedAgain.ID != 99999 || objLoadedAgain.FirstName != objLoaded.FirstName {
 		t.Fatalf("Save failed to update struct previously inserted with provided ID in the table")
 	}
 }
@@ -161,7 +161,7 @@ func TestSaveInsertWithIDAndNoInsert(t *testing.T) {
 	recreateTestStructTable()
 
 	objSaved := testStructWithData()
-	objSaved.Id = 99999
+	objSaved.ID = 99999
 	objSaved.FirstName = "ProvidedID"
 	err := testCRUD.Save(objSaved, SaveOptions{
 		NoInsert: true,

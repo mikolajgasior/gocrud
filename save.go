@@ -43,12 +43,12 @@ func (c *CRUD) Save(obj interface{}, options SaveOptions) error {
 		}
 	}
 
-	objId := ObjIdValue(obj)
+	objID := ObjIDValue(obj)
 
 	// populate created and modified columns
 	if options.ModifiedAt != 0 && options.ModifiedBy != 0 && builder.HasModificationFields() {
 		SetObjModified(obj, options.ModifiedAt, options.ModifiedBy)
-		if objId == 0 {
+		if objID == 0 {
 			SetObjCreated(obj, options.ModifiedAt, options.ModifiedBy)
 		}
 	}
@@ -76,9 +76,9 @@ func (c *CRUD) Save(obj interface{}, options SaveOptions) error {
 							Op:  sqlbuilder.OpEqual,
 							Val: ObjFieldValue(obj, uniqField),
 						},
-						"Id": sqlbuilder.OpVal{
+						"ID": sqlbuilder.OpVal{
 							Op:  sqlbuilder.OpNotEqual,
-							Val: objId,
+							Val: objID,
 						},
 					},
 				},
@@ -98,14 +98,14 @@ func (c *CRUD) Save(obj interface{}, options SaveOptions) error {
 		}
 	}
 
-	objIdInterface := ObjIdInterface(obj)
+	objIDInterface := ObjIDInterface(obj)
 
 	// update
-	if objId != 0 {
+	if objID != 0 {
 		// do no try to insert if NoInsert is set
 		// TODO: error handling, we should check if object exists - for now nothing happens, UPDATE gets executed and updates nothing
 		if options.NoInsert {
-			_, err = c.db.Exec(builder.UpdateById(), append(ObjFieldInterfaces(obj, false), objIdInterface)...)
+			_, err = c.db.Exec(builder.UpdateByID(), append(ObjFieldInterfaces(obj, false), objIDInterface)...)
 		} else {
 			// try to insert - if ID already exists then try to update it
 			_, err = c.db.Exec(builder.InsertOnConflictUpdate(), append(ObjFieldInterfaces(obj, true), ObjFieldInterfaces(obj, false)...)...)
@@ -134,7 +134,7 @@ func (c *CRUD) Save(obj interface{}, options SaveOptions) error {
 	}
 
 	// insert
-	err = c.db.QueryRow(builder.Insert(), ObjFieldInterfaces(obj, false)...).Scan(objIdInterface)
+	err = c.db.QueryRow(builder.Insert(), ObjFieldInterfaces(obj, false)...).Scan(objIDInterface)
 	if err != nil {
 		var pgErr *pq.Error
 		if errors.As(err, &pgErr) {

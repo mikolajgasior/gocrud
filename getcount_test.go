@@ -12,7 +12,7 @@ func TestGetCount(t *testing.T) {
 	// Insert some data that should be ignored by GetCount later on
 	for i := 1; i < 51; i++ {
 		ts := testStructWithData()
-		ts.Id = 0
+		ts.ID = 0
 		ts.Age = 10 + i
 		ts.Price = 444
 		ts.PrimaryEmail = "another@example.com"
@@ -22,7 +22,7 @@ func TestGetCount(t *testing.T) {
 	// Insert data that should be selected by filters
 	for i := 1; i < 151; i++ {
 		ts := testStructWithData()
-		ts.Id = 0
+		ts.ID = 0
 		ts.Age = 30
 		_ = testCRUD.Save(ts, SaveOptions{})
 	}
@@ -48,7 +48,7 @@ func TestGetCountWithRawQuery(t *testing.T) {
 	// Insert some data that should be ignored by GetCount later on
 	for i := 1; i < 51; i++ {
 		ts := testStructWithData()
-		ts.Id = 0
+		ts.ID = 0
 		ts.Age = 10 + i
 		ts.Price = 444
 		ts.PrimaryEmail = "another@example.com"
@@ -58,7 +58,7 @@ func TestGetCountWithRawQuery(t *testing.T) {
 	// Insert data that should be selected by filters
 	for i := 1; i < 151; i++ {
 		ts := testStructWithData()
-		ts.Id = 0
+		ts.ID = 0
 		ts.Age = 30
 		_ = testCRUD.Save(ts, SaveOptions{})
 	}

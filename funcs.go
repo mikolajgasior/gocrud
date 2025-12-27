@@ -8,14 +8,14 @@ import (
 
 // ObjFieldInterfaces return list of interfaces to object's fields
 // Argument includeID tells it to include or omit the ID field
-func ObjFieldInterfaces(obj interface{}, includeId bool) []interface{} {
+func ObjFieldInterfaces(obj interface{}, includeID bool) []interface{} {
 	objValue := reflect.ValueOf(obj).Elem()
 
 	var fieldInterfaces []interface{}
 
 	for i := 0; i < objValue.NumField(); i++ {
 		valueField := objValue.Field(i)
-		if objValue.Type().Field(i).Name == IdField && !includeId {
+		if objValue.Type().Field(i).Name == IDField && !includeID {
 			continue
 		}
 
@@ -30,12 +30,12 @@ func ObjFieldInterfaces(obj interface{}, includeId bool) []interface{} {
 	return fieldInterfaces
 }
 
-func ObjIdInterface(obj interface{}) interface{} {
-	return reflect.ValueOf(obj).Elem().FieldByName(IdField).Addr().Interface()
+func ObjIDInterface(obj interface{}) interface{} {
+	return reflect.ValueOf(obj).Elem().FieldByName(IDField).Addr().Interface()
 }
 
-func ObjIdValue(obj interface{}) int64 {
-	return reflect.ValueOf(obj).Elem().FieldByName(IdField).Int()
+func ObjIDValue(obj interface{}) int64 {
+	return reflect.ValueOf(obj).Elem().FieldByName(IDField).Int()
 }
 
 func ObjFieldValue(obj interface{}, fieldName string) interface{} {

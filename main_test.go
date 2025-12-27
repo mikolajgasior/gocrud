@@ -24,7 +24,7 @@ var testCRUD *CRUD
 
 // Test struct for all the tests
 type TestStruct struct {
-	Id             int64
+	ID             int64
 	Flags          int64
 	PrimaryEmail   string `crud:"req"`
 	EmailSecondary string `crud:"req email"`

@@ -15,7 +15,7 @@ func TestLoad(t *testing.T) {
 
 	// Get the object
 	objLoaded := &TestStruct{}
-	err := testCRUD.Load(objLoaded, fmt.Sprintf("%d", objSaved.Id), LoadOptions{})
+	err := testCRUD.Load(objLoaded, fmt.Sprintf("%d", objSaved.ID), LoadOptions{})
 	if err != nil {
 		t.Fatalf("Load failed to get data: %s", err.(ErrCRUD).Op)
 	}

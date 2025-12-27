@@ -26,7 +26,7 @@ func (c *CRUD) Load(obj interface{}, id string, options LoadOptions) error {
 		}
 	}
 
-	err = c.db.QueryRow(bldr.SelectById(), int64(idInt)).Scan(ObjFieldInterfaces(obj, true)...)
+	err = c.db.QueryRow(bldr.SelectByID(), int64(idInt)).Scan(ObjFieldInterfaces(obj, true)...)
 	switch {
 	case err == sql.ErrNoRows:
 		ZeroObjFields(obj)

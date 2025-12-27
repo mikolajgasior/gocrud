@@ -35,7 +35,7 @@ func (c *CRUD) GetCount(obj interface{}, options GetCountOptions) (int64, error)
 	}
 	slog.Debug(fmt.Sprintf("builder query: %s", query))
 
-	row := c.db.QueryRow(query, sqlbuilder.Interfaces(options.Filters)...)
+	row := c.db.QueryRow(query, sqlbuilder.FiltersInterfaces(options.Filters)...)
 	var cnt int64
 	err = row.Scan(&cnt)
 	if err != nil {

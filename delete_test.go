@@ -20,14 +20,14 @@ func TestDelete(t *testing.T) {
 	}
 
 	var rowCount int64
-	err = testDB.QueryRow(fmt.Sprintf("SELECT COUNT(*) AS c FROM test_struct WHERE id = %d", objSaved.Id)).Scan(&rowCount)
+	err = testDB.QueryRow(fmt.Sprintf("SELECT COUNT(*) AS c FROM test_struct WHERE id = %d", objSaved.ID)).Scan(&rowCount)
 	if err != nil {
 		t.Fatalf("Delete failed to delete struct from the table")
 	}
 	if rowCount > 0 {
 		t.Fatalf("Delete failed to delete struct from the table")
 	}
-	if objSaved.Id != 0 {
-		t.Fatalf("Delete failed to set Id to 0 on the struct")
+	if objSaved.ID != 0 {
+		t.Fatalf("Delete failed to set ID to 0 on the struct")
 	}
 }

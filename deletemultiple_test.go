@@ -13,7 +13,7 @@ func TestDeleteMultiple(t *testing.T) {
 	// Insert some data that should not be removed
 	for i := 1; i < 51; i++ {
 		ts := testStructWithData()
-		ts.Id = 0
+		ts.ID = 0
 		ts.Age = 10 + i
 		ts.PrimaryEmail = "another@example.com"
 		_ = testCRUD.Save(ts, SaveOptions{})
@@ -22,7 +22,7 @@ func TestDeleteMultiple(t *testing.T) {
 	// Insert data that should be deleted
 	for i := 1; i < 151; i++ {
 		ts := testStructWithData()
-		ts.Id = 0
+		ts.ID = 0
 		ts.Age = 30
 		_ = testCRUD.Save(ts, SaveOptions{})
 	}
@@ -58,7 +58,7 @@ func TestDeleteMultipleWithRawQuery(t *testing.T) {
 	// Insert some data that should not be removed
 	for i := 1; i < 51; i++ {
 		ts := testStructWithData()
-		ts.Id = 0
+		ts.ID = 0
 		ts.Age = 10 + i
 		ts.PrimaryEmail = "another@example.com"
 		_ = testCRUD.Save(ts, SaveOptions{})
@@ -67,7 +67,7 @@ func TestDeleteMultipleWithRawQuery(t *testing.T) {
 	// Insert data that should be deleted
 	for i := 1; i < 151; i++ {
 		ts := testStructWithData()
-		ts.Id = 0
+		ts.ID = 0
 		ts.Age = 30
 		_ = testCRUD.Save(ts, SaveOptions{})
 	}
@@ -112,7 +112,7 @@ func TestDeleteMultipleWithRawQueryOnly(t *testing.T) {
 	// Insert some data that should not be removed
 	for i := 1; i < 51; i++ {
 		ts := testStructWithData()
-		ts.Id = 0
+		ts.ID = 0
 		ts.Age = 10 + i
 		ts.PrimaryEmail = "another@example.com"
 		_ = testCRUD.Save(ts, SaveOptions{})
@@ -121,7 +121,7 @@ func TestDeleteMultipleWithRawQueryOnly(t *testing.T) {
 	// Insert data that should be deleted
 	for i := 1; i < 151; i++ {
 		ts := testStructWithData()
-		ts.Id = 0
+		ts.ID = 0
 		ts.Age = 30
 		_ = testCRUD.Save(ts, SaveOptions{})
 	}

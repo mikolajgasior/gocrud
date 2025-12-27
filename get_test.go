@@ -17,7 +17,7 @@ func TestGet(t *testing.T) {
 	// Insert some data that should be ignored by Get later on
 	for i := 1; i < 51; i++ {
 		ts := testStructWithData()
-		ts.Id = 0
+		ts.ID = 0
 		ts.Age = 10 + i
 		ts.Price = 444
 		ts.PrimaryEmail = "another@example.com"
@@ -27,7 +27,7 @@ func TestGet(t *testing.T) {
 	// Insert data that should be selected by filters
 	for i := 1; i < 51; i++ {
 		ts := testStructWithData()
-		ts.Id = 0
+		ts.ID = 0
 		ts.Age = 30 + i
 		_ = testCRUD.Save(ts, SaveOptions{})
 	}
@@ -76,7 +76,7 @@ func TestGetWithoutFilters(t *testing.T) {
 	// Insert data to the database
 	for i := 1; i < 51; i++ {
 		ts := testStructWithData()
-		ts.Id = 0
+		ts.ID = 0
 		ts.Age = 30 + i
 		_ = testCRUD.Save(ts, SaveOptions{})
 	}
@@ -108,7 +108,7 @@ func TestGetWithRowObjTransformFunc(t *testing.T) {
 	// Insert data to the database
 	for i := 1; i < 3; i++ {
 		ts := testStructWithData()
-		ts.Id = 0
+		ts.ID = 0
 		ts.Age = 30 + i
 		ts.FirstName = fmt.Sprintf("%s %d", ts.FirstName, i)
 		_ = testCRUD.Save(ts, SaveOptions{})
@@ -131,7 +131,7 @@ func TestGetWithRowObjTransformFunc(t *testing.T) {
 				fieldType := field.Type.Kind()
 
 				// print only few fields
-				if field.Name != "Id" && field.Name != "PrimaryEmail" {
+				if field.Name != "ID" && field.Name != "PrimaryEmail" {
 					continue
 				}
 

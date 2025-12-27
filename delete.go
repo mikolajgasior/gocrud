@@ -13,12 +13,12 @@ func (c *CRUD) Delete(obj interface{}, options DeleteOptions) error {
 		}
 	}
 
-	id := ObjIdValue(obj)
+	id := ObjIDValue(obj)
 
 	if id == 0 {
 		return nil
 	}
-	_, err = c.db.Exec(builder.DeleteById(), ObjIdInterface(obj))
+	_, err = c.db.Exec(builder.DeleteByID(), ObjIDInterface(obj))
 	if err != nil {
 		return ErrCRUD{
 			Op:  "o.db.Exec",
@@ -26,6 +26,15 @@ func (c *CRUD) Delete(obj interface{}, options DeleteOptions) error {
 		}
 	}
 	ZeroObjFields(obj)
+
+	// Loop through fields and cascade-delete.
+	err = c.runOnDelete(obj, []int64{id}, 0)
+	if err != nil {
+		return ErrCRUD{
+			Op:  "o.runOnDelete",
+			Err: err,
+		}
+	}
 
 	return nil
 }
