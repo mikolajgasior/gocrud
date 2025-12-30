@@ -1,6 +1,9 @@
 package crud
 
-import "testing"
+import (
+	"context"
+	"testing"
+)
 
 type TestCompany struct {
 	ID            int64
@@ -38,7 +41,7 @@ func createTestCascadeDeleteObjects() interface{} {
 		Name: "Company",
 		ID:   int64(i),
 	}
-	_ = testCRUD.Save(company, SaveOptions{})
+	_ = testCRUD.Save(context.Background(), company, SaveOptions{})
 
 	// create two employees in each company
 	for j := 1; j < 3; j++ {
@@ -47,7 +50,7 @@ func createTestCascadeDeleteObjects() interface{} {
 			ID:            int64(i*10 + j),
 			TestCompanyID: int64(i),
 		}
-		_ = testCRUD.Save(employee, SaveOptions{})
+		_ = testCRUD.Save(context.Background(), employee, SaveOptions{})
 
 		// create two credit cards and two comments for each employee
 		for k := 1; k < 3; k++ {
@@ -56,14 +59,14 @@ func createTestCascadeDeleteObjects() interface{} {
 				Number:         "number",
 				TestEmployeeID: int64(i*10 + j),
 			}
-			_ = testCRUD.Save(creditCard, SaveOptions{})
+			_ = testCRUD.Save(context.Background(), creditCard, SaveOptions{})
 
 			comment := &TestComment{
 				ID:             int64(i*100 + j*10 + k),
 				Comment:        "comment",
 				TestEmployeeID: int64(i*10 + j),
 			}
-			_ = testCRUD.Save(comment, SaveOptions{})
+			_ = testCRUD.Save(context.Background(), comment, SaveOptions{})
 		}
 	}
 
@@ -71,14 +74,14 @@ func createTestCascadeDeleteObjects() interface{} {
 }
 
 func recreateTestDeleteCascadeTables() {
-	_ = testCRUD.DropTable(&TestCompany{})
-	_ = testCRUD.DropTable(&TestEmployee{})
-	_ = testCRUD.DropTable(&TestCreditCard{})
-	_ = testCRUD.DropTable(&TestComment{})
-	_ = testCRUD.CreateTable(&TestCompany{})
-	_ = testCRUD.CreateTable(&TestEmployee{})
-	_ = testCRUD.CreateTable(&TestCreditCard{})
-	_ = testCRUD.CreateTable(&TestComment{})
+	_ = testCRUD.DropTable(context.Background(), &TestCompany{})
+	_ = testCRUD.DropTable(context.Background(), &TestEmployee{})
+	_ = testCRUD.DropTable(context.Background(), &TestCreditCard{})
+	_ = testCRUD.DropTable(context.Background(), &TestComment{})
+	_ = testCRUD.CreateTable(context.Background(), &TestCompany{})
+	_ = testCRUD.CreateTable(context.Background(), &TestEmployee{})
+	_ = testCRUD.CreateTable(context.Background(), &TestCreditCard{})
+	_ = testCRUD.CreateTable(context.Background(), &TestComment{})
 }
 
 func TestDeleteCascade(t *testing.T) {
@@ -117,7 +120,7 @@ func TestDeleteCascade(t *testing.T) {
 	}
 
 	// Delete the parent (company) object.
-	err1 := testCRUD.Delete(p, DeleteOptions{})
+	err1 := testCRUD.Delete(context.Background(), p, DeleteOptions{})
 	if err1 != nil {
 		t.Fatalf("Failed to run Delete successfully: %v", err1.(ErrCRUD).Op)
 	}

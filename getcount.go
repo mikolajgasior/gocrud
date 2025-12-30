@@ -1,6 +1,7 @@
 package crud
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 
@@ -12,7 +13,7 @@ type GetCountOptions struct {
 }
 
 // GetCount runs a 'SELECT COUNT(*)' query on the database with specified filters, order, limit and offset and returns count of rows
-func (c *CRUD) GetCount(obj interface{}, options GetCountOptions) (int64, error) {
+func (c *CRUD) GetCount(ctx context.Context, obj interface{}, options GetCountOptions) (int64, error) {
 	builder, err := c.builder(obj)
 	if err != nil {
 		return 0, ErrCRUD{
@@ -35,7 +36,7 @@ func (c *CRUD) GetCount(obj interface{}, options GetCountOptions) (int64, error)
 	}
 	slog.Debug(fmt.Sprintf("builder query: %s", query))
 
-	row := c.db.QueryRow(query, sqlbuilder.FiltersInterfaces(options.Filters)...)
+	row := c.db.QueryRowContext(ctx, query, sqlbuilder.FiltersInterfaces(options.Filters)...)
 	var cnt int64
 	err = row.Scan(&cnt)
 	if err != nil {

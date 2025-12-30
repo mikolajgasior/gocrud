@@ -1,6 +1,7 @@
 package crud
 
 import (
+	"context"
 	"testing"
 
 	sqlbuilder "github.com/keenbytes/pgsql-builder"
@@ -16,7 +17,7 @@ func TestGetCount(t *testing.T) {
 		ts.Age = 10 + i
 		ts.Price = 444
 		ts.PrimaryEmail = "another@example.com"
-		_ = testCRUD.Save(ts, SaveOptions{})
+		_ = testCRUD.Save(context.Background(), ts, SaveOptions{})
 	}
 
 	// Insert data that should be selected by filters
@@ -24,11 +25,11 @@ func TestGetCount(t *testing.T) {
 		ts := testStructWithData()
 		ts.ID = 0
 		ts.Age = 30
-		_ = testCRUD.Save(ts, SaveOptions{})
+		_ = testCRUD.Save(context.Background(), ts, SaveOptions{})
 	}
 
 	// Get the data from the database
-	cnt, err := testCRUD.GetCount(&TestStruct{}, GetCountOptions{
+	cnt, err := testCRUD.GetCount(context.Background(), &TestStruct{}, GetCountOptions{
 		Filters: &sqlbuilder.Filters{
 			"Price":        {Op: sqlbuilder.OpEqual, Val: 444},
 			"PrimaryEmail": {Op: sqlbuilder.OpEqual, Val: "primary@example.com"},
@@ -52,7 +53,7 @@ func TestGetCountWithRawQuery(t *testing.T) {
 		ts.Age = 10 + i
 		ts.Price = 444
 		ts.PrimaryEmail = "another@example.com"
-		_ = testCRUD.Save(ts, SaveOptions{})
+		_ = testCRUD.Save(context.Background(), ts, SaveOptions{})
 	}
 
 	// Insert data that should be selected by filters
@@ -60,11 +61,11 @@ func TestGetCountWithRawQuery(t *testing.T) {
 		ts := testStructWithData()
 		ts.ID = 0
 		ts.Age = 30
-		_ = testCRUD.Save(ts, SaveOptions{})
+		_ = testCRUD.Save(context.Background(), ts, SaveOptions{})
 	}
 
 	// Get the data from the database
-	cnt, err := testCRUD.GetCount(&TestStruct{}, GetCountOptions{
+	cnt, err := testCRUD.GetCount(context.Background(), &TestStruct{}, GetCountOptions{
 		Filters: &sqlbuilder.Filters{
 			"Price":        {Op: sqlbuilder.OpEqual, Val: 444},
 			"PrimaryEmail": {Op: sqlbuilder.OpEqual, Val: "primary@example.com"},

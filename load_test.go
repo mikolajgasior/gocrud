@@ -1,6 +1,7 @@
 package crud
 
 import (
+	"context"
 	"fmt"
 	"testing"
 )
@@ -11,11 +12,11 @@ func TestLoad(t *testing.T) {
 
 	// Insert an object first
 	objSaved := testStructWithData()
-	_ = testCRUD.Save(objSaved, SaveOptions{})
+	_ = testCRUD.Save(context.Background(), objSaved, SaveOptions{})
 
 	// Get the object
 	objLoaded := &TestStruct{}
-	err := testCRUD.Load(objLoaded, fmt.Sprintf("%d", objSaved.ID), LoadOptions{})
+	err := testCRUD.Load(context.Background(), objLoaded, fmt.Sprintf("%d", objSaved.ID), LoadOptions{})
 	if err != nil {
 		t.Fatalf("Load failed to get data: %s", err.(ErrCRUD).Op)
 	}

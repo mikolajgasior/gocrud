@@ -1,6 +1,7 @@
 package crud
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log"
@@ -106,8 +107,8 @@ func testStructWithData() *TestStruct {
 }
 
 func recreateTestStructTable() {
-	_ = testCRUD.DropTable(&TestStruct{})
-	_ = testCRUD.CreateTable(&TestStruct{})
+	_ = testCRUD.DropTable(context.Background(), &TestStruct{})
+	_ = testCRUD.CreateTable(context.Background(), &TestStruct{})
 }
 
 func areTestStructObjectsSame(ts1 *TestStruct, ts2 *TestStruct) bool {

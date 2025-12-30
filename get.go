@@ -1,6 +1,8 @@
 package crud
 
 import (
+	"context"
+
 	sqlbuilder "github.com/keenbytes/pgsql-builder"
 )
 
@@ -12,7 +14,7 @@ type GetOptions struct {
 	RowObjTransformFunc func(interface{}) interface{}
 }
 
-func (c *CRUD) Get(newObjFunc func() interface{}, options GetOptions) ([]interface{}, error) {
+func (c *CRUD) Get(ctx context.Context, newObjFunc func() interface{}, options GetOptions) ([]interface{}, error) {
 	obj := newObjFunc()
 
 	builder, err := c.builder(obj)
@@ -37,7 +39,7 @@ func (c *CRUD) Get(newObjFunc func() interface{}, options GetOptions) ([]interfa
 		}
 	}
 
-	rows, err := c.db.Query(query, sqlbuilder.FiltersInterfaces(options.Filters)...)
+	rows, err := c.db.QueryContext(ctx, query, sqlbuilder.FiltersInterfaces(options.Filters)...)
 	if err != nil {
 		return nil, ErrCRUD{
 			Op:  "o.db.Query",

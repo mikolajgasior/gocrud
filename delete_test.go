@@ -1,6 +1,7 @@
 package crud
 
 import (
+	"context"
 	"fmt"
 	"testing"
 )
@@ -11,10 +12,10 @@ func TestDelete(t *testing.T) {
 
 	// Insert an object first
 	objSaved := testStructWithData()
-	_ = testCRUD.Save(objSaved, SaveOptions{})
+	_ = testCRUD.Save(context.Background(), objSaved, SaveOptions{})
 
 	// Delete it
-	err := testCRUD.Delete(objSaved, DeleteOptions{})
+	err := testCRUD.Delete(context.Background(), objSaved, DeleteOptions{})
 	if err != nil {
 		t.Fatalf("Delete failed to remove: %s", err.(ErrCRUD).Op)
 	}

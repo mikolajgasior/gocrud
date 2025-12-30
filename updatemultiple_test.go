@@ -1,6 +1,7 @@
 package crud
 
 import (
+	"context"
 	"testing"
 
 	sqlbuilder "github.com/keenbytes/pgsql-builder"
@@ -16,7 +17,7 @@ func TestUpdateMultiple(t *testing.T) {
 		ts.ID = 0
 		ts.Age = 10 + i
 		ts.PrimaryEmail = "another@example.com"
-		_ = testCRUD.Save(ts, SaveOptions{})
+		_ = testCRUD.Save(context.Background(), ts, SaveOptions{})
 	}
 
 	// Insert data that should be updated
@@ -25,11 +26,11 @@ func TestUpdateMultiple(t *testing.T) {
 		ts.ID = 0
 		ts.Age = 30
 		ts.PrimaryEmail = "changeme@example.com"
-		_ = testCRUD.Save(ts, SaveOptions{})
+		_ = testCRUD.Save(context.Background(), ts, SaveOptions{})
 	}
 
 	// Update multiple rows from the database
-	err := testCRUD.UpdateMultiple(&TestStruct{}, map[string]interface{}{
+	err := testCRUD.UpdateMultiple(context.Background(), &TestStruct{}, map[string]interface{}{
 		"PrimaryEmail": "newemail@example.com",
 		"Age":          98,
 	},
@@ -49,7 +50,7 @@ func TestUpdateMultiple(t *testing.T) {
 		t.Fatalf("UpdateMultiple failed to update objects: %s %s", err.(ErrCRUD).Op, err.(ErrCRUD).Err.Error())
 	}
 
-	cnt, _ := testCRUD.GetCount(&TestStruct{}, GetCountOptions{
+	cnt, _ := testCRUD.GetCount(context.Background(), &TestStruct{}, GetCountOptions{
 		Filters: &sqlbuilder.Filters{
 			"PrimaryEmail": {
 				Op:  sqlbuilder.OpEqual,

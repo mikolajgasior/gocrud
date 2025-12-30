@@ -1,6 +1,8 @@
 package crud
 
 import (
+	"context"
+
 	sqlbuilder "github.com/keenbytes/pgsql-builder"
 )
 
@@ -10,7 +12,7 @@ type DeleteMultipleOptions struct {
 }
 
 // DeleteMultiple removes objects from the database based on specified filters
-func (c *CRUD) DeleteMultiple(obj interface{}, options DeleteMultipleOptions) error {
+func (c *CRUD) DeleteMultiple(ctx context.Context, obj interface{}, options DeleteMultipleOptions) error {
 	builder, err := c.builder(obj)
 	if err != nil {
 		return ErrCRUD{
@@ -32,7 +34,7 @@ func (c *CRUD) DeleteMultiple(obj interface{}, options DeleteMultipleOptions) er
 		}
 	}
 
-	rows, err := c.db.Query(query, sqlbuilder.FiltersInterfaces(options.Filters)...)
+	rows, err := c.db.QueryContext(ctx, query, sqlbuilder.FiltersInterfaces(options.Filters)...)
 	if err != nil {
 		return ErrCRUD{
 			Op:  "o.db.Query",
@@ -58,7 +60,7 @@ func (c *CRUD) DeleteMultiple(obj interface{}, options DeleteMultipleOptions) er
 
 	if options.CascadeDeleteDepth < 3 {
 		// Loop through the fields to cascade-delete.
-		errCascadeDelete := c.runOnDelete(obj, returnedIDs, options.CascadeDeleteDepth)
+		errCascadeDelete := c.runOnDelete(ctx, obj, returnedIDs, options.CascadeDeleteDepth)
 		if errCascadeDelete != nil {
 			return ErrCRUD{
 				Op:  "o.runOnDelete",

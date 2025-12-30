@@ -6,7 +6,7 @@ import (
 	sqlbuilder "github.com/keenbytes/pgsql-builder"
 )
 
-// ObjFieldInterfaces return list of interfaces to object's fields
+// ObjFieldInterfaces returns a list of interfaces to object's fields
 // Argument includeID tells it to include or omit the ID field
 func ObjFieldInterfaces(obj interface{}, includeID bool) []interface{} {
 	objValue := reflect.ValueOf(obj).Elem()
@@ -19,7 +19,7 @@ func ObjFieldInterfaces(obj interface{}, includeID bool) []interface{} {
 			continue
 		}
 
-		// builder is used to generate SQL queries so here the same kinds must be supported
+		// builder is used to generate SQL queries, so here the same kinds must be supported
 		if !sqlbuilder.IsFieldKindSupported(valueField.Kind()) {
 			continue
 		}
@@ -43,7 +43,7 @@ func ObjFieldValue(obj interface{}, fieldName string) interface{} {
 		return nil
 	}
 
-	// Obtain the reflect.Value that we can inspect.
+	// Get reflect.Value that we can inspect.
 	// If we received a pointer, dereference it once to get the underlying struct.
 	val := reflect.ValueOf(obj)
 

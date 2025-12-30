@@ -1,6 +1,7 @@
 package crud
 
 import (
+	"context"
 	"database/sql"
 	"strconv"
 )
@@ -9,7 +10,7 @@ type LoadOptions struct {
 	Unused bool
 }
 
-func (c *CRUD) Load(obj interface{}, id string, options LoadOptions) error {
+func (c *CRUD) Load(ctx context.Context, obj interface{}, id string, options LoadOptions) error {
 	idInt, err := strconv.Atoi(id)
 	if err != nil {
 		return ErrCRUD{
@@ -26,7 +27,7 @@ func (c *CRUD) Load(obj interface{}, id string, options LoadOptions) error {
 		}
 	}
 
-	err = c.db.QueryRow(bldr.SelectByID(), int64(idInt)).Scan(ObjFieldInterfaces(obj, true)...)
+	err = c.db.QueryRowContext(ctx, bldr.SelectByID(), int64(idInt)).Scan(ObjFieldInterfaces(obj, true)...)
 	switch {
 	case err == sql.ErrNoRows:
 		ZeroObjFields(obj)

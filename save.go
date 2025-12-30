@@ -1,6 +1,7 @@
 package crud
 
 import (
+	"context"
 	"errors"
 
 	sqlbuilder "github.com/keenbytes/pgsql-builder"
@@ -17,7 +18,7 @@ type SaveOptions struct {
 // Save takes an object, validates its field values, and saves it in the database.
 // If ID is not present, then an INSERT will be performed.
 // If ID is set, then an "upsert" is performed.
-func (c *CRUD) Save(obj interface{}, options SaveOptions) error {
+func (c *CRUD) Save(ctx context.Context, obj interface{}, options SaveOptions) error {
 	builder, err := c.builder(obj)
 	if err != nil {
 		return ErrCRUD{
@@ -69,7 +70,7 @@ func (c *CRUD) Save(obj interface{}, options SaveOptions) error {
 	if c.flags&GetCountOnUniq > 0 {
 		uniqFields := builder.UniqueFields()
 		for _, uniqField := range uniqFields {
-			count, err := c.GetCount(obj,
+			count, err := c.GetCount(ctx, obj,
 				GetCountOptions{
 					Filters: &sqlbuilder.Filters{
 						uniqField: sqlbuilder.OpVal{
@@ -105,10 +106,10 @@ func (c *CRUD) Save(obj interface{}, options SaveOptions) error {
 		// do no try to insert if NoInsert is set
 		// TODO: error handling, we should check if object exists - for now nothing happens, UPDATE gets executed and updates nothing
 		if options.NoInsert {
-			_, err = c.db.Exec(builder.UpdateByID(), append(ObjFieldInterfaces(obj, false), objIDInterface)...)
+			_, err = c.db.ExecContext(ctx, builder.UpdateByID(), append(ObjFieldInterfaces(obj, false), objIDInterface)...)
 		} else {
 			// try to insert - if ID already exists then try to update it
-			_, err = c.db.Exec(builder.InsertOnConflictUpdate(), append(ObjFieldInterfaces(obj, true), ObjFieldInterfaces(obj, false)...)...)
+			_, err = c.db.ExecContext(ctx, builder.InsertOnConflictUpdate(), append(ObjFieldInterfaces(obj, true), ObjFieldInterfaces(obj, false)...)...)
 		}
 
 		if err != nil {
@@ -134,7 +135,7 @@ func (c *CRUD) Save(obj interface{}, options SaveOptions) error {
 	}
 
 	// insert
-	err = c.db.QueryRow(builder.Insert(), ObjFieldInterfaces(obj, false)...).Scan(objIDInterface)
+	err = c.db.QueryRowContext(ctx, builder.Insert(), ObjFieldInterfaces(obj, false)...).Scan(objIDInterface)
 	if err != nil {
 		var pgErr *pq.Error
 		if errors.As(err, &pgErr) {

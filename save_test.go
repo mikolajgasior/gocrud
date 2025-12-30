@@ -1,6 +1,7 @@
 package crud
 
 import (
+	"context"
 	"errors"
 	"testing"
 	"time"
@@ -11,7 +12,7 @@ func TestSave(t *testing.T) {
 	recreateTestStructTable()
 
 	objSaved := testStructWithData()
-	err := testCRUD.Save(objSaved, SaveOptions{})
+	err := testCRUD.Save(context.Background(), objSaved, SaveOptions{})
 	if err != nil {
 		t.Fatalf("Save failed to insert struct to the table: %s", err.(ErrCRUD).Op)
 	}
@@ -46,7 +47,7 @@ func TestSave(t *testing.T) {
 	objSaved.CreatedBy = 7
 	objSaved.Key = "123456789012345678901234567890aaa"
 
-	err = testCRUD.Save(objSaved, SaveOptions{})
+	err = testCRUD.Save(context.Background(), objSaved, SaveOptions{})
 	if err != nil {
 		t.Fatalf("Save failed to update struct")
 	}
@@ -68,7 +69,7 @@ func TestSaveWithModifiedAt(t *testing.T) {
 	recreateTestStructTable()
 
 	objSaved := testStructWithData()
-	err := testCRUD.Save(objSaved, SaveOptions{
+	err := testCRUD.Save(context.Background(), objSaved, SaveOptions{
 		ModifiedBy: 4,
 		ModifiedAt: time.Now().Unix(),
 	})
@@ -94,7 +95,7 @@ func TestSaveWithModifiedAt(t *testing.T) {
 	modifiedAt := time.Now().Unix()
 	modifiedBy := int64(5)
 
-	err = testCRUD.Save(objSaved, SaveOptions{
+	err = testCRUD.Save(context.Background(), objSaved, SaveOptions{
 		ModifiedBy: modifiedBy,
 		ModifiedAt: modifiedAt,
 	})
@@ -122,7 +123,7 @@ func TestSaveInsertWithID(t *testing.T) {
 	objSaved := testStructWithData()
 	objSaved.ID = 99999
 	objSaved.FirstName = "ProvidedID"
-	err := testCRUD.Save(objSaved, SaveOptions{})
+	err := testCRUD.Save(context.Background(), objSaved, SaveOptions{})
 	if err != nil {
 		t.Fatalf("Save failed to insert struct with provided ID to the table: %s", err.(ErrCRUD).Op)
 	}
@@ -140,7 +141,7 @@ func TestSaveInsertWithID(t *testing.T) {
 
 	// update that object
 	objLoaded.FirstName = "UpdatedProvidedID"
-	err = testCRUD.Save(objLoaded, SaveOptions{})
+	err = testCRUD.Save(context.Background(), objLoaded, SaveOptions{})
 	if err != nil {
 		t.Fatalf("Save failed to update struct previously inserted with provided ID to the table: %s", err.(ErrCRUD).Op)
 	}
@@ -163,7 +164,7 @@ func TestSaveInsertWithIDAndNoInsert(t *testing.T) {
 	objSaved := testStructWithData()
 	objSaved.ID = 99999
 	objSaved.FirstName = "ProvidedID"
-	err := testCRUD.Save(objSaved, SaveOptions{
+	err := testCRUD.Save(context.Background(), objSaved, SaveOptions{
 		NoInsert: true,
 	})
 	if err != nil {
@@ -186,11 +187,11 @@ func TestErrUniq(t *testing.T) {
 
 	objSaved := testStructWithData()
 	objSaved.Key = "gottabeunique123456789012345678901234567890"
-	_ = testCRUD.Save(objSaved, SaveOptions{})
+	_ = testCRUD.Save(context.Background(), objSaved, SaveOptions{})
 
 	objWithSameKey := testStructWithData()
 	objWithSameKey.Key = "gottabeunique123456789012345678901234567890"
-	err := testCRUD.Save(objWithSameKey, SaveOptions{})
+	err := testCRUD.Save(context.Background(), objWithSameKey, SaveOptions{})
 	if !errors.Is(err, ErrUniq{}) {
 		t.Fatalf("Save failed to return uniq error")
 	}
@@ -201,7 +202,7 @@ func TestErrUniqUsingGetCount(t *testing.T) {
 
 	objSaved := testStructWithData()
 	objSaved.Key = "gottabeunique123456789012345678901234567890"
-	_ = testCRUD.Save(objSaved, SaveOptions{})
+	_ = testCRUD.Save(context.Background(), objSaved, SaveOptions{})
 
 	testCRUD.SetFlag(GetCountOnUniq)
 
@@ -212,7 +213,7 @@ func TestErrUniqUsingGetCount(t *testing.T) {
 
 	objWithSameKey := testStructWithData()
 	objWithSameKey.Key = "gottabeunique123456789012345678901234567890"
-	err = testCRUD.Save(objWithSameKey, SaveOptions{})
+	err = testCRUD.Save(context.Background(), objWithSameKey, SaveOptions{})
 	if !errors.Is(err, ErrUniq{}) {
 		t.Fatalf("Save failed to return uniq error when there is no UNIQUE constraint")
 	}

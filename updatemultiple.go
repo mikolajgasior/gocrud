@@ -1,6 +1,7 @@
 package crud
 
 import (
+	"context"
 	"errors"
 
 	sqlbuilder "github.com/keenbytes/pgsql-builder"
@@ -12,7 +13,7 @@ type UpdateMultipleOptions struct {
 	ConvertValuesFromString bool
 }
 
-func (c *CRUD) UpdateMultiple(obj interface{}, fieldsToUpdate map[string]interface{}, options UpdateMultipleOptions) error {
+func (c *CRUD) UpdateMultiple(ctx context.Context, obj interface{}, fieldsToUpdate map[string]interface{}, options UpdateMultipleOptions) error {
 	builder, err := c.builder(obj)
 	if err != nil {
 		return ErrCRUD{
@@ -77,7 +78,7 @@ func (c *CRUD) UpdateMultiple(obj interface{}, fieldsToUpdate map[string]interfa
 		}
 	}
 
-	_, err = c.db.Exec(query, append(sqlbuilder.MapInterfaces(fieldsToUpdate), sqlbuilder.FiltersInterfaces(options.Filters)...)...)
+	_, err = c.db.ExecContext(ctx, query, append(sqlbuilder.MapInterfaces(fieldsToUpdate), sqlbuilder.FiltersInterfaces(options.Filters)...)...)
 	if err != nil {
 		return ErrCRUD{
 			Op:  "o.db.Exec",

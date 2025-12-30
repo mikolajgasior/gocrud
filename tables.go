@@ -1,7 +1,9 @@
 package crud
 
+import "context"
+
 // CreateTable creates a database table for the specified object.
-func (c *CRUD) CreateTable(obj interface{}) error {
+func (c *CRUD) CreateTable(ctx context.Context, obj interface{}) error {
 	builder, err := c.builder(obj)
 	if err != nil {
 		return ErrCRUD{
@@ -10,7 +12,7 @@ func (c *CRUD) CreateTable(obj interface{}) error {
 		}
 	}
 
-	_, err = c.db.Exec(builder.CreateTable())
+	_, err = c.db.ExecContext(ctx, builder.CreateTable())
 	if err != nil {
 		return ErrCRUD{
 			Op:  "o.db.Exec",
@@ -22,7 +24,7 @@ func (c *CRUD) CreateTable(obj interface{}) error {
 }
 
 // DropTable drops the database table for the specified object.
-func (c *CRUD) DropTable(obj interface{}) error {
+func (c *CRUD) DropTable(ctx context.Context, obj interface{}) error {
 	builder, err := c.builder(obj)
 	if err != nil {
 		return ErrCRUD{
@@ -31,7 +33,7 @@ func (c *CRUD) DropTable(obj interface{}) error {
 		}
 	}
 
-	_, err = c.db.Exec(builder.DropTable())
+	_, err = c.db.ExecContext(ctx, builder.DropTable())
 	if err != nil {
 		return ErrCRUD{
 			Op:  "o.db.Exec",

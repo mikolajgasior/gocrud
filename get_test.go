@@ -1,6 +1,7 @@
 package crud
 
 import (
+	"context"
 	"fmt"
 	"html"
 	"reflect"
@@ -21,7 +22,7 @@ func TestGet(t *testing.T) {
 		ts.Age = 10 + i
 		ts.Price = 444
 		ts.PrimaryEmail = "another@example.com"
-		_ = testCRUD.Save(ts, SaveOptions{})
+		_ = testCRUD.Save(context.Background(), ts, SaveOptions{})
 	}
 
 	// Insert data that should be selected by filters
@@ -29,11 +30,11 @@ func TestGet(t *testing.T) {
 		ts := testStructWithData()
 		ts.ID = 0
 		ts.Age = 30 + i
-		_ = testCRUD.Save(ts, SaveOptions{})
+		_ = testCRUD.Save(context.Background(), ts, SaveOptions{})
 	}
 
 	// Get the data from the database
-	testStructs, err := testCRUD.Get(func() interface{} {
+	testStructs, err := testCRUD.Get(context.Background(), func() interface{} {
 		return &TestStruct{}
 	}, GetOptions{
 		Order:  []string{"Age", "asc", "Price", "asc"},
@@ -78,11 +79,11 @@ func TestGetWithoutFilters(t *testing.T) {
 		ts := testStructWithData()
 		ts.ID = 0
 		ts.Age = 30 + i
-		_ = testCRUD.Save(ts, SaveOptions{})
+		_ = testCRUD.Save(context.Background(), ts, SaveOptions{})
 	}
 
 	// Get the data
-	testStructs, err := testCRUD.Get(func() interface{} {
+	testStructs, err := testCRUD.Get(context.Background(), func() interface{} {
 		return &TestStruct{}
 	}, GetOptions{
 		Order:  []string{"Age", "asc", "Price", "asc"},
@@ -111,11 +112,11 @@ func TestGetWithRowObjTransformFunc(t *testing.T) {
 		ts.ID = 0
 		ts.Age = 30 + i
 		ts.FirstName = fmt.Sprintf("%s %d", ts.FirstName, i)
-		_ = testCRUD.Save(ts, SaveOptions{})
+		_ = testCRUD.Save(context.Background(), ts, SaveOptions{})
 	}
 
 	// Get the data
-	testCustomList, err := testCRUD.Get(func() interface{} {
+	testCustomList, err := testCRUD.Get(context.Background(), func() interface{} {
 		return &TestStruct{}
 	}, GetOptions{
 		Order: []string{"Age", "asc"},

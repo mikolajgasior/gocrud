@@ -1,6 +1,7 @@
 package crud
 
 import (
+	"context"
 	"testing"
 
 	sqlbuilder "github.com/keenbytes/pgsql-builder"
@@ -16,7 +17,7 @@ func TestDeleteMultiple(t *testing.T) {
 		ts.ID = 0
 		ts.Age = 10 + i
 		ts.PrimaryEmail = "another@example.com"
-		_ = testCRUD.Save(ts, SaveOptions{})
+		_ = testCRUD.Save(context.Background(), ts, SaveOptions{})
 	}
 
 	// Insert data that should be deleted
@@ -24,11 +25,11 @@ func TestDeleteMultiple(t *testing.T) {
 		ts := testStructWithData()
 		ts.ID = 0
 		ts.Age = 30
-		_ = testCRUD.Save(ts, SaveOptions{})
+		_ = testCRUD.Save(context.Background(), ts, SaveOptions{})
 	}
 
 	// Delete multiple rows from the database
-	err := testCRUD.DeleteMultiple(&TestStruct{}, DeleteMultipleOptions{
+	err := testCRUD.DeleteMultiple(context.Background(), &TestStruct{}, DeleteMultipleOptions{
 		Filters: &sqlbuilder.Filters{
 			"Price": {
 				Op:  sqlbuilder.OpEqual,
@@ -44,7 +45,7 @@ func TestDeleteMultiple(t *testing.T) {
 		t.Fatalf("DeleteMultiple failed to delete objects: %s", err.(ErrCRUD).Op)
 	}
 
-	cnt, _ := testCRUD.GetCount(&TestStruct{}, GetCountOptions{})
+	cnt, _ := testCRUD.GetCount(context.Background(), &TestStruct{}, GetCountOptions{})
 	if cnt != 50 {
 		t.Fatalf("DeleteMultiple removed invalid number of rows, there are %d rows left, instead of %d", cnt, 50)
 	}
@@ -61,7 +62,7 @@ func TestDeleteMultipleWithRawQuery(t *testing.T) {
 		ts.ID = 0
 		ts.Age = 10 + i
 		ts.PrimaryEmail = "another@example.com"
-		_ = testCRUD.Save(ts, SaveOptions{})
+		_ = testCRUD.Save(context.Background(), ts, SaveOptions{})
 	}
 
 	// Insert data that should be deleted
@@ -69,11 +70,11 @@ func TestDeleteMultipleWithRawQuery(t *testing.T) {
 		ts := testStructWithData()
 		ts.ID = 0
 		ts.Age = 30
-		_ = testCRUD.Save(ts, SaveOptions{})
+		_ = testCRUD.Save(context.Background(), ts, SaveOptions{})
 	}
 
 	// Delete multiple rows from the database
-	err := testCRUD.DeleteMultiple(&TestStruct{}, DeleteMultipleOptions{
+	err := testCRUD.DeleteMultiple(context.Background(), &TestStruct{}, DeleteMultipleOptions{
 		Filters: &sqlbuilder.Filters{
 			"Price": {
 				Op:  sqlbuilder.OpEqual,
@@ -99,7 +100,7 @@ func TestDeleteMultipleWithRawQuery(t *testing.T) {
 		t.Fatalf("DeleteMultiple failed to delete objects: %s", err.(ErrCRUD).Op)
 	}
 
-	cnt, _ := testCRUD.GetCount(&TestStruct{}, GetCountOptions{})
+	cnt, _ := testCRUD.GetCount(context.Background(), &TestStruct{}, GetCountOptions{})
 	if cnt != 46 {
 		t.Fatalf("DeleteMultiple removed invalid number of rows, there are %d rows left, instead of %d", cnt, 46)
 	}
@@ -115,7 +116,7 @@ func TestDeleteMultipleWithRawQueryOnly(t *testing.T) {
 		ts.ID = 0
 		ts.Age = 10 + i
 		ts.PrimaryEmail = "another@example.com"
-		_ = testCRUD.Save(ts, SaveOptions{})
+		_ = testCRUD.Save(context.Background(), ts, SaveOptions{})
 	}
 
 	// Insert data that should be deleted
@@ -123,11 +124,11 @@ func TestDeleteMultipleWithRawQueryOnly(t *testing.T) {
 		ts := testStructWithData()
 		ts.ID = 0
 		ts.Age = 30
-		_ = testCRUD.Save(ts, SaveOptions{})
+		_ = testCRUD.Save(context.Background(), ts, SaveOptions{})
 	}
 
 	// Delete multiple rows from the database
-	err := testCRUD.DeleteMultiple(&TestStruct{}, DeleteMultipleOptions{
+	err := testCRUD.DeleteMultiple(context.Background(), &TestStruct{}, DeleteMultipleOptions{
 		Filters: &sqlbuilder.Filters{
 			sqlbuilder.Raw: {
 				Op: sqlbuilder.OpOR,
@@ -147,7 +148,7 @@ func TestDeleteMultipleWithRawQueryOnly(t *testing.T) {
 		t.Fatalf("DeleteMultiple failed to delete objects: %s", err.(ErrCRUD).Op)
 	}
 
-	cnt, _ := testCRUD.GetCount(&TestStruct{}, GetCountOptions{})
+	cnt, _ := testCRUD.GetCount(context.Background(), &TestStruct{}, GetCountOptions{})
 	if cnt != 46 {
 		t.Fatalf("DeleteMultiple removed invalid number of rows, there are %d rows left, instead of %d", cnt, 46)
 	}
