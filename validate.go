@@ -21,10 +21,7 @@ func ValidateFilters(obj interface{}, filters *sqlbuilder.Filters, tagName strin
 
 	err := sqlbuilder.SetObjFields(obj, filters)
 	if err != nil {
-		return ErrCRUD{
-			Op:  "sqlbuilder.SetObjFields",
-			Err: err,
-		}
+		return getBuilderFuncCRUDError("set obj fields", err)
 	}
 
 	fieldsToValidate := map[string]bool{}
@@ -34,19 +31,11 @@ func ValidateFilters(obj interface{}, filters *sqlbuilder.Filters, tagName strin
 
 	ok, violations, err := Validate(obj, fieldsToValidate, tagName)
 	if err != nil {
-		return ErrCRUD{
-			Op:  "Validate",
-			Err: err,
-		}
+		return getValidateObjCRUDError(err)
 	}
 
 	if !ok {
-		return ErrCRUD{
-			Op: "Validate",
-			Err: &ErrValidation{
-				Violations: violations,
-			},
-		}
+		return getObjInvalidCRUDError(violations)
 	}
 
 	return nil

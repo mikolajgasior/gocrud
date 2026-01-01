@@ -13,18 +13,12 @@ type LoadOptions struct {
 func (c *CRUD) Load(ctx context.Context, obj interface{}, id string, options LoadOptions) error {
 	idInt, err := strconv.Atoi(id)
 	if err != nil {
-		return ErrCRUD{
-			Op:  "atoi",
-			Err: err,
-		}
+		return getConvertIDToIntCRUDError(err)
 	}
 
 	bldr, err := c.builder(obj)
 	if err != nil {
-		return ErrCRUD{
-			Op:  "o.builder",
-			Err: err,
-		}
+		return getBuilderObjectCRUDError(err)
 	}
 
 	err = c.db.QueryRowContext(ctx, bldr.SelectByID(), int64(idInt)).Scan(ObjFieldInterfaces(obj, true)...)
@@ -35,10 +29,7 @@ func (c *CRUD) Load(ctx context.Context, obj interface{}, id string, options Loa
 		return nil
 
 	case err != nil:
-		return ErrCRUD{
-			Op:  "o.db.QueryRow",
-			Err: err,
-		}
+		return getDBFuncCRUDError("query row", err)
 
 	default:
 		return nil

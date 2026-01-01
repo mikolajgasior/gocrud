@@ -16,10 +16,7 @@ type GetCountOptions struct {
 func (c *CRUD) GetCount(ctx context.Context, obj interface{}, options GetCountOptions) (int64, error) {
 	builder, err := c.builder(obj)
 	if err != nil {
-		return 0, ErrCRUD{
-			Op:  "o.builder",
-			Err: err,
-		}
+		return 0, getBuilderObjectCRUDError(err)
 	}
 
 	err = ValidateFilters(obj, options.Filters, c.tagName)
@@ -29,10 +26,7 @@ func (c *CRUD) GetCount(ctx context.Context, obj interface{}, options GetCountOp
 
 	query, err := builder.SelectCount(options.Filters)
 	if err != nil {
-		return 0, ErrCRUD{
-			Op:  "builder.SelectCount",
-			Err: err,
-		}
+		return 0, getBuilderFuncCRUDError("select count", err)
 	}
 	slog.Debug(fmt.Sprintf("builder query: %s", query))
 
@@ -40,10 +34,7 @@ func (c *CRUD) GetCount(ctx context.Context, obj interface{}, options GetCountOp
 	var cnt int64
 	err = row.Scan(&cnt)
 	if err != nil {
-		return 0, ErrCRUD{
-			Op:  "o.db.QueryRow",
-			Err: err,
-		}
+		return 0, getDBFuncCRUDError("query row scan", err)
 	}
 
 	return cnt, nil

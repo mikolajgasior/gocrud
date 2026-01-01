@@ -42,7 +42,7 @@ func TestDeleteMultiple(t *testing.T) {
 		},
 	})
 	if err != nil {
-		t.Fatalf("DeleteMultiple failed to delete objects: %s", err.(ErrCRUD).Op)
+		t.Fatalf("DeleteMultiple failed to delete objects: %s", err.(*CRUDError).Op)
 	}
 
 	cnt, _ := testCRUD.GetCount(context.Background(), &TestStruct{}, GetCountOptions{})
@@ -97,7 +97,7 @@ func TestDeleteMultipleWithRawQuery(t *testing.T) {
 		},
 	})
 	if err != nil {
-		t.Fatalf("DeleteMultiple failed to delete objects: %s", err.(ErrCRUD).Op)
+		t.Fatalf("DeleteMultiple failed to delete objects: %s", err.(*CRUDError).Op)
 	}
 
 	cnt, _ := testCRUD.GetCount(context.Background(), &TestStruct{}, GetCountOptions{})
@@ -145,7 +145,7 @@ func TestDeleteMultipleWithRawQueryOnly(t *testing.T) {
 		},
 	})
 	if err != nil {
-		t.Fatalf("DeleteMultiple failed to delete objects: %s", err.(ErrCRUD).Op)
+		t.Fatalf("DeleteMultiple failed to delete objects: %s", err.(*CRUDError).Op)
 	}
 
 	cnt, _ := testCRUD.GetCount(context.Background(), &TestStruct{}, GetCountOptions{})

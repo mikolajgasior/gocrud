@@ -17,7 +17,7 @@ func TestDelete(t *testing.T) {
 	// Delete it
 	err := testCRUD.Delete(context.Background(), objSaved, DeleteOptions{})
 	if err != nil {
-		t.Fatalf("Delete failed to remove: %s", err.(ErrCRUD).Op)
+		t.Fatalf("Delete failed to remove: %s", err.(*CRUDError).Op)
 	}
 
 	var rowCount int64

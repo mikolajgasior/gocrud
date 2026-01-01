@@ -21,27 +21,16 @@ type SaveOptions struct {
 func (c *CRUD) Save(ctx context.Context, obj interface{}, options SaveOptions) error {
 	builder, err := c.builder(obj)
 	if err != nil {
-		return ErrCRUD{
-			Op:  "o.builder",
-			Err: err,
-		}
+		return getBuilderObjectCRUDError(err)
 	}
 
 	ok, violations, err := Validate(obj, nil, c.tagName)
 	if err != nil {
-		return ErrCRUD{
-			Op:  "Validate",
-			Err: err,
-		}
+		return getValidateObjCRUDError(err)
 	}
 
 	if !ok {
-		return ErrCRUD{
-			Op: "Validate",
-			Err: &ErrValidation{
-				Violations: violations,
-			},
-		}
+		return getObjInvalidCRUDError(violations)
 	}
 
 	objID := ObjIDValue(obj)
@@ -85,16 +74,11 @@ func (c *CRUD) Save(ctx context.Context, obj interface{}, options SaveOptions) e
 				},
 			)
 			if err != nil {
-				return ErrCRUD{
-					Op:  "o.GetCount",
-					Err: err,
-				}
+				return getCRUDFuncCRUDError("get count", err)
 			}
 
 			if count > 0 {
-				return ErrUniq{
-					Field: uniqField,
-				}
+				return getUniqError(uniqField)
 			}
 		}
 	}
@@ -119,16 +103,11 @@ func (c *CRUD) Save(ctx context.Context, obj interface{}, options SaveOptions) e
 				if pgErr.Code == "23505" {
 					// You can also look at pgErr.Constraint to know which
 					// unique index triggered the error (if you need that detail).
-					return ErrUniq{
-						Field: pgErr.Constraint,
-					}
+					return getUniqError(pgErr.Constraint)
 				}
 			}
 
-			return ErrCRUD{
-				Op:  "o.db.QueryRow",
-				Err: err,
-			}
+			return getDBFuncCRUDError("query row", err)
 		}
 
 		return nil
@@ -143,16 +122,11 @@ func (c *CRUD) Save(ctx context.Context, obj interface{}, options SaveOptions) e
 			if pgErr.Code == "23505" {
 				// You can also look at pgErr.Constraint to know which
 				// unique index triggered the error (if you need that detail).
-				return ErrUniq{
-					Field: pgErr.Constraint,
-				}
+				return getUniqError(pgErr.Constraint)
 			}
 		}
 
-		return ErrCRUD{
-			Op:  "o.db.QueryRow",
-			Err: err,
-		}
+		return getDBFuncCRUDError("query row", err)
 	}
 
 	return nil

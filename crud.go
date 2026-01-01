@@ -2,17 +2,8 @@ package crud
 
 import (
 	"database/sql"
-	"regexp"
 
 	sqlbuilder "github.com/keenbytes/pgsql-builder"
-)
-
-const (
-	IDField = "ID"
-)
-
-var (
-	tagWithValRegexp = regexp.MustCompile(`[a-zA-Z0-9_]+:[a-zA-Z0-9_-]+`)
 )
 
 type CRUD struct {

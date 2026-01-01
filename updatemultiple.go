@@ -2,7 +2,6 @@ package crud
 
 import (
 	"context"
-	"errors"
 
 	sqlbuilder "github.com/keenbytes/pgsql-builder"
 	validator "github.com/keenbytes/struct-validator"
@@ -16,10 +15,7 @@ type UpdateMultipleOptions struct {
 func (c *CRUD) UpdateMultiple(ctx context.Context, obj interface{}, fieldsToUpdate map[string]interface{}, options UpdateMultipleOptions) error {
 	builder, err := c.builder(obj)
 	if err != nil {
-		return ErrCRUD{
-			Op:  "o.builder",
-			Err: err,
-		}
+		return getBuilderObjectCRUDError(err)
 	}
 	if options.ConvertValuesFromString {
 		for name, value := range fieldsToUpdate {
@@ -30,10 +26,7 @@ func (c *CRUD) UpdateMultiple(ctx context.Context, obj interface{}, fieldsToUpda
 
 			ok, valueAsFieldType := sqlbuilder.StructFieldValueFromString(obj, name, valueAsString)
 			if !ok {
-				return ErrCRUD{
-					Op:  "sqlbuilder.StructFieldValueFromString",
-					Err: errors.New("error converting string to field type"),
-				}
+				return getStructFieldValueFromStringCRUDError()
 			}
 			fieldsToUpdate[name] = valueAsFieldType
 		}
@@ -50,19 +43,11 @@ func (c *CRUD) UpdateMultiple(ctx context.Context, obj interface{}, fieldsToUpda
 	})
 
 	if err != nil {
-		return ErrCRUD{
-			Op:  "Validate",
-			Err: err,
-		}
+		return getValidateObjCRUDError(err)
 	}
 
 	if !ok {
-		return ErrCRUD{
-			Op: "Validate",
-			Err: &ErrValidation{
-				Violations: violations,
-			},
-		}
+		return getObjInvalidCRUDError(violations)
 	}
 
 	err = ValidateFilters(obj, options.Filters, c.tagName)
@@ -72,18 +57,12 @@ func (c *CRUD) UpdateMultiple(ctx context.Context, obj interface{}, fieldsToUpda
 
 	query, err := builder.Update(fieldsToUpdate, options.Filters)
 	if err != nil {
-		return ErrCRUD{
-			Op:  "builder.Update",
-			Err: err,
-		}
+		return getBuilderFuncCRUDError("update", err)
 	}
 
 	_, err = c.db.ExecContext(ctx, query, append(sqlbuilder.MapInterfaces(fieldsToUpdate), sqlbuilder.FiltersInterfaces(options.Filters)...)...)
 	if err != nil {
-		return ErrCRUD{
-			Op:  "o.db.Exec",
-			Err: err,
-		}
+		return getDBFuncCRUDError("exec", err)
 	}
 
 	return nil

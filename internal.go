@@ -2,7 +2,6 @@ package crud
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"reflect"
 	"strings"
@@ -23,10 +22,7 @@ func (c *CRUD) builder(obj interface{}) (*sqlbuilder.Builder, error) {
 		TagName:         c.tagName,
 	})
 	if builder.Err() != nil {
-		return nil, ErrCRUD{
-			Op:  "builder.New",
-			Err: builder.Err(),
-		}
+		return nil, getBuilderObjectCRUDError(builder.Err())
 	}
 
 	c.builders[name] = builder
@@ -119,10 +115,7 @@ func (c *CRUD) runOnDelete(ctx context.Context, obj interface{}, ids []int64, la
 				CascadeDeleteDepth: lastDepth + 1,
 			})
 			if errDelete != nil {
-				return ErrCRUD{
-					Op:  "o.DeleteMultiple",
-					Err: errDelete,
-				}
+				return getCRUDFuncCRUDError("delete multiple", errDelete)
 			}
 		}
 
@@ -131,10 +124,7 @@ func (c *CRUD) runOnDelete(ctx context.Context, obj interface{}, ids []int64, la
 			updateField := tagsMap["del_upd_field"]
 			updateValue := tagsMap["del_upd_val"]
 			if updateField == "" {
-				return ErrCRUD{
-					Op:  "o.runOnDelete",
-					Err: errors.New("missing update field in tags"),
-				}
+				return getUpdateFieldFromTagsCRUDError()
 			}
 
 			if tagsMap["del_field"] != "" {
@@ -159,10 +149,7 @@ func (c *CRUD) runOnDelete(ctx context.Context, obj interface{}, ids []int64, la
 				},
 			)
 			if errUpdate != nil {
-				return ErrCRUD{
-					Op:  "o.UpdateMultiple",
-					Err: errUpdate,
-				}
+				return getCRUDFuncCRUDError("update multiple", errUpdate)
 			}
 		}
 	}

@@ -15,10 +15,7 @@ type DeleteMultipleOptions struct {
 func (c *CRUD) DeleteMultiple(ctx context.Context, obj interface{}, options DeleteMultipleOptions) error {
 	builder, err := c.builder(obj)
 	if err != nil {
-		return ErrCRUD{
-			Op:  "o.builder",
-			Err: err,
-		}
+		return getBuilderObjectCRUDError(err)
 	}
 
 	err = ValidateFilters(obj, options.Filters, c.tagName)
@@ -28,18 +25,12 @@ func (c *CRUD) DeleteMultiple(ctx context.Context, obj interface{}, options Dele
 
 	query, err := builder.DeleteReturningID(options.Filters)
 	if err != nil {
-		return ErrCRUD{
-			Op:  "builder.Delete",
-			Err: err,
-		}
+		return getBuilderFuncCRUDError("delete returning id", err)
 	}
 
 	rows, err := c.db.QueryContext(ctx, query, sqlbuilder.FiltersInterfaces(options.Filters)...)
 	if err != nil {
-		return ErrCRUD{
-			Op:  "o.db.Query",
-			Err: err,
-		}
+		return getDBFuncCRUDError("query", err)
 	}
 	defer rows.Close()
 
@@ -49,10 +40,7 @@ func (c *CRUD) DeleteMultiple(ctx context.Context, obj interface{}, options Dele
 		var returnedID int64
 		errScan := rows.Scan(&returnedID)
 		if errScan != nil {
-			return ErrCRUD{
-				Op:  "db.Query",
-				Err: errScan,
-			}
+			return getDBFuncCRUDError("rows scan", errScan)
 		}
 
 		returnedIDs = append(returnedIDs, returnedID)
@@ -62,10 +50,7 @@ func (c *CRUD) DeleteMultiple(ctx context.Context, obj interface{}, options Dele
 		// Loop through the fields to cascade-delete.
 		errCascadeDelete := c.runOnDelete(ctx, obj, returnedIDs, options.CascadeDeleteDepth)
 		if errCascadeDelete != nil {
-			return ErrCRUD{
-				Op:  "o.runOnDelete",
-				Err: errCascadeDelete,
-			}
+			return getCascadingDeleteCRUDError(errCascadeDelete)
 		}
 	}
 

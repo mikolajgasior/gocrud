@@ -9,10 +9,7 @@ type DeleteOptions struct{}
 func (c *CRUD) Delete(ctx context.Context, obj interface{}, options DeleteOptions) error {
 	builder, err := c.builder(obj)
 	if err != nil {
-		return ErrCRUD{
-			Op:  "o.builder",
-			Err: err,
-		}
+		return getBuilderObjectCRUDError(err)
 	}
 
 	id := ObjIDValue(obj)
@@ -22,20 +19,14 @@ func (c *CRUD) Delete(ctx context.Context, obj interface{}, options DeleteOption
 	}
 	_, err = c.db.ExecContext(ctx, builder.DeleteByID(), ObjIDInterface(obj))
 	if err != nil {
-		return ErrCRUD{
-			Op:  "o.db.Exec",
-			Err: err,
-		}
+		return getDBFuncCRUDError("exec", err)
 	}
 	ZeroObjFields(obj)
 
 	// Loop through fields and cascade-delete.
 	err = c.runOnDelete(ctx, obj, []int64{id}, 0)
 	if err != nil {
-		return ErrCRUD{
-			Op:  "o.runOnDelete",
-			Err: err,
-		}
+		return getCascadingDeleteCRUDError(err)
 	}
 
 	return nil

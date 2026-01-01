@@ -6,18 +6,12 @@ import "context"
 func (c *CRUD) CreateTable(ctx context.Context, obj interface{}) error {
 	builder, err := c.builder(obj)
 	if err != nil {
-		return ErrCRUD{
-			Op:  "o.builder",
-			Err: err,
-		}
+		return getBuilderObjectCRUDError(err)
 	}
 
 	_, err = c.db.ExecContext(ctx, builder.CreateTable())
 	if err != nil {
-		return ErrCRUD{
-			Op:  "o.db.Exec",
-			Err: err,
-		}
+		return getDBFuncCRUDError("exec", err)
 	}
 
 	return nil
@@ -27,18 +21,12 @@ func (c *CRUD) CreateTable(ctx context.Context, obj interface{}) error {
 func (c *CRUD) DropTable(ctx context.Context, obj interface{}) error {
 	builder, err := c.builder(obj)
 	if err != nil {
-		return ErrCRUD{
-			Op:  "o.builder",
-			Err: err,
-		}
+		return getBuilderObjectCRUDError(err)
 	}
 
 	_, err = c.db.ExecContext(ctx, builder.DropTable())
 	if err != nil {
-		return ErrCRUD{
-			Op:  "o.db.Exec",
-			Err: err,
-		}
+		return getDBFuncCRUDError("exec", err)
 	}
 
 	return nil

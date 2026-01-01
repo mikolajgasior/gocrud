@@ -36,7 +36,7 @@ func TestGetCount(t *testing.T) {
 		},
 	})
 	if err != nil {
-		t.Fatalf("Get failed to return list of objects: %s", err.(ErrCRUD).Op)
+		t.Fatalf("Get failed to return list of objects: %s", err.(*CRUDError).Op)
 	}
 	if cnt != 150 {
 		t.Fatalf("Get failed to return list of objects, want %v, got %v", 150, cnt)
@@ -80,7 +80,7 @@ func TestGetCountWithRawQuery(t *testing.T) {
 		},
 	})
 	if err != nil {
-		t.Fatalf("Get failed to return list of objects: %s", err.(ErrCRUD).Op)
+		t.Fatalf("Get failed to return list of objects: %s", err.(*CRUDError).Op)
 	}
 	if cnt != 153 {
 		t.Fatalf("Get failed to return list of objects, want %v, got %v", 153, cnt)

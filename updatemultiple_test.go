@@ -47,7 +47,7 @@ func TestUpdateMultiple(t *testing.T) {
 			},
 		})
 	if err != nil {
-		t.Fatalf("UpdateMultiple failed to update objects: %s %s", err.(ErrCRUD).Op, err.(ErrCRUD).Err.Error())
+		t.Fatalf("UpdateMultiple failed to update objects: %s %s", err.(*CRUDError).Op, err.(*CRUDError).Err.Error())
 	}
 
 	cnt, _ := testCRUD.GetCount(context.Background(), &TestStruct{}, GetCountOptions{

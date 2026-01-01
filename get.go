@@ -19,10 +19,7 @@ func (c *CRUD) Get(ctx context.Context, newObjFunc func() interface{}, options G
 
 	builder, err := c.builder(obj)
 	if err != nil {
-		return nil, ErrCRUD{
-			Op:  "o.builder",
-			Err: err,
-		}
+		return nil, getBuilderObjectCRUDError(err)
 	}
 
 	err = ValidateFilters(obj, options.Filters, c.tagName)
@@ -33,18 +30,12 @@ func (c *CRUD) Get(ctx context.Context, newObjFunc func() interface{}, options G
 	var returnValue []interface{}
 	query, err := builder.Select(options.Order, options.Limit, options.Offset, options.Filters)
 	if err != nil {
-		return nil, ErrCRUD{
-			Op:  "builder.Select",
-			Err: err,
-		}
+		return nil, getBuilderFuncCRUDError("select", err)
 	}
 
 	rows, err := c.db.QueryContext(ctx, query, sqlbuilder.FiltersInterfaces(options.Filters)...)
 	if err != nil {
-		return nil, ErrCRUD{
-			Op:  "o.db.Query",
-			Err: err,
-		}
+		return nil, getDBFuncCRUDError("query", err)
 	}
 	defer rows.Close()
 
@@ -52,10 +43,7 @@ func (c *CRUD) Get(ctx context.Context, newObjFunc func() interface{}, options G
 		newObj := newObjFunc()
 		err = rows.Scan(ObjFieldInterfaces(newObj, true)...)
 		if err != nil {
-			return nil, ErrCRUD{
-				Op:  "rows.Scan",
-				Err: err,
-			}
+			return nil, getDBFuncCRUDError("rows scan", err)
 		}
 
 		// If options.RowObjTransformFunc is defined, then call it on the row.

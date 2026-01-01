@@ -3,7 +3,7 @@ module github.com/keenbytes/struct-crud
 go 1.24.5
 
 require (
-	github.com/keenbytes/pgsql-builder v0.10.4
+	github.com/keenbytes/pgsql-builder v0.11.0
 	github.com/keenbytes/struct-validator v0.8.0
 	github.com/lib/pq v1.10.9
 	github.com/ory/dockertest/v3 v3.12.0

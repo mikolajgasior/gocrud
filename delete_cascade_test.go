@@ -122,7 +122,7 @@ func TestDeleteCascade(t *testing.T) {
 	// Delete the parent (company) object.
 	err1 := testCRUD.Delete(context.Background(), p, DeleteOptions{})
 	if err1 != nil {
-		t.Fatalf("Failed to run Delete successfully: %v", err1.(ErrCRUD).Op)
+		t.Fatalf("Failed to run Delete successfully: %v", err1.(*CRUDError).Op)
 	}
 
 	// Parent should be removed.

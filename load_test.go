@@ -18,10 +18,10 @@ func TestLoad(t *testing.T) {
 	objLoaded := &TestStruct{}
 	err := testCRUD.Load(context.Background(), objLoaded, fmt.Sprintf("%d", objSaved.ID), LoadOptions{})
 	if err != nil {
-		t.Fatalf("Load failed to get data: %s", err.(ErrCRUD).Op)
+		t.Fatalf("Load failed to get data: %s", err.(*CRUDError).Op)
 	}
 
 	if !areTestStructObjectsSame(objSaved, objLoaded) {
-		t.Fatalf("Load failed to set struct with data: %s", err.(ErrCRUD).Op)
+		t.Fatalf("Load failed to set struct with data: %s", err.(*CRUDError).Op)
 	}
 }
