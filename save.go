@@ -36,7 +36,12 @@ func (c *CRUD) Save(ctx context.Context, obj interface{}, options SaveOptions) e
 	objID := ObjIDValue(obj)
 
 	// populate created and modified columns
-	if options.ModifiedAt != 0 && options.ModifiedBy != 0 && builder.HasModificationFields() {
+	hasModificationFields, err := builder.HasModificationFields()
+	if err != nil {
+		return getBuilderFuncCRUDError("has modification fields", err)
+	}
+
+	if options.ModifiedAt != 0 && options.ModifiedBy != 0 && hasModificationFields {
 		SetObjModified(obj, options.ModifiedAt, options.ModifiedBy)
 		if objID == 0 {
 			SetObjCreated(obj, options.ModifiedAt, options.ModifiedBy)
@@ -44,7 +49,11 @@ func (c *CRUD) Save(ctx context.Context, obj interface{}, options SaveOptions) e
 	}
 
 	// encrypt all password fields
-	passFields := builder.PasswordFields()
+	passFields, err := builder.PasswordFields()
+	if err != nil {
+		return getBuilderFuncCRUDError("password fields", err)
+	}
+
 	for _, passField := range passFields {
 		fieldValue := ObjFieldValue(obj, passField)
 		hash, err := bcrypt.GenerateFromPassword([]byte(fieldValue.(string)), bcrypt.DefaultCost)
@@ -57,7 +66,10 @@ func (c *CRUD) Save(ctx context.Context, obj interface{}, options SaveOptions) e
 
 	// run GetCount on unique fields
 	if c.flags&GetCountOnUniq > 0 {
-		uniqFields := builder.UniqueFields()
+		uniqFields, err := builder.UniqueFields()
+		if err != nil {
+			return getBuilderFuncCRUDError("unique fields", err)
+		}
 		for _, uniqField := range uniqFields {
 			count, err := c.GetCount(ctx, obj,
 				GetCountOptions{
@@ -90,10 +102,39 @@ func (c *CRUD) Save(ctx context.Context, obj interface{}, options SaveOptions) e
 		// do no try to insert if NoInsert is set
 		// TODO: error handling, we should check if object exists - for now nothing happens, UPDATE gets executed and updates nothing
 		if options.NoInsert {
-			_, err = c.db.ExecContext(ctx, builder.UpdateByID(), append(ObjFieldInterfaces(obj, false), objIDInterface)...)
+			var query string
+
+			// if the object has an UpdateByID method, use it.
+			if updateByIDerImpl, ok := obj.(updateByIDer); ok {
+				query, err = updateByIDerImpl.UpdateByID()
+				if err != nil {
+					return getObjFuncCRUDError("delete by id", err)
+				}
+			} else {
+				query, err = builder.UpdateByID()
+				if err != nil {
+					return getBuilderFuncCRUDError("update by id", err)
+				}
+			}
+			_, err = c.db.ExecContext(ctx, query, append(ObjFieldInterfaces(obj, false), objIDInterface)...)
 		} else {
 			// try to insert - if ID already exists then try to update it
-			_, err = c.db.ExecContext(ctx, builder.InsertOnConflictUpdate(), append(ObjFieldInterfaces(obj, true), ObjFieldInterfaces(obj, false)...)...)
+
+			var query string
+
+			// if the object has an UpdateByID method, use it.
+			if insertOnConflictUpdateerImpl, ok := obj.(insertOnConflictUpdateer); ok {
+				query, err = insertOnConflictUpdateerImpl.InsertOnConflictUpdate()
+				if err != nil {
+					return getObjFuncCRUDError("insert on conflict update", err)
+				}
+			} else {
+				query, err = builder.InsertOnConflictUpdate()
+				if err != nil {
+					return getBuilderFuncCRUDError("insert on conflict update", err)
+				}
+			}
+			_, err = c.db.ExecContext(ctx, query, append(ObjFieldInterfaces(obj, true), ObjFieldInterfaces(obj, false)...)...)
 		}
 
 		if err != nil {
@@ -114,7 +155,21 @@ func (c *CRUD) Save(ctx context.Context, obj interface{}, options SaveOptions) e
 	}
 
 	// insert
-	err = c.db.QueryRowContext(ctx, builder.Insert(), ObjFieldInterfaces(obj, false)...).Scan(objIDInterface)
+	var query string
+	// if the object has an Insert method, use it.
+	if inserterImpl, ok := obj.(inserter); ok {
+		query, err = inserterImpl.Insert()
+		if err != nil {
+			return getObjFuncCRUDError("insert", err)
+		}
+	} else {
+		query, err = builder.Insert()
+		if err != nil {
+			return getBuilderFuncCRUDError("insert", err)
+		}
+	}
+
+	err = c.db.QueryRowContext(ctx, query, ObjFieldInterfaces(obj, false)...).Scan(objIDInterface)
 	if err != nil {
 		var pgErr *pq.Error
 		if errors.As(err, &pgErr) {

@@ -23,9 +23,18 @@ func (c *CRUD) DeleteMultiple(ctx context.Context, obj interface{}, options Dele
 		return err
 	}
 
-	query, err := builder.DeleteReturningID(options.Filters)
-	if err != nil {
-		return getBuilderFuncCRUDError("delete returning id", err)
+	var query string
+	// if the object has a DeleteReturningID method, use it.
+	if deleteReturningIDerImpl, ok := obj.(deleteReturningIDer); ok {
+		query, err = deleteReturningIDerImpl.DeleteReturningID()
+		if err != nil {
+			return getObjFuncCRUDError("delete returning id", err)
+		}
+	} else {
+		query, err = builder.DeleteReturningID(options.Filters)
+		if err != nil {
+			return getBuilderFuncCRUDError("delete returning id", err)
+		}
 	}
 
 	rows, err := c.db.QueryContext(ctx, query, sqlbuilder.FiltersInterfaces(options.Filters)...)

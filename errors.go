@@ -60,6 +60,12 @@ var getCRUDFuncCRUDError = func(action string, err error) *CRUDError {
 		Err: err,
 	}
 }
+var getObjFuncCRUDError = func(action string, err error) *CRUDError {
+	return &CRUDError{
+		Op:  "object " + action,
+		Err: err,
+	}
+}
 
 var getUpdateFieldFromTagsCRUDError = func() *CRUDError {
 	return &CRUDError{

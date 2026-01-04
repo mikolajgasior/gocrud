@@ -9,7 +9,22 @@ func (c *CRUD) CreateTable(ctx context.Context, obj interface{}) error {
 		return getBuilderObjectCRUDError(err)
 	}
 
-	_, err = c.db.ExecContext(ctx, builder.CreateTable())
+	var query string
+
+	// if the object has a CreateTable method, use it.
+	if createTableerImpl, ok := obj.(createTableer); ok {
+		query, err = createTableerImpl.CreateTable()
+		if err != nil {
+			return getObjFuncCRUDError("create table", err)
+		}
+	} else {
+		query, err = builder.CreateTable()
+		if err != nil {
+			return getBuilderFuncCRUDError("create table", err)
+		}
+	}
+
+	_, err = c.db.ExecContext(ctx, query)
 	if err != nil {
 		return getDBFuncCRUDError("exec", err)
 	}
@@ -24,7 +39,21 @@ func (c *CRUD) DropTable(ctx context.Context, obj interface{}) error {
 		return getBuilderObjectCRUDError(err)
 	}
 
-	_, err = c.db.ExecContext(ctx, builder.DropTable())
+	var query string
+	// if the object has a DropTable method, use it.
+	if dropTableerImpl, ok := obj.(dropTableer); ok {
+		query, err = dropTableerImpl.DropTable()
+		if err != nil {
+			return getObjFuncCRUDError("drop table", err)
+		}
+	} else {
+		query, err = builder.DropTable()
+		if err != nil {
+			return getBuilderFuncCRUDError("drop table", err)
+		}
+	}
+
+	_, err = c.db.ExecContext(ctx, query)
 	if err != nil {
 		return getDBFuncCRUDError("exec", err)
 	}

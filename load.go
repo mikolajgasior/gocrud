@@ -21,7 +21,22 @@ func (c *CRUD) Load(ctx context.Context, obj interface{}, id string, options Loa
 		return getBuilderObjectCRUDError(err)
 	}
 
-	err = c.db.QueryRowContext(ctx, bldr.SelectByID(), int64(idInt)).Scan(ObjFieldInterfaces(obj, true)...)
+	var query string
+
+	// if the object has a SelectByID method, use it.
+	if selectByIDerImpl, ok := obj.(selectByIDer); ok {
+		query, err = selectByIDerImpl.SelectByID()
+		if err != nil {
+			return getObjFuncCRUDError("delete by id", err)
+		}
+	} else {
+		query, err = bldr.SelectByID()
+		if err != nil {
+			return getBuilderFuncCRUDError("delete by id", err)
+		}
+	}
+
+	err = c.db.QueryRowContext(ctx, query, int64(idInt)).Scan(ObjFieldInterfaces(obj, true)...)
 	switch {
 	case err == sql.ErrNoRows:
 		ZeroObjFields(obj)

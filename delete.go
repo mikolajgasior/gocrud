@@ -17,7 +17,22 @@ func (c *CRUD) Delete(ctx context.Context, obj interface{}, options DeleteOption
 	if id == 0 {
 		return nil
 	}
-	_, err = c.db.ExecContext(ctx, builder.DeleteByID(), ObjIDInterface(obj))
+
+	var query string
+	// if the object has a DeleteByID method, use it.
+	if deleteByIDerImpl, ok := obj.(deleteByIDer); ok {
+		query, err = deleteByIDerImpl.DeleteByID()
+		if err != nil {
+			return getObjFuncCRUDError("delete by id", err)
+		}
+	} else {
+		query, err = builder.DeleteByID()
+		if err != nil {
+			return getBuilderFuncCRUDError("delete by id", err)
+		}
+	}
+
+	_, err = c.db.ExecContext(ctx, query, ObjIDInterface(obj))
 	if err != nil {
 		return getDBFuncCRUDError("exec", err)
 	}

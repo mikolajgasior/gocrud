@@ -28,9 +28,20 @@ func (c *CRUD) Get(ctx context.Context, newObjFunc func() interface{}, options G
 	}
 
 	var returnValue []interface{}
-	query, err := builder.Select(options.Order, options.Limit, options.Offset, options.Filters)
-	if err != nil {
-		return nil, getBuilderFuncCRUDError("select", err)
+
+	var query string
+
+	// if the object has a Select method, use it.
+	if selectedImpl, ok := obj.(selecter); ok {
+		query, err = selectedImpl.Select(options.Order, options.Limit, options.Offset, options.Filters)
+		if err != nil {
+			return nil, getObjFuncCRUDError("select", err)
+		}
+	} else {
+		query, err = builder.Select(options.Order, options.Limit, options.Offset, options.Filters)
+		if err != nil {
+			return nil, getBuilderFuncCRUDError("select", err)
+		}
 	}
 
 	rows, err := c.db.QueryContext(ctx, query, sqlbuilder.FiltersInterfaces(options.Filters)...)

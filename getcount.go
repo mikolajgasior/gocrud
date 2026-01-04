@@ -2,8 +2,6 @@ package crud
 
 import (
 	"context"
-	"fmt"
-	"log/slog"
 
 	sqlbuilder "github.com/keenbytes/pgsql-builder"
 )
@@ -24,11 +22,19 @@ func (c *CRUD) GetCount(ctx context.Context, obj interface{}, options GetCountOp
 		return 0, err
 	}
 
-	query, err := builder.SelectCount(options.Filters)
-	if err != nil {
-		return 0, getBuilderFuncCRUDError("select count", err)
+	var query string
+	// if the object has a SelectCount method, use it.
+	if selectCounterImpl, ok := obj.(selectCounter); ok {
+		query, err = selectCounterImpl.SelectCount(options.Filters)
+		if err != nil {
+			return 0, getObjFuncCRUDError("select count", err)
+		}
+	} else {
+		query, err = builder.SelectCount(options.Filters)
+		if err != nil {
+			return 0, getBuilderFuncCRUDError("select count", err)
+		}
 	}
-	slog.Debug(fmt.Sprintf("builder query: %s", query))
 
 	row := c.db.QueryRowContext(ctx, query, sqlbuilder.FiltersInterfaces(options.Filters)...)
 	var cnt int64

@@ -55,9 +55,18 @@ func (c *CRUD) UpdateMultiple(ctx context.Context, obj interface{}, fieldsToUpda
 		return err
 	}
 
-	query, err := builder.Update(fieldsToUpdate, options.Filters)
-	if err != nil {
-		return getBuilderFuncCRUDError("update", err)
+	var query string
+	// if the object has a Update method, use it.
+	if updateerImpl, ok := obj.(updateer); ok {
+		query, err = updateerImpl.Update(fieldsToUpdate, options.Filters)
+		if err != nil {
+			return getObjFuncCRUDError("update", err)
+		}
+	} else {
+		query, err = builder.Update(fieldsToUpdate, options.Filters)
+		if err != nil {
+			return getBuilderFuncCRUDError("update", err)
+		}
 	}
 
 	_, err = c.db.ExecContext(ctx, query, append(sqlbuilder.MapInterfaces(fieldsToUpdate), sqlbuilder.FiltersInterfaces(options.Filters)...)...)
