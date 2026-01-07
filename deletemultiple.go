@@ -25,8 +25,8 @@ func (c *CRUD) DeleteMultiple(ctx context.Context, obj interface{}, options Dele
 
 	var query string
 	// if the object has a DeleteReturningID method, use it.
-	if deleteReturningIDerImpl, ok := obj.(deleteReturningIDer); ok {
-		query, err = deleteReturningIDerImpl.DeleteReturningID()
+	if deleteReturningIDerImpl, ok := obj.(deleteReturningIDQueryBuilder); ok {
+		query, err = deleteReturningIDerImpl.DeleteReturningIDQuery()
 		if err != nil {
 			return getObjFuncCRUDError("delete returning id", err)
 		}

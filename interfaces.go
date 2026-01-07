@@ -2,46 +2,46 @@ package crud
 
 import sqlbuilder "github.com/keenbytes/pgsql-builder"
 
-type deleteByIDer interface {
-	DeleteByID() (string, error)
+type deleteByIDQueryBuilder interface {
+	DeleteByIDQuery() (string, error)
 }
 
-type deleteReturningIDer interface {
-	DeleteReturningID() (string, error)
+type deleteReturningIDQueryBuilder interface {
+	DeleteReturningIDQuery() (string, error)
 }
 
-type selecter interface {
-	Select(order []string, limit int, offset int, filters *sqlbuilder.Filters) (string, error)
+type selectQueryBuilder interface {
+	SelectQuery(order []string, limit int, offset int, filters *sqlbuilder.Filters) (string, error)
 }
 
-type selectCounter interface {
-	SelectCount(filters *sqlbuilder.Filters) (string, error)
+type selectCountQueryBuilder interface {
+	SelectCountQuery(filters *sqlbuilder.Filters) (string, error)
 }
 
-type selectByIDer interface {
-	SelectByID() (string, error)
+type selectByIDQueryBuilder interface {
+	SelectByIDQuery() (string, error)
 }
 
-type updateByIDer interface {
-	UpdateByID() (string, error)
+type updateByIDQueryBuilder interface {
+	UpdateByIDQuery() (string, error)
 }
 
-type insertOnConflictUpdateer interface {
-	InsertOnConflictUpdate() (string, error)
+type insertOnConflictUpdateQueryBuilder interface {
+	InsertOnConflictUpdateQuery() (string, error)
 }
 
-type inserter interface {
-	Insert() (string, error)
+type insertQueryBuilder interface {
+	InsertQuery() (string, error)
 }
 
-type updateer interface {
-	Update(values map[string]interface{}, filters *sqlbuilder.Filters) (string, error)
+type updateQueryBuilder interface {
+	UpdateQuery(values map[string]interface{}, filters *sqlbuilder.Filters) (string, error)
 }
 
-type createTableer interface {
-	CreateTable() (string, error)
+type createTableQueryBuilder interface {
+	CreateTableQuery() (string, error)
 }
 
-type dropTableer interface {
-	DropTable() (string, error)
+type dropTableQueryBuilder interface {
+	DropTableQuery() (string, error)
 }

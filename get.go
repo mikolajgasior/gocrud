@@ -32,8 +32,8 @@ func (c *CRUD) Get(ctx context.Context, newObjFunc func() interface{}, options G
 	var query string
 
 	// if the object has a Select method, use it.
-	if selectedImpl, ok := obj.(selecter); ok {
-		query, err = selectedImpl.Select(options.Order, options.Limit, options.Offset, options.Filters)
+	if selectedImpl, ok := obj.(selectQueryBuilder); ok {
+		query, err = selectedImpl.SelectQuery(options.Order, options.Limit, options.Offset, options.Filters)
 		if err != nil {
 			return nil, getObjFuncCRUDError("select", err)
 		}

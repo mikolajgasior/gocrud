@@ -12,8 +12,8 @@ func (c *CRUD) CreateTable(ctx context.Context, obj interface{}) error {
 	var query string
 
 	// if the object has a CreateTable method, use it.
-	if createTableerImpl, ok := obj.(createTableer); ok {
-		query, err = createTableerImpl.CreateTable()
+	if createTableerImpl, ok := obj.(createTableQueryBuilder); ok {
+		query, err = createTableerImpl.CreateTableQuery()
 		if err != nil {
 			return getObjFuncCRUDError("create table", err)
 		}
@@ -41,8 +41,8 @@ func (c *CRUD) DropTable(ctx context.Context, obj interface{}) error {
 
 	var query string
 	// if the object has a DropTable method, use it.
-	if dropTableerImpl, ok := obj.(dropTableer); ok {
-		query, err = dropTableerImpl.DropTable()
+	if dropTableerImpl, ok := obj.(dropTableQueryBuilder); ok {
+		query, err = dropTableerImpl.DropTableQuery()
 		if err != nil {
 			return getObjFuncCRUDError("drop table", err)
 		}

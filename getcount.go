@@ -24,8 +24,8 @@ func (c *CRUD) GetCount(ctx context.Context, obj interface{}, options GetCountOp
 
 	var query string
 	// if the object has a SelectCount method, use it.
-	if selectCounterImpl, ok := obj.(selectCounter); ok {
-		query, err = selectCounterImpl.SelectCount(options.Filters)
+	if selectCounterImpl, ok := obj.(selectCountQueryBuilder); ok {
+		query, err = selectCounterImpl.SelectCountQuery(options.Filters)
 		if err != nil {
 			return 0, getObjFuncCRUDError("select count", err)
 		}

@@ -20,8 +20,8 @@ func (c *CRUD) Delete(ctx context.Context, obj interface{}, options DeleteOption
 
 	var query string
 	// if the object has a DeleteByID method, use it.
-	if deleteByIDerImpl, ok := obj.(deleteByIDer); ok {
-		query, err = deleteByIDerImpl.DeleteByID()
+	if deleteByIDerImpl, ok := obj.(deleteByIDQueryBuilder); ok {
+		query, err = deleteByIDerImpl.DeleteByIDQuery()
 		if err != nil {
 			return getObjFuncCRUDError("delete by id", err)
 		}

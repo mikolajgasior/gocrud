@@ -24,8 +24,8 @@ func (c *CRUD) Load(ctx context.Context, obj interface{}, id string, options Loa
 	var query string
 
 	// if the object has a SelectByID method, use it.
-	if selectByIDerImpl, ok := obj.(selectByIDer); ok {
-		query, err = selectByIDerImpl.SelectByID()
+	if selectByIDerImpl, ok := obj.(selectByIDQueryBuilder); ok {
+		query, err = selectByIDerImpl.SelectByIDQuery()
 		if err != nil {
 			return getObjFuncCRUDError("delete by id", err)
 		}

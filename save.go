@@ -105,8 +105,8 @@ func (c *CRUD) Save(ctx context.Context, obj interface{}, options SaveOptions) e
 			var query string
 
 			// if the object has an UpdateByID method, use it.
-			if updateByIDerImpl, ok := obj.(updateByIDer); ok {
-				query, err = updateByIDerImpl.UpdateByID()
+			if updateByIDerImpl, ok := obj.(updateByIDQueryBuilder); ok {
+				query, err = updateByIDerImpl.UpdateByIDQuery()
 				if err != nil {
 					return getObjFuncCRUDError("delete by id", err)
 				}
@@ -123,8 +123,8 @@ func (c *CRUD) Save(ctx context.Context, obj interface{}, options SaveOptions) e
 			var query string
 
 			// if the object has an UpdateByID method, use it.
-			if insertOnConflictUpdateerImpl, ok := obj.(insertOnConflictUpdateer); ok {
-				query, err = insertOnConflictUpdateerImpl.InsertOnConflictUpdate()
+			if insertOnConflictUpdateerImpl, ok := obj.(insertOnConflictUpdateQueryBuilder); ok {
+				query, err = insertOnConflictUpdateerImpl.InsertOnConflictUpdateQuery()
 				if err != nil {
 					return getObjFuncCRUDError("insert on conflict update", err)
 				}
@@ -157,8 +157,8 @@ func (c *CRUD) Save(ctx context.Context, obj interface{}, options SaveOptions) e
 	// insert
 	var query string
 	// if the object has an Insert method, use it.
-	if inserterImpl, ok := obj.(inserter); ok {
-		query, err = inserterImpl.Insert()
+	if inserterImpl, ok := obj.(insertQueryBuilder); ok {
+		query, err = inserterImpl.InsertQuery()
 		if err != nil {
 			return getObjFuncCRUDError("insert", err)
 		}
