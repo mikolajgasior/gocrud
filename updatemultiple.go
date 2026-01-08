@@ -60,7 +60,7 @@ func (c *CRUD) UpdateMultiple(ctx context.Context, obj interface{}, fieldsToUpda
 	if updateerImpl, ok := obj.(updateQueryBuilder); ok {
 		query, err = updateerImpl.UpdateQuery(fieldsToUpdate, options.Filters)
 		if err != nil {
-			return getObjFuncCRUDError("update", err)
+			return getObjFuncCRUDError("update query", err)
 		}
 	} else {
 		query, err = builder.Update(fieldsToUpdate, options.Filters)

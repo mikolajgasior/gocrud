@@ -39,8 +39,12 @@ github.com/keenbytes/pgsql-builder v0.11.0 h1:KVVNsncDcwNM4J//zpa0Q10eIHb7YOJBiG
 github.com/keenbytes/pgsql-builder v0.11.0/go.mod h1:dVZ9B8+3F00HIU+ftIJKsr2A7UwoI3SHjA9tYOT4mzQ=
 github.com/keenbytes/pgsql-builder v0.12.0 h1:sxM163Hb0rgkSzLDjmCaByfB8tnJCWhAyafpafLpEQU=
 github.com/keenbytes/pgsql-builder v0.12.0/go.mod h1:dVZ9B8+3F00HIU+ftIJKsr2A7UwoI3SHjA9tYOT4mzQ=
+github.com/keenbytes/pgsql-builder v0.14.0 h1:bAahO8mj6mEFn+s4iXSAYt9roX49Ttx3fktdnNVH38E=
+github.com/keenbytes/pgsql-builder v0.14.0/go.mod h1:dVZ9B8+3F00HIU+ftIJKsr2A7UwoI3SHjA9tYOT4mzQ=
 github.com/keenbytes/struct-validator v0.8.0 h1:AieHU2nth2VM+xvqGitFmM1yQWfgN8+Wuz0D37yNtZk=
 github.com/keenbytes/struct-validator v0.8.0/go.mod h1:RAlDGJ9CfWMzR1PhcgY/wK/28zBAzlpZhCquZ7W7GNM=
+github.com/keenbytes/struct-validator v0.8.1 h1:NPjbla/UxBUKYzkWdrE5jL5vyN2BeN3/BaNXzbdJaX0=
+github.com/keenbytes/struct-validator v0.8.1/go.mod h1:RAlDGJ9CfWMzR1PhcgY/wK/28zBAzlpZhCquZ7W7GNM=
 github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
 github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
 github.com/lib/pq v1.10.9 h1:YXG7RB+JIjhP29X+OtkiDnYaXQwpS4JEWq7dtCCRUEw=

@@ -35,7 +35,7 @@ func (c *CRUD) Get(ctx context.Context, newObjFunc func() interface{}, options G
 	if selectedImpl, ok := obj.(selectQueryBuilder); ok {
 		query, err = selectedImpl.SelectQuery(options.Order, options.Limit, options.Offset, options.Filters)
 		if err != nil {
-			return nil, getObjFuncCRUDError("select", err)
+			return nil, getObjFuncCRUDError("select query", err)
 		}
 	} else {
 		query, err = builder.Select(options.Order, options.Limit, options.Offset, options.Filters)

@@ -27,12 +27,12 @@ func (c *CRUD) Load(ctx context.Context, obj interface{}, id string, options Loa
 	if selectByIDerImpl, ok := obj.(selectByIDQueryBuilder); ok {
 		query, err = selectByIDerImpl.SelectByIDQuery()
 		if err != nil {
-			return getObjFuncCRUDError("delete by id", err)
+			return getObjFuncCRUDError("select by id query", err)
 		}
 	} else {
 		query, err = bldr.SelectByID()
 		if err != nil {
-			return getBuilderFuncCRUDError("delete by id", err)
+			return getBuilderFuncCRUDError("select by id", err)
 		}
 	}
 

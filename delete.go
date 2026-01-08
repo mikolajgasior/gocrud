@@ -23,7 +23,7 @@ func (c *CRUD) Delete(ctx context.Context, obj interface{}, options DeleteOption
 	if deleteByIDerImpl, ok := obj.(deleteByIDQueryBuilder); ok {
 		query, err = deleteByIDerImpl.DeleteByIDQuery()
 		if err != nil {
-			return getObjFuncCRUDError("delete by id", err)
+			return getObjFuncCRUDError("delete by id query", err)
 		}
 	} else {
 		query, err = builder.DeleteByID()

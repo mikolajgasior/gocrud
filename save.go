@@ -108,7 +108,7 @@ func (c *CRUD) Save(ctx context.Context, obj interface{}, options SaveOptions) e
 			if updateByIDerImpl, ok := obj.(updateByIDQueryBuilder); ok {
 				query, err = updateByIDerImpl.UpdateByIDQuery()
 				if err != nil {
-					return getObjFuncCRUDError("delete by id", err)
+					return getObjFuncCRUDError("update by id query", err)
 				}
 			} else {
 				query, err = builder.UpdateByID()
@@ -126,7 +126,7 @@ func (c *CRUD) Save(ctx context.Context, obj interface{}, options SaveOptions) e
 			if insertOnConflictUpdateerImpl, ok := obj.(insertOnConflictUpdateQueryBuilder); ok {
 				query, err = insertOnConflictUpdateerImpl.InsertOnConflictUpdateQuery()
 				if err != nil {
-					return getObjFuncCRUDError("insert on conflict update", err)
+					return getObjFuncCRUDError("insert on conflict update query", err)
 				}
 			} else {
 				query, err = builder.InsertOnConflictUpdate()
@@ -160,7 +160,7 @@ func (c *CRUD) Save(ctx context.Context, obj interface{}, options SaveOptions) e
 	if inserterImpl, ok := obj.(insertQueryBuilder); ok {
 		query, err = inserterImpl.InsertQuery()
 		if err != nil {
-			return getObjFuncCRUDError("insert", err)
+			return getObjFuncCRUDError("insert query", err)
 		}
 	} else {
 		query, err = builder.Insert()
