@@ -3,7 +3,7 @@ package crud
 import (
 	"reflect"
 
-	sqlbuilder "github.com/keenbytes/pgsql-builder"
+	structInfo "miko.gs/pgsql-builder/pkg/structinfo"
 )
 
 // ObjFieldInterfaces returns a list of interfaces to object's fields
@@ -20,7 +20,7 @@ func ObjFieldInterfaces(obj interface{}, includeID bool) []interface{} {
 		}
 
 		// builder is used to generate SQL queries, so here the same kinds must be supported
-		if !sqlbuilder.IsFieldKindSupported(valueField.Kind()) {
+		if !structInfo.IsFieldKindSupported(valueField.Kind()) {
 			continue
 		}
 

@@ -6,7 +6,8 @@ import (
 	"reflect"
 	"strings"
 
-	sqlbuilder "github.com/keenbytes/pgsql-builder"
+	sqlbuilder "miko.gs/pgsql-builder"
+	sqlfilters "miko.gs/pgsql-builder/pkg/filters"
 )
 
 func (c *CRUD) builder(obj interface{}) (*sqlbuilder.Builder, error) {
@@ -21,9 +22,6 @@ func (c *CRUD) builder(obj interface{}) (*sqlbuilder.Builder, error) {
 		TableNamePrefix: c.tableNamePrefix,
 		TagName:         c.tagName,
 	})
-	if builder.Err() != nil {
-		return nil, getBuilderObjectCRUDError(builder.Err())
-	}
 
 	c.builders[name] = builder
 
@@ -103,9 +101,9 @@ func (c *CRUD) runOnDelete(ctx context.Context, obj interface{}, ids []int64, la
 
 			// Delete from the child table where parent ID = id of the deleted object.
 			errDelete := c.DeleteMultiple(ctx, reflect.New(field.Type.Elem()), DeleteMultipleOptions{
-				Filters: &sqlbuilder.Filters{
-					sqlbuilder.Raw: {
-						Op: sqlbuilder.OpAND,
+				Filters: &sqlfilters.Filters{
+					sqlfilters.Raw: {
+						Op: sqlfilters.OpAND,
 						Val: []interface{}{
 							fmt.Sprintf(".%s IN (?)", parentIDField),
 							ids,
@@ -136,9 +134,9 @@ func (c *CRUD) runOnDelete(ctx context.Context, obj interface{}, ids []int64, la
 					updateField: updateValue,
 				},
 				UpdateMultipleOptions{
-					Filters: &sqlbuilder.Filters{
-						sqlbuilder.Raw: {
-							Op: sqlbuilder.OpAND,
+					Filters: &sqlfilters.Filters{
+						sqlfilters.Raw: {
+							Op: sqlfilters.OpAND,
 							Val: []interface{}{
 								fmt.Sprintf(".%s IN (?)", parentIDField),
 								ids,

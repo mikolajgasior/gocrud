@@ -11,15 +11,15 @@ type ValidationTestStruct struct {
 	Flags          int64
 	PrimaryEmail   string `crud:"req email"`
 	EmailSecondary string `crud:"req email"`
-	FirstName      string `crud:"req lenmin:2 lenmax:30"`
-	LastName       string `crud:"req lenmin:0 lenmax:255"`
-	Age            int    `crud:"valmin:1 valmax:120"`
-	Price          int    `crud:"valmin:0 valmax:999"`
-	PostCode       string `crud:"req lenmin:6 regexp:^[0-9]{2}\\-[0-9]{3}$"`
-	PostCode2      string `crud:"lenmin:6" crud_regexp:"^[0-9]{2}\\-[0-9]{3}$"`
+	FirstName      string `crud:"req len:2,30"`
+	LastName       string `crud:"req len:0,255"`
+	Age            int    `crud:"val:1,120"`
+	Price          int    `crud:"val:0,999"`
+	PostCode       string `crud:"req len:6 regexp:^[0-9]{2}\\-[0-9]{3}$"`
+	PostCode2      string `crud:"len:6" crud_regexp:"^[0-9]{2}\\-[0-9]{3}$"`
 	Password       string
 	CreatedBy      int64
-	Key            string `crud:"req uniq lenmin:30 lenmax:255"`
+	Key            string `crud:"req uniq len:30,255"`
 }
 
 func validationTestStructWithData() *ValidationTestStruct {

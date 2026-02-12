@@ -3,12 +3,13 @@ package crud
 import (
 	"context"
 
-	sqlbuilder "github.com/keenbytes/pgsql-builder"
-	validator "github.com/keenbytes/struct-validator"
+	sqlbuilder "miko.gs/pgsql-builder"
+	sqlfilters "miko.gs/pgsql-builder/pkg/filters"
+	validator "miko.gs/struct-validator"
 )
 
 type UpdateMultipleOptions struct {
-	Filters                 *sqlbuilder.Filters
+	Filters                 *sqlfilters.Filters
 	ConvertValuesFromString bool
 }
 
@@ -56,7 +57,7 @@ func (c *CRUD) UpdateMultiple(ctx context.Context, obj interface{}, fieldsToUpda
 	}
 
 	var query string
-	// if the object has a Update method, use it.
+	// if the object has an Update method, use it.
 	if updateerImpl, ok := obj.(updateQueryBuilder); ok {
 		query, err = updateerImpl.UpdateQuery(fieldsToUpdate, options.Filters)
 		if err != nil {
@@ -69,7 +70,7 @@ func (c *CRUD) UpdateMultiple(ctx context.Context, obj interface{}, fieldsToUpda
 		}
 	}
 
-	_, err = c.db.ExecContext(ctx, query, append(sqlbuilder.MapInterfaces(fieldsToUpdate), sqlbuilder.FiltersInterfaces(options.Filters)...)...)
+	_, err = c.db.ExecContext(ctx, query, append(sqlbuilder.MapInterfaces(fieldsToUpdate), sqlfilters.FiltersInterfaces(options.Filters)...)...)
 	if err != nil {
 		return getDBFuncCRUDError("exec", err)
 	}

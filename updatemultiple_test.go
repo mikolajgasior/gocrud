@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	sqlbuilder "github.com/keenbytes/pgsql-builder"
+	sqlfilters "miko.gs/pgsql-builder/pkg/filters"
 )
 
 // TestUpdateMultiple tests if UpdateMultiple update objects from database based on specified filters
@@ -35,13 +35,13 @@ func TestUpdateMultiple(t *testing.T) {
 		"Age":          98,
 	},
 		UpdateMultipleOptions{
-			Filters: &sqlbuilder.Filters{
+			Filters: &sqlfilters.Filters{
 				"Price": {
-					Op:  sqlbuilder.OpEqual,
+					Op:  sqlfilters.OpEqual,
 					Val: 444,
 				},
 				"PrimaryEmail": {
-					Op:  sqlbuilder.OpEqual,
+					Op:  sqlfilters.OpEqual,
 					Val: "changeme@example.com",
 				},
 			},
@@ -51,13 +51,13 @@ func TestUpdateMultiple(t *testing.T) {
 	}
 
 	cnt, _ := testCRUD.GetCount(context.Background(), &TestStruct{}, GetCountOptions{
-		Filters: &sqlbuilder.Filters{
+		Filters: &sqlfilters.Filters{
 			"PrimaryEmail": {
-				Op:  sqlbuilder.OpEqual,
+				Op:  sqlfilters.OpEqual,
 				Val: "newemail@example.com",
 			},
 			"Age": {
-				Op:  sqlbuilder.OpEqual,
+				Op:  sqlfilters.OpEqual,
 				Val: 98,
 			},
 		},

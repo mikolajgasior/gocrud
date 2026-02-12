@@ -26,10 +26,7 @@ func (c *CRUD) Delete(ctx context.Context, obj interface{}, options DeleteOption
 			return getObjFuncCRUDError("delete by id query", err)
 		}
 	} else {
-		query, err = builder.DeleteByID()
-		if err != nil {
-			return getBuilderFuncCRUDError("delete by id", err)
-		}
+		query = builder.DeleteByID()
 	}
 
 	_, err = c.db.ExecContext(ctx, query, ObjIDInterface(obj))

@@ -1,8 +1,9 @@
 package crud
 
 import (
-	sqlbuilder "github.com/keenbytes/pgsql-builder"
-	"github.com/keenbytes/struct-validator"
+	sqlfilters "miko.gs/pgsql-builder/pkg/filters"
+	"miko.gs/struct-validator"
+	validator "miko.gs/struct-validator"
 )
 
 func Validate(obj interface{}, restrictFields map[string]bool, tagName string) (bool, map[string]int, error) {
@@ -14,12 +15,12 @@ func Validate(obj interface{}, restrictFields map[string]bool, tagName string) (
 	return ok, violations, err
 }
 
-func ValidateFilters(obj interface{}, filters *sqlbuilder.Filters, tagName string) error {
+func ValidateFilters(obj interface{}, filters *sqlfilters.Filters, tagName string) error {
 	if filters == nil || len(*filters) == 0 {
 		return nil
 	}
 
-	err := sqlbuilder.SetObjFields(obj, filters)
+	err := sqlfilters.SetObjFields(obj, filters)
 	if err != nil {
 		return getBuilderFuncCRUDError("set obj fields", err)
 	}

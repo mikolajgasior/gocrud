@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 
-	sqlbuilder "github.com/keenbytes/pgsql-builder"
 	"github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
+	sqlfilters "miko.gs/pgsql-builder/pkg/filters"
 )
 
 type SaveOptions struct {
@@ -36,10 +36,7 @@ func (c *CRUD) Save(ctx context.Context, obj interface{}, options SaveOptions) e
 	objID := ObjIDValue(obj)
 
 	// populate created and modified columns
-	hasModificationFields, err := builder.HasModificationFields()
-	if err != nil {
-		return getBuilderFuncCRUDError("has modification fields", err)
-	}
+	hasModificationFields := builder.HasModificationFields()
 
 	if options.ModifiedAt != 0 && options.ModifiedBy != 0 && hasModificationFields {
 		SetObjModified(obj, options.ModifiedAt, options.ModifiedBy)
@@ -49,10 +46,7 @@ func (c *CRUD) Save(ctx context.Context, obj interface{}, options SaveOptions) e
 	}
 
 	// encrypt all password fields
-	passFields, err := builder.PasswordFields()
-	if err != nil {
-		return getBuilderFuncCRUDError("password fields", err)
-	}
+	passFields := builder.PasswordFields()
 
 	for _, passField := range passFields {
 		fieldValue := ObjFieldValue(obj, passField)
@@ -66,20 +60,17 @@ func (c *CRUD) Save(ctx context.Context, obj interface{}, options SaveOptions) e
 
 	// run GetCount on unique fields
 	if c.flags&GetCountOnUniq > 0 {
-		uniqFields, err := builder.UniqueFields()
-		if err != nil {
-			return getBuilderFuncCRUDError("unique fields", err)
-		}
+		uniqFields := builder.UniqueFields()
 		for _, uniqField := range uniqFields {
 			count, err := c.GetCount(ctx, obj,
 				GetCountOptions{
-					Filters: &sqlbuilder.Filters{
-						uniqField: sqlbuilder.OpVal{
-							Op:  sqlbuilder.OpEqual,
+					Filters: &sqlfilters.Filters{
+						uniqField: sqlfilters.OpVal{
+							Op:  sqlfilters.OpEqual,
 							Val: ObjFieldValue(obj, uniqField),
 						},
-						"ID": sqlbuilder.OpVal{
-							Op:  sqlbuilder.OpNotEqual,
+						"ID": sqlfilters.OpVal{
+							Op:  sqlfilters.OpNotEqual,
 							Val: objID,
 						},
 					},
@@ -111,10 +102,7 @@ func (c *CRUD) Save(ctx context.Context, obj interface{}, options SaveOptions) e
 					return getObjFuncCRUDError("update by id query", err)
 				}
 			} else {
-				query, err = builder.UpdateByID()
-				if err != nil {
-					return getBuilderFuncCRUDError("update by id", err)
-				}
+				query = builder.UpdateByID()
 			}
 			_, err = c.db.ExecContext(ctx, query, append(ObjFieldInterfaces(obj, false), objIDInterface)...)
 		} else {
@@ -129,10 +117,7 @@ func (c *CRUD) Save(ctx context.Context, obj interface{}, options SaveOptions) e
 					return getObjFuncCRUDError("insert on conflict update query", err)
 				}
 			} else {
-				query, err = builder.InsertOnConflictUpdate()
-				if err != nil {
-					return getBuilderFuncCRUDError("insert on conflict update", err)
-				}
+				query = builder.InsertOnConflictUpdate()
 			}
 			_, err = c.db.ExecContext(ctx, query, append(ObjFieldInterfaces(obj, true), ObjFieldInterfaces(obj, false)...)...)
 		}
@@ -163,10 +148,7 @@ func (c *CRUD) Save(ctx context.Context, obj interface{}, options SaveOptions) e
 			return getObjFuncCRUDError("insert query", err)
 		}
 	} else {
-		query, err = builder.Insert()
-		if err != nil {
-			return getBuilderFuncCRUDError("insert", err)
-		}
+		query = builder.Insert()
 	}
 
 	err = c.db.QueryRowContext(ctx, query, ObjFieldInterfaces(obj, false)...).Scan(objIDInterface)

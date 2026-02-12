@@ -16,7 +16,7 @@ func (c *CRUD) Load(ctx context.Context, obj interface{}, id string, options Loa
 		return getConvertIDToIntCRUDError(err)
 	}
 
-	bldr, err := c.builder(obj)
+	builder, err := c.builder(obj)
 	if err != nil {
 		return getBuilderObjectCRUDError(err)
 	}
@@ -30,10 +30,7 @@ func (c *CRUD) Load(ctx context.Context, obj interface{}, id string, options Loa
 			return getObjFuncCRUDError("select by id query", err)
 		}
 	} else {
-		query, err = bldr.SelectByID()
-		if err != nil {
-			return getBuilderFuncCRUDError("select by id", err)
-		}
+		query = builder.SelectByID()
 	}
 
 	err = c.db.QueryRowContext(ctx, query, int64(idInt)).Scan(ObjFieldInterfaces(obj, true)...)

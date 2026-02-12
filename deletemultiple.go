@@ -3,11 +3,11 @@ package crud
 import (
 	"context"
 
-	sqlbuilder "github.com/keenbytes/pgsql-builder"
+	sqlfilters "miko.gs/pgsql-builder/pkg/filters"
 )
 
 type DeleteMultipleOptions struct {
-	Filters            *sqlbuilder.Filters
+	Filters            *sqlfilters.Filters
 	CascadeDeleteDepth int8
 }
 
@@ -37,7 +37,7 @@ func (c *CRUD) DeleteMultiple(ctx context.Context, obj interface{}, options Dele
 		}
 	}
 
-	rows, err := c.db.QueryContext(ctx, query, sqlbuilder.FiltersInterfaces(options.Filters)...)
+	rows, err := c.db.QueryContext(ctx, query, sqlfilters.FiltersInterfaces(options.Filters)...)
 	if err != nil {
 		return getDBFuncCRUDError("query", err)
 	}

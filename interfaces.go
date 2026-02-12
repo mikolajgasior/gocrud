@@ -1,6 +1,8 @@
 package crud
 
-import sqlbuilder "github.com/keenbytes/pgsql-builder"
+import (
+	sqlfilters "miko.gs/pgsql-builder/pkg/filters"
+)
 
 type deleteByIDQueryBuilder interface {
 	DeleteByIDQuery() (string, error)
@@ -11,11 +13,11 @@ type deleteReturningIDQueryBuilder interface {
 }
 
 type selectQueryBuilder interface {
-	SelectQuery(order []string, limit int, offset int, filters *sqlbuilder.Filters) (string, error)
+	SelectQuery(order []string, limit int, offset int, filters *sqlfilters.Filters) (string, error)
 }
 
 type selectCountQueryBuilder interface {
-	SelectCountQuery(filters *sqlbuilder.Filters) (string, error)
+	SelectCountQuery(filters *sqlfilters.Filters) (string, error)
 }
 
 type selectByIDQueryBuilder interface {
@@ -35,7 +37,7 @@ type insertQueryBuilder interface {
 }
 
 type updateQueryBuilder interface {
-	UpdateQuery(values map[string]interface{}, filters *sqlbuilder.Filters) (string, error)
+	UpdateQuery(values map[string]interface{}, filters *sqlfilters.Filters) (string, error)
 }
 
 type createTableQueryBuilder interface {

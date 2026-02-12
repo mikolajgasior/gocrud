@@ -18,10 +18,7 @@ func (c *CRUD) CreateTable(ctx context.Context, obj interface{}) error {
 			return getObjFuncCRUDError("create table", err)
 		}
 	} else {
-		query, err = builder.CreateTable()
-		if err != nil {
-			return getBuilderFuncCRUDError("create table", err)
-		}
+		query = builder.CreateTable()
 	}
 
 	_, err = c.db.ExecContext(ctx, query)
@@ -47,10 +44,7 @@ func (c *CRUD) DropTable(ctx context.Context, obj interface{}) error {
 			return getObjFuncCRUDError("drop table", err)
 		}
 	} else {
-		query, err = builder.DropTable()
-		if err != nil {
-			return getBuilderFuncCRUDError("drop table", err)
-		}
+		query = builder.DropTable()
 	}
 
 	_, err = c.db.ExecContext(ctx, query)

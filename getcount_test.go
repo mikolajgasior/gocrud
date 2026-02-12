@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	sqlbuilder "github.com/keenbytes/pgsql-builder"
+	sqlfilters "miko.gs/pgsql-builder/pkg/filters"
 )
 
 func TestGetCount(t *testing.T) {
@@ -30,9 +30,9 @@ func TestGetCount(t *testing.T) {
 
 	// Get the data from the database
 	cnt, err := testCRUD.GetCount(context.Background(), &TestStruct{}, GetCountOptions{
-		Filters: &sqlbuilder.Filters{
-			"Price":        {Op: sqlbuilder.OpEqual, Val: 444},
-			"PrimaryEmail": {Op: sqlbuilder.OpEqual, Val: "primary@example.com"},
+		Filters: &sqlfilters.Filters{
+			"Price":        {Op: sqlfilters.OpEqual, Val: 444},
+			"PrimaryEmail": {Op: sqlfilters.OpEqual, Val: "primary@example.com"},
 		},
 	})
 	if err != nil {
@@ -66,11 +66,11 @@ func TestGetCountWithRawQuery(t *testing.T) {
 
 	// Get the data from the database
 	cnt, err := testCRUD.GetCount(context.Background(), &TestStruct{}, GetCountOptions{
-		Filters: &sqlbuilder.Filters{
-			"Price":        {Op: sqlbuilder.OpEqual, Val: 444},
-			"PrimaryEmail": {Op: sqlbuilder.OpEqual, Val: "primary@example.com"},
-			sqlbuilder.Raw: {
-				Op: sqlbuilder.OpOR,
+		Filters: &sqlfilters.Filters{
+			"Price":        {Op: sqlfilters.OpEqual, Val: 444},
+			"PrimaryEmail": {Op: sqlfilters.OpEqual, Val: "primary@example.com"},
+			sqlfilters.Raw: {
+				Op: sqlfilters.OpOR,
 				Val: []interface{}{
 					".PrimaryEmail = ? AND .Age IN (?)",
 					"another@example.com",

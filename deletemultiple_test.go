@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	sqlbuilder "github.com/keenbytes/pgsql-builder"
+	sqlfilters "miko.gs/pgsql-builder/pkg/filters"
 )
 
 // TestDeleteMultiple tests if DeleteMultiple removes objects from database based on specified filters
@@ -30,13 +30,13 @@ func TestDeleteMultiple(t *testing.T) {
 
 	// Delete multiple rows from the database
 	err := testCRUD.DeleteMultiple(context.Background(), &TestStruct{}, DeleteMultipleOptions{
-		Filters: &sqlbuilder.Filters{
+		Filters: &sqlfilters.Filters{
 			"Price": {
-				Op:  sqlbuilder.OpEqual,
+				Op:  sqlfilters.OpEqual,
 				Val: 444,
 			},
 			"PrimaryEmail": {
-				Op:  sqlbuilder.OpEqual,
+				Op:  sqlfilters.OpEqual,
 				Val: "primary@example.com",
 			},
 		},
@@ -75,17 +75,17 @@ func TestDeleteMultipleWithRawQuery(t *testing.T) {
 
 	// Delete multiple rows from the database
 	err := testCRUD.DeleteMultiple(context.Background(), &TestStruct{}, DeleteMultipleOptions{
-		Filters: &sqlbuilder.Filters{
+		Filters: &sqlfilters.Filters{
 			"Price": {
-				Op:  sqlbuilder.OpEqual,
+				Op:  sqlfilters.OpEqual,
 				Val: 444,
 			},
 			"PrimaryEmail": {
-				Op:  sqlbuilder.OpEqual,
+				Op:  sqlfilters.OpEqual,
 				Val: "primary@example.com",
 			},
-			sqlbuilder.Raw: {
-				Op: sqlbuilder.OpOR,
+			sqlfilters.Raw: {
+				Op: sqlfilters.OpOR,
 				Val: []interface{}{
 					".Age = ? OR .Age IN (?) OR (.Age = ? AND .PrimaryEmail = ?)",
 					31,
@@ -129,9 +129,9 @@ func TestDeleteMultipleWithRawQueryOnly(t *testing.T) {
 
 	// Delete multiple rows from the database
 	err := testCRUD.DeleteMultiple(context.Background(), &TestStruct{}, DeleteMultipleOptions{
-		Filters: &sqlbuilder.Filters{
-			sqlbuilder.Raw: {
-				Op: sqlbuilder.OpOR,
+		Filters: &sqlfilters.Filters{
+			sqlfilters.Raw: {
+				Op: sqlfilters.OpOR,
 				Val: []interface{}{
 					"(.Price = ? AND .PrimaryEmail = ?) OR (.Age = ? OR .Age IN (?) OR (.Age = ? AND .PrimaryEmail = ?))",
 					444,

@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// TestSave tests if Save properly inserts and updates object in the database
+// TestSave tests if Save properly inserts and updates an object in the database
 func TestSave(t *testing.T) {
 	recreateTestStructTable()
 

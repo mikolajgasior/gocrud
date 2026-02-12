@@ -3,14 +3,14 @@ package crud
 import (
 	"context"
 
-	sqlbuilder "github.com/keenbytes/pgsql-builder"
+	sqlfilters "miko.gs/pgsql-builder/pkg/filters"
 )
 
 type GetOptions struct {
 	Order               []string
 	Limit               int
 	Offset              int
-	Filters             *sqlbuilder.Filters
+	Filters             *sqlfilters.Filters
 	RowObjTransformFunc func(interface{}) interface{}
 }
 
@@ -44,7 +44,7 @@ func (c *CRUD) Get(ctx context.Context, newObjFunc func() interface{}, options G
 		}
 	}
 
-	rows, err := c.db.QueryContext(ctx, query, sqlbuilder.FiltersInterfaces(options.Filters)...)
+	rows, err := c.db.QueryContext(ctx, query, sqlfilters.FiltersInterfaces(options.Filters)...)
 	if err != nil {
 		return nil, getDBFuncCRUDError("query", err)
 	}

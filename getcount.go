@@ -3,11 +3,11 @@ package crud
 import (
 	"context"
 
-	sqlbuilder "github.com/keenbytes/pgsql-builder"
+	sqlfilters "miko.gs/pgsql-builder/pkg/filters"
 )
 
 type GetCountOptions struct {
-	Filters *sqlbuilder.Filters
+	Filters *sqlfilters.Filters
 }
 
 // GetCount runs a 'SELECT COUNT(*)' query on the database with specified filters, order, limit and offset and returns count of rows
@@ -36,7 +36,7 @@ func (c *CRUD) GetCount(ctx context.Context, obj interface{}, options GetCountOp
 		}
 	}
 
-	row := c.db.QueryRowContext(ctx, query, sqlbuilder.FiltersInterfaces(options.Filters)...)
+	row := c.db.QueryRowContext(ctx, query, sqlfilters.FiltersInterfaces(options.Filters)...)
 	var cnt int64
 	err = row.Scan(&cnt)
 	if err != nil {

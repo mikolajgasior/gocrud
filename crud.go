@@ -3,7 +3,7 @@ package crud
 import (
 	"database/sql"
 
-	sqlbuilder "github.com/keenbytes/pgsql-builder"
+	sqlbuilder "miko.gs/pgsql-builder"
 )
 
 type CRUD struct {

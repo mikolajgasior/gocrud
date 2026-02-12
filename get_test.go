@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	sqlbuilder "github.com/keenbytes/pgsql-builder"
+	sqlfilters "miko.gs/pgsql-builder/pkg/filters"
 )
 
 // TestGet tests if Get properly gets many objects from the database, filtered and ordered, with results limited to specific number
@@ -40,17 +40,17 @@ func TestGet(t *testing.T) {
 		Order:  []string{"Age", "asc", "Price", "asc"},
 		Limit:  10,
 		Offset: 20,
-		Filters: &sqlbuilder.Filters{
+		Filters: &sqlfilters.Filters{
 			"Price": {
-				Op:  sqlbuilder.OpEqual,
+				Op:  sqlfilters.OpEqual,
 				Val: 444,
 			},
 			"PrimaryEmail": {
-				Op:  sqlbuilder.OpEqual,
+				Op:  sqlfilters.OpEqual,
 				Val: "primary@example.com",
 			},
-			sqlbuilder.Raw: {
-				Op: sqlbuilder.OpAND,
+			sqlfilters.Raw: {
+				Op: sqlfilters.OpAND,
 				Val: []interface{}{
 					".Price > ? AND .Price NOT IN (?)",
 					-200,
