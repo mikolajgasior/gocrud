@@ -2,7 +2,6 @@ package crud
 
 import (
 	sqlfilters "miko.gs/pgsql-builder/pkg/filters"
-	"miko.gs/struct-validator"
 	validator "miko.gs/struct-validator"
 )
 

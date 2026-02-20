@@ -70,6 +70,66 @@ func TestGet(t *testing.T) {
 	}
 }
 
+// TestGetWithStringFilters tests if Get properly gets many objects but with filter values being strings.
+func TestGetWithStringFilters(t *testing.T) {
+	recreateTestStructTable()
+
+	// Insert some data that should be ignored by Get later on
+	for i := 1; i < 51; i++ {
+		ts := testStructWithData()
+		ts.ID = 0
+		ts.Age = 10 + i
+		ts.Price = 444
+		ts.PrimaryEmail = "another@example.com"
+		_ = testCRUD.Save(context.Background(), ts, SaveOptions{})
+	}
+
+	// Insert data that should be selected by filters
+	for i := 1; i < 51; i++ {
+		ts := testStructWithData()
+		ts.ID = 0
+		ts.Age = 30 + i
+		_ = testCRUD.Save(context.Background(), ts, SaveOptions{})
+	}
+
+	// Get the data from the database
+	testStructs, err := testCRUD.Get(context.Background(), func() interface{} {
+		return &TestStruct{}
+	}, GetOptions{
+		Order:  []string{"Age", "asc", "Price", "asc"},
+		Limit:  10,
+		Offset: 20,
+		Filters: &sqlfilters.Filters{
+			"Price": {
+				Op:  sqlfilters.OpEqual,
+				Val: "444",
+			},
+			"PrimaryEmail": {
+				Op:  sqlfilters.OpEqual,
+				Val: "primary@example.com",
+			},
+			sqlfilters.Raw: {
+				Op: sqlfilters.OpAND,
+				Val: []interface{}{
+					".Price > ? AND .Price NOT IN (?)",
+					-200,
+					[]int{9999, 9998, 9997},
+				},
+			},
+		},
+		ConvertFiltersFromString: true,
+	})
+	if err != nil {
+		t.Fatalf("Get failed to return list of objects when string filters are used: %s", err.(*CRUDError).Op)
+	}
+	if len(testStructs) != 10 {
+		t.Fatalf("Get failed to return list of objects when string filters are used, want %v, got %v", 10, len(testStructs))
+	}
+	if testStructs[2].(*TestStruct).Age != 53 {
+		t.Fatalf("Get failed to return correct list of objects when string filters are used, want %v, got %v", 53, testStructs[2].(*TestStruct).Age)
+	}
+}
+
 // TestGetWithoutFilters tests if Get properly gets many objects from the database, without any filters
 func TestGetWithoutFilters(t *testing.T) {
 	recreateTestStructTable()

@@ -3,15 +3,18 @@ package crud
 import (
 	"context"
 
+	sqlbuilder "miko.gs/pgsql-builder"
 	sqlfilters "miko.gs/pgsql-builder/pkg/filters"
+	validator "miko.gs/struct-validator"
 )
 
 type GetOptions struct {
-	Order               []string
-	Limit               int
-	Offset              int
-	Filters             *sqlfilters.Filters
-	RowObjTransformFunc func(interface{}) interface{}
+	Order                    []string
+	Limit                    int
+	Offset                   int
+	Filters                  *sqlfilters.Filters
+	RowObjTransformFunc      func(interface{}) interface{}
+	ConvertFiltersFromString bool
 }
 
 func (c *CRUD) Get(ctx context.Context, newObjFunc func() interface{}, options GetOptions) ([]interface{}, error) {
@@ -20,6 +23,39 @@ func (c *CRUD) Get(ctx context.Context, newObjFunc func() interface{}, options G
 	builder, err := c.builder(obj)
 	if err != nil {
 		return nil, getBuilderObjectCRUDError(err)
+	}
+
+	// Filter values can be passed as string. We do not want any use of reflect outside of CRUD.
+	if options.ConvertFiltersFromString {
+		newFilters := &sqlfilters.Filters{}
+
+		for filterName, filterOpVal := range *(options.Filters) {
+			// ignore the raw filters entirely, that's too complicated
+			if filterName == sqlfilters.Raw {
+				continue
+			}
+
+			valueAsString, ok := filterOpVal.Val.(string)
+			if !ok {
+				return nil, getObjInvalidCRUDError(map[string]int{
+					filterName: validator.FailType,
+				})
+			}
+
+			ok, valueAsFieldType := sqlbuilder.StructFieldValueFromString(obj, filterName, valueAsString)
+			if !ok {
+				return nil, getObjInvalidCRUDError(map[string]int{
+					filterName: validator.FailType,
+				})
+			}
+
+			newFilters.Add(filterName, sqlfilters.OpVal{
+				Op:  filterOpVal.Op,
+				Val: valueAsFieldType,
+			})
+		}
+
+		options.Filters = newFilters
 	}
 
 	err = ValidateFilters(obj, options.Filters, c.tagName)
