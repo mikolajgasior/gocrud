@@ -1,6 +1,9 @@
 package crud
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 type CRUDError struct {
 	Op  string
@@ -14,11 +17,10 @@ func (e *CRUDError) Error() string {
 
 type ValidationError struct {
 	Violations map[string]int
-	Err        error
 }
 
 func (e *ValidationError) Error() string {
-	return e.Err.Error()
+	return fmt.Sprintf("validation failed with violations: %v", e.Violations)
 }
 
 type UniqError struct {
