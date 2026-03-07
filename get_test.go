@@ -13,7 +13,7 @@ import (
 )
 
 // TestGet tests if Get properly gets many objects from the database, filtered and ordered, with results limited to specific number
-func TestGet(t *testing.T) {
+func TestGet_WithFilters(t *testing.T) {
 	recreateTestStructTable()
 
 	// Insert some data that should be ignored by Get later on
@@ -72,7 +72,7 @@ func TestGet(t *testing.T) {
 }
 
 // TestGetWithStringFilters tests if Get properly gets many objects but with filter values being strings.
-func TestGetWithStringFilters(t *testing.T) {
+func TestGet_WithStringFilters(t *testing.T) {
 	recreateTestStructTable()
 
 	// Insert some data that should be ignored by Get later on
@@ -132,7 +132,7 @@ func TestGetWithStringFilters(t *testing.T) {
 }
 
 // TestGetWithoutFilters tests if Get properly gets many objects from the database, without any filters
-func TestGetWithoutFilters(t *testing.T) {
+func TestGet_WithoutFilters(t *testing.T) {
 	recreateTestStructTable()
 
 	// Insert data to the database
@@ -164,7 +164,7 @@ func TestGetWithoutFilters(t *testing.T) {
 
 // TestGetWithRowObjTransformFunc tests if Get can properly return a list of custom elements (eg. string)
 // where each object (row from the database) is transform with a specific function
-func TestGetWithRowObjTransformFunc(t *testing.T) {
+func TestGet_WithRowObjTransformFunc(t *testing.T) {
 	recreateTestStructTable()
 
 	// Insert data to the database

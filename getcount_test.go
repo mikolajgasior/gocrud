@@ -8,7 +8,7 @@ import (
 	"miko.gs/struct-crud/pkg/test"
 )
 
-func TestGetCount(t *testing.T) {
+func TestGetCount_WithFilters(t *testing.T) {
 	recreateTestStructTable()
 
 	// Insert some data that should be ignored by GetCount later on
@@ -44,7 +44,7 @@ func TestGetCount(t *testing.T) {
 	}
 }
 
-func TestGetCountWithRawQuery(t *testing.T) {
+func TestGetCount_WithRawQuery(t *testing.T) {
 	recreateTestStructTable()
 
 	// Insert some data that should be ignored by GetCount later on

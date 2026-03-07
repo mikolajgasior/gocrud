@@ -67,7 +67,7 @@ func TestSave(t *testing.T) {
 	}
 }
 
-func TestSaveWithModifiedAt(t *testing.T) {
+func TestSave_WithModifiedAt(t *testing.T) {
 	recreateTestStructTable()
 
 	objSaved := test.TestStructWithData()
@@ -119,7 +119,7 @@ func TestSaveWithModifiedAt(t *testing.T) {
 }
 
 // TestSaveInsertWithID tests if an element with provided ID will be inserted
-func TestSaveInsertWithID(t *testing.T) {
+func TestSave_InsertWithID(t *testing.T) {
 	recreateTestStructTable()
 
 	objSaved := test.TestStructWithData()
@@ -160,7 +160,7 @@ func TestSaveInsertWithID(t *testing.T) {
 }
 
 // TestSaveInsertWithIDAndNoInsert tests if an element with provided ID is not inserted when NoInsert is true
-func TestSaveInsertWithIDAndNoInsert(t *testing.T) {
+func TestSave_InsertWithIDAndNoInsert(t *testing.T) {
 	recreateTestStructTable()
 
 	objSaved := test.TestStructWithData()
@@ -184,7 +184,7 @@ func TestSaveInsertWithIDAndNoInsert(t *testing.T) {
 	}
 }
 
-func TestErrUniq(t *testing.T) {
+func TestSave_ErrUniq(t *testing.T) {
 	recreateTestStructTable()
 
 	objSaved := test.TestStructWithData()
@@ -200,7 +200,7 @@ func TestErrUniq(t *testing.T) {
 	}
 }
 
-func TestErrUniqUsingGetCount(t *testing.T) {
+func TestSave_ErrUniqUsingGetCount(t *testing.T) {
 	recreateTestStructTable()
 
 	objSaved := test.TestStructWithData()

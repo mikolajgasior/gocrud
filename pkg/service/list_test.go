@@ -12,7 +12,7 @@ import (
 	"miko.gs/struct-crud/pkg/test"
 )
 
-func TestList(t *testing.T) {
+func TestList_WithFilters(t *testing.T) {
 	recreateTestStructTable()
 
 	// Insert some data that should be ignored by Get later on
@@ -52,7 +52,7 @@ func TestList(t *testing.T) {
 	}
 }
 
-func TestListWithoutFilters(t *testing.T) {
+func TestList_WithoutFilters(t *testing.T) {
 	recreateTestStructTable()
 
 	// Insert data to the database
@@ -76,7 +76,7 @@ func TestListWithoutFilters(t *testing.T) {
 	}
 }
 
-func TestListWithRowObjTransformFunc(t *testing.T) {
+func TestList_WithRowObjTransformFunc(t *testing.T) {
 	recreateTestStructTable()
 
 	// Insert data to the database

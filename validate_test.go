@@ -41,7 +41,7 @@ func validationTestStructWithData() *ValidationTestStruct {
 }
 
 // TestValidateWithValidStruct tests if Validate successfully validates object with valid values
-func TestValidateWithValidStruct(t *testing.T) {
+func TestValidate_WithValidStruct(t *testing.T) {
 	ts := validationTestStructWithData()
 	ok, violations, err := Validate(ts, nil, "crud")
 	if !ok {
@@ -78,7 +78,7 @@ func TestValidateWithValidStructAndListOfFields(t *testing.T) {
 }
 
 // TestValidateWithInvalidStruct tests if Validate invalidates object with invalid values
-func TestValidateWithInvalidStruct(t *testing.T) {
+func TestValidate_WithInvalidStruct(t *testing.T) {
 	ts := validationTestStructWithData()
 	ts.PrimaryEmail = "invalidemail"
 	ts.EmailSecondary = "invalidemail"

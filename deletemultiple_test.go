@@ -9,7 +9,7 @@ import (
 )
 
 // TestDeleteMultiple tests if DeleteMultiple removes objects from database based on specified filters
-func TestDeleteMultiple(t *testing.T) {
+func TestDeleteMultiple_WithFilters(t *testing.T) {
 	recreateTestStructTable()
 
 	// Insert some data that should not be removed
@@ -54,7 +54,7 @@ func TestDeleteMultiple(t *testing.T) {
 
 // TestDeleteMultipleWithRawQuery tests if DeleteMultiple removes objects from the database based on specified filters
 // and condition, that is almost a raw query.
-func TestDeleteMultipleWithRawQuery(t *testing.T) {
+func TestDeleteMultiple_WithRawQuery(t *testing.T) {
 	recreateTestStructTable()
 
 	// Insert some data that should not be removed
@@ -108,7 +108,7 @@ func TestDeleteMultipleWithRawQuery(t *testing.T) {
 }
 
 // TestDeleteMultipleWithRawQueryOnly tests if DeleteMultiple removes objects from database based on a condition which is somewhat raw query
-func TestDeleteMultipleWithRawQueryOnly(t *testing.T) {
+func TestDeleteMultiple_WithRawQueryOnly(t *testing.T) {
 	recreateTestStructTable()
 
 	// Insert some data that should not be removed

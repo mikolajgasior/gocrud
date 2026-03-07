@@ -9,7 +9,7 @@ import (
 	"miko.gs/struct-crud/pkg/test"
 )
 
-func TestRead(t *testing.T) {
+func TestRead_WhenObjectExists(t *testing.T) {
 	recreateTestStructTable()
 
 	// Insert an object first
@@ -26,7 +26,7 @@ func TestRead(t *testing.T) {
 	}
 }
 
-func TestReadWhenObjectDoesNotExist(t *testing.T) {
+func TestRead_WhenObjectDoesNotExist(t *testing.T) {
 	recreateTestStructTable()
 
 	_, err := testService.Read(context.Background(), "teststruct", 444)

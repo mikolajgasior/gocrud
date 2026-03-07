@@ -20,7 +20,7 @@ func TestServe_Read(t *testing.T) {
 	objSaved := test.TestStructWithData()
 	_ = testCRUD.Save(context.Background(), objSaved, structcrud.SaveOptions{})
 
-	// Delete it
+	// Get object
 	req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/teststruct/%d", objSaved.ID), nil)
 	w := httptest.NewRecorder()
 
