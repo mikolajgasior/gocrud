@@ -6,7 +6,7 @@ require (
 	github.com/lib/pq v1.11.2
 	github.com/ory/dockertest/v3 v3.12.0
 	golang.org/x/crypto v0.48.0
-	miko.gs/pgsql-builder v0.15.1
+	miko.gs/pgsql-builder v0.15.2
 	miko.gs/struct-validator v0.9.0
 )
 

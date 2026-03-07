@@ -115,5 +115,7 @@ gotest.tools/v3 v3.5.1 h1:EENdUnS3pdur5nybKYIh2Vfgc8IUNBjxDPSjtiJcOzU=
 gotest.tools/v3 v3.5.1/go.mod h1:isy3WKz7GK6uNw/sbHzfKBLvlvXwUyV06n6brMxxopU=
 miko.gs/pgsql-builder v0.15.1 h1:7rJ/pJBZGfdM7L8+l7yGP74rbGD2gy1QITZpkO/svFg=
 miko.gs/pgsql-builder v0.15.1/go.mod h1:5oyu3KLrCOZ6mda9MHH/KiOavDAjfuZvJyEbsnUaxho=
+miko.gs/pgsql-builder v0.15.2 h1:gc2V0WxJ+EQ6u6Ln/uKRpHrNYVV42MK+vrwdsfQTLUU=
+miko.gs/pgsql-builder v0.15.2/go.mod h1:5oyu3KLrCOZ6mda9MHH/KiOavDAjfuZvJyEbsnUaxho=
 miko.gs/struct-validator v0.9.0 h1:px4RIGTTSTQUol2EsMSZD1z+wQUkh3MyoGmaa5n+b3A=
 miko.gs/struct-validator v0.9.0/go.mod h1:gxOr8mQN01qfhOSWza5JEP2pTXOiJo2cs6d8nMnDa8I=
