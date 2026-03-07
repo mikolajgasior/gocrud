@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	sqlfilters "miko.gs/pgsql-builder/pkg/filters"
+	"miko.gs/struct-crud/pkg/test"
 )
 
 // TestGet tests if Get properly gets many objects from the database, filtered and ordered, with results limited to specific number
@@ -17,7 +18,7 @@ func TestGet(t *testing.T) {
 
 	// Insert some data that should be ignored by Get later on
 	for i := 1; i < 51; i++ {
-		ts := testStructWithData()
+		ts := test.TestStructWithData()
 		ts.ID = 0
 		ts.Age = 10 + i
 		ts.Price = 444
@@ -27,7 +28,7 @@ func TestGet(t *testing.T) {
 
 	// Insert data that should be selected by filters
 	for i := 1; i < 51; i++ {
-		ts := testStructWithData()
+		ts := test.TestStructWithData()
 		ts.ID = 0
 		ts.Age = 30 + i
 		_ = testCRUD.Save(context.Background(), ts, SaveOptions{})
@@ -35,7 +36,7 @@ func TestGet(t *testing.T) {
 
 	// Get the data from the database
 	testStructs, err := testCRUD.Get(context.Background(), func() interface{} {
-		return &TestStruct{}
+		return &test.TestStruct{}
 	}, GetOptions{
 		Order:  []string{"Age", "asc", "Price", "asc"},
 		Limit:  10,
@@ -65,8 +66,8 @@ func TestGet(t *testing.T) {
 	if len(testStructs) != 10 {
 		t.Fatalf("Get failed to return list of objects, want %v, got %v", 10, len(testStructs))
 	}
-	if testStructs[2].(*TestStruct).Age != 53 {
-		t.Fatalf("Get failed to return correct list of objects, want %v, got %v", 53, testStructs[2].(*TestStruct).Age)
+	if testStructs[2].(*test.TestStruct).Age != 53 {
+		t.Fatalf("Get failed to return correct list of objects, want %v, got %v", 53, testStructs[2].(*test.TestStruct).Age)
 	}
 }
 
@@ -76,7 +77,7 @@ func TestGetWithStringFilters(t *testing.T) {
 
 	// Insert some data that should be ignored by Get later on
 	for i := 1; i < 51; i++ {
-		ts := testStructWithData()
+		ts := test.TestStructWithData()
 		ts.ID = 0
 		ts.Age = 10 + i
 		ts.Price = 444
@@ -86,7 +87,7 @@ func TestGetWithStringFilters(t *testing.T) {
 
 	// Insert data that should be selected by filters
 	for i := 1; i < 51; i++ {
-		ts := testStructWithData()
+		ts := test.TestStructWithData()
 		ts.ID = 0
 		ts.Age = 30 + i
 		_ = testCRUD.Save(context.Background(), ts, SaveOptions{})
@@ -94,7 +95,7 @@ func TestGetWithStringFilters(t *testing.T) {
 
 	// Get the data from the database
 	testStructs, err := testCRUD.Get(context.Background(), func() interface{} {
-		return &TestStruct{}
+		return &test.TestStruct{}
 	}, GetOptions{
 		Order:  []string{"Age", "asc", "Price", "asc"},
 		Limit:  10,
@@ -125,8 +126,8 @@ func TestGetWithStringFilters(t *testing.T) {
 	if len(testStructs) != 10 {
 		t.Fatalf("Get failed to return list of objects when string filters are used, want %v, got %v", 10, len(testStructs))
 	}
-	if testStructs[2].(*TestStruct).Age != 53 {
-		t.Fatalf("Get failed to return correct list of objects when string filters are used, want %v, got %v", 53, testStructs[2].(*TestStruct).Age)
+	if testStructs[2].(*test.TestStruct).Age != 53 {
+		t.Fatalf("Get failed to return correct list of objects when string filters are used, want %v, got %v", 53, testStructs[2].(*test.TestStruct).Age)
 	}
 }
 
@@ -136,7 +137,7 @@ func TestGetWithoutFilters(t *testing.T) {
 
 	// Insert data to the database
 	for i := 1; i < 51; i++ {
-		ts := testStructWithData()
+		ts := test.TestStructWithData()
 		ts.ID = 0
 		ts.Age = 30 + i
 		_ = testCRUD.Save(context.Background(), ts, SaveOptions{})
@@ -144,7 +145,7 @@ func TestGetWithoutFilters(t *testing.T) {
 
 	// Get the data
 	testStructs, err := testCRUD.Get(context.Background(), func() interface{} {
-		return &TestStruct{}
+		return &test.TestStruct{}
 	}, GetOptions{
 		Order:  []string{"Age", "asc", "Price", "asc"},
 		Limit:  13,
@@ -156,8 +157,8 @@ func TestGetWithoutFilters(t *testing.T) {
 	if len(testStructs) != 13 {
 		t.Fatalf("Get failed to return list of objects, want %v, got %v", 10, len(testStructs))
 	}
-	if testStructs[2].(*TestStruct).Age != 47 {
-		t.Fatalf("Get failed to return correct list of objects, want %v, got %v", 47, testStructs[2].(*TestStruct).Age)
+	if testStructs[2].(*test.TestStruct).Age != 47 {
+		t.Fatalf("Get failed to return correct list of objects, want %v, got %v", 47, testStructs[2].(*test.TestStruct).Age)
 	}
 }
 
@@ -168,7 +169,7 @@ func TestGetWithRowObjTransformFunc(t *testing.T) {
 
 	// Insert data to the database
 	for i := 1; i < 3; i++ {
-		ts := testStructWithData()
+		ts := test.TestStructWithData()
 		ts.ID = 0
 		ts.Age = 30 + i
 		ts.FirstName = fmt.Sprintf("%s %d", ts.FirstName, i)
@@ -177,7 +178,7 @@ func TestGetWithRowObjTransformFunc(t *testing.T) {
 
 	// Get the data
 	testCustomList, err := testCRUD.Get(context.Background(), func() interface{} {
-		return &TestStruct{}
+		return &test.TestStruct{}
 	}, GetOptions{
 		Order: []string{"Age", "asc"},
 		RowObjTransformFunc: func(obj interface{}) interface{} {

@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	sqlfilters "miko.gs/pgsql-builder/pkg/filters"
+	"miko.gs/struct-crud/pkg/test"
 )
 
 func TestGetCount(t *testing.T) {
@@ -12,7 +13,7 @@ func TestGetCount(t *testing.T) {
 
 	// Insert some data that should be ignored by GetCount later on
 	for i := 1; i < 51; i++ {
-		ts := testStructWithData()
+		ts := test.TestStructWithData()
 		ts.ID = 0
 		ts.Age = 10 + i
 		ts.Price = 444
@@ -22,14 +23,14 @@ func TestGetCount(t *testing.T) {
 
 	// Insert data that should be selected by filters
 	for i := 1; i < 151; i++ {
-		ts := testStructWithData()
+		ts := test.TestStructWithData()
 		ts.ID = 0
 		ts.Age = 30
 		_ = testCRUD.Save(context.Background(), ts, SaveOptions{})
 	}
 
 	// Get the data from the database
-	cnt, err := testCRUD.GetCount(context.Background(), &TestStruct{}, GetCountOptions{
+	cnt, err := testCRUD.GetCount(context.Background(), &test.TestStruct{}, GetCountOptions{
 		Filters: &sqlfilters.Filters{
 			"Price":        {Op: sqlfilters.OpEqual, Val: 444},
 			"PrimaryEmail": {Op: sqlfilters.OpEqual, Val: "primary@example.com"},
@@ -48,7 +49,7 @@ func TestGetCountWithRawQuery(t *testing.T) {
 
 	// Insert some data that should be ignored by GetCount later on
 	for i := 1; i < 51; i++ {
-		ts := testStructWithData()
+		ts := test.TestStructWithData()
 		ts.ID = 0
 		ts.Age = 10 + i
 		ts.Price = 444
@@ -58,14 +59,14 @@ func TestGetCountWithRawQuery(t *testing.T) {
 
 	// Insert data that should be selected by filters
 	for i := 1; i < 151; i++ {
-		ts := testStructWithData()
+		ts := test.TestStructWithData()
 		ts.ID = 0
 		ts.Age = 30
 		_ = testCRUD.Save(context.Background(), ts, SaveOptions{})
 	}
 
 	// Get the data from the database
-	cnt, err := testCRUD.GetCount(context.Background(), &TestStruct{}, GetCountOptions{
+	cnt, err := testCRUD.GetCount(context.Background(), &test.TestStruct{}, GetCountOptions{
 		Filters: &sqlfilters.Filters{
 			"Price":        {Op: sqlfilters.OpEqual, Val: 444},
 			"PrimaryEmail": {Op: sqlfilters.OpEqual, Val: "primary@example.com"},

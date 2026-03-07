@@ -1,31 +1,81 @@
 package service
 
 import (
+	"context"
+	"database/sql"
 	"errors"
+	"log/slog"
+
+	sqlfilters "miko.gs/pgsql-builder/pkg/filters"
+	structcrud "miko.gs/struct-crud"
+	"miko.gs/struct-crud/pkg/logger"
 )
 
-const (
-	LogAttrService = "service"
-	LogAttrError   = "err"
+var (
+	InvalidPathError = errors.New("invalid path")
 )
 
-var NotFoundError = errors.New("item not found")
-var InvalidFilterOpError = errors.New("invalid filter op")
-
-type ModelValidationError struct {
-	Err        error
-	Violations map[string]int
+type CRUD struct {
+	paths map[string]func() interface{}
+	crud  *structcrud.CRUD
 }
 
-func (e *ModelValidationError) Error() string {
-	return e.Err.Error()
+func New(paths map[string]func() interface{}, dbConn *sql.DB) *CRUD {
+	crud := &CRUD{
+		paths: paths,
+		crud:  structcrud.New(dbConn, structcrud.Options{}),
+	}
+
+	return crud
 }
 
-type FilterValidationError struct {
-	Err        error
-	Violations map[string]int
+func (c *CRUD) CreateTables(ctx context.Context) error {
+	logAttrService := logger.AttrService(c, "CreateTables")
+
+	var err error
+	for _, constructor := range c.paths {
+		err = c.crud.CreateTable(ctx, constructor())
+		if err != nil {
+			slog.Error("error creating table", logAttrService, logger.AttrError(err))
+			return err
+		}
+	}
+	return nil
 }
 
-func (e *FilterValidationError) Error() string {
-	return e.Err.Error()
+func (c *CRUD) New(path string) interface{} {
+	constructor, ok := c.paths[path]
+	if !ok {
+		return nil
+	}
+	return constructor()
+}
+
+func (c *CRUD) ID(obj interface{}) int64 {
+	return structcrud.ObjIDValue(obj)
+}
+
+func Op(op string) (int, error) {
+	switch op {
+	case "eq":
+		return sqlfilters.OpEqual, nil
+	case "ne":
+		return sqlfilters.OpNotEqual, nil
+	case "lt":
+		return sqlfilters.OpLower, nil
+	case "le":
+		return sqlfilters.OpLowerOrEqual, nil
+	case "gt":
+		return sqlfilters.OpGreater, nil
+	case "ge":
+		return sqlfilters.OpGreaterOrEqual, nil
+	case "like":
+		return sqlfilters.OpLike, nil
+	case "match":
+		return sqlfilters.OpMatch, nil
+	case "bit":
+		return sqlfilters.OpBit, nil
+	default:
+		return 0, InvalidFilterOpError
+	}
 }

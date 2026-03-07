@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	sqlfilters "miko.gs/pgsql-builder/pkg/filters"
+	"miko.gs/struct-crud/pkg/test"
 )
 
 // TestDeleteMultiple tests if DeleteMultiple removes objects from database based on specified filters
@@ -13,7 +14,7 @@ func TestDeleteMultiple(t *testing.T) {
 
 	// Insert some data that should not be removed
 	for i := 1; i < 51; i++ {
-		ts := testStructWithData()
+		ts := test.TestStructWithData()
 		ts.ID = 0
 		ts.Age = 10 + i
 		ts.PrimaryEmail = "another@example.com"
@@ -22,14 +23,14 @@ func TestDeleteMultiple(t *testing.T) {
 
 	// Insert data that should be deleted
 	for i := 1; i < 151; i++ {
-		ts := testStructWithData()
+		ts := test.TestStructWithData()
 		ts.ID = 0
 		ts.Age = 30
 		_ = testCRUD.Save(context.Background(), ts, SaveOptions{})
 	}
 
 	// Delete multiple rows from the database
-	err := testCRUD.DeleteMultiple(context.Background(), &TestStruct{}, DeleteMultipleOptions{
+	err := testCRUD.DeleteMultiple(context.Background(), &test.TestStruct{}, DeleteMultipleOptions{
 		Filters: &sqlfilters.Filters{
 			"Price": {
 				Op:  sqlfilters.OpEqual,
@@ -45,7 +46,7 @@ func TestDeleteMultiple(t *testing.T) {
 		t.Fatalf("DeleteMultiple failed to delete objects: %s", err.(*CRUDError).Op)
 	}
 
-	cnt, _ := testCRUD.GetCount(context.Background(), &TestStruct{}, GetCountOptions{})
+	cnt, _ := testCRUD.GetCount(context.Background(), &test.TestStruct{}, GetCountOptions{})
 	if cnt != 50 {
 		t.Fatalf("DeleteMultiple removed invalid number of rows, there are %d rows left, instead of %d", cnt, 50)
 	}
@@ -58,7 +59,7 @@ func TestDeleteMultipleWithRawQuery(t *testing.T) {
 
 	// Insert some data that should not be removed
 	for i := 1; i < 51; i++ {
-		ts := testStructWithData()
+		ts := test.TestStructWithData()
 		ts.ID = 0
 		ts.Age = 10 + i
 		ts.PrimaryEmail = "another@example.com"
@@ -67,14 +68,14 @@ func TestDeleteMultipleWithRawQuery(t *testing.T) {
 
 	// Insert data that should be deleted
 	for i := 1; i < 151; i++ {
-		ts := testStructWithData()
+		ts := test.TestStructWithData()
 		ts.ID = 0
 		ts.Age = 30
 		_ = testCRUD.Save(context.Background(), ts, SaveOptions{})
 	}
 
 	// Delete multiple rows from the database
-	err := testCRUD.DeleteMultiple(context.Background(), &TestStruct{}, DeleteMultipleOptions{
+	err := testCRUD.DeleteMultiple(context.Background(), &test.TestStruct{}, DeleteMultipleOptions{
 		Filters: &sqlfilters.Filters{
 			"Price": {
 				Op:  sqlfilters.OpEqual,
@@ -100,7 +101,7 @@ func TestDeleteMultipleWithRawQuery(t *testing.T) {
 		t.Fatalf("DeleteMultiple failed to delete objects: %s", err.(*CRUDError).Op)
 	}
 
-	cnt, _ := testCRUD.GetCount(context.Background(), &TestStruct{}, GetCountOptions{})
+	cnt, _ := testCRUD.GetCount(context.Background(), &test.TestStruct{}, GetCountOptions{})
 	if cnt != 46 {
 		t.Fatalf("DeleteMultiple removed invalid number of rows, there are %d rows left, instead of %d", cnt, 46)
 	}
@@ -112,7 +113,7 @@ func TestDeleteMultipleWithRawQueryOnly(t *testing.T) {
 
 	// Insert some data that should not be removed
 	for i := 1; i < 51; i++ {
-		ts := testStructWithData()
+		ts := test.TestStructWithData()
 		ts.ID = 0
 		ts.Age = 10 + i
 		ts.PrimaryEmail = "another@example.com"
@@ -121,14 +122,14 @@ func TestDeleteMultipleWithRawQueryOnly(t *testing.T) {
 
 	// Insert data that should be deleted
 	for i := 1; i < 151; i++ {
-		ts := testStructWithData()
+		ts := test.TestStructWithData()
 		ts.ID = 0
 		ts.Age = 30
 		_ = testCRUD.Save(context.Background(), ts, SaveOptions{})
 	}
 
 	// Delete multiple rows from the database
-	err := testCRUD.DeleteMultiple(context.Background(), &TestStruct{}, DeleteMultipleOptions{
+	err := testCRUD.DeleteMultiple(context.Background(), &test.TestStruct{}, DeleteMultipleOptions{
 		Filters: &sqlfilters.Filters{
 			sqlfilters.Raw: {
 				Op: sqlfilters.OpOR,
@@ -148,7 +149,7 @@ func TestDeleteMultipleWithRawQueryOnly(t *testing.T) {
 		t.Fatalf("DeleteMultiple failed to delete objects: %s", err.(*CRUDError).Op)
 	}
 
-	cnt, _ := testCRUD.GetCount(context.Background(), &TestStruct{}, GetCountOptions{})
+	cnt, _ := testCRUD.GetCount(context.Background(), &test.TestStruct{}, GetCountOptions{})
 	if cnt != 46 {
 		t.Fatalf("DeleteMultiple removed invalid number of rows, there are %d rows left, instead of %d", cnt, 46)
 	}

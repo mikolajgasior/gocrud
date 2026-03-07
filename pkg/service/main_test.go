@@ -1,4 +1,4 @@
-package crud
+package service
 
 import (
 	"context"
@@ -6,8 +6,8 @@ import (
 	"os"
 	"testing"
 
-	_ "github.com/lib/pq"
 	"github.com/ory/dockertest/v3"
+	structcrud "miko.gs/struct-crud"
 	"miko.gs/struct-crud/pkg/test"
 )
 
@@ -19,7 +19,8 @@ var testDB *sql.DB
 var dockerPool *dockertest.Pool
 var dockerResource *dockertest.Resource
 
-var testCRUD *CRUD
+var testCRUD *structcrud.CRUD
+var testService *CRUD
 
 func TestMain(m *testing.M) {
 	dockerPool, dockerResource, testDB = test.CreateDocker(testUser, testPassword, testName)
@@ -32,11 +33,21 @@ func TestMain(m *testing.M) {
 	}()
 
 	createCRUD()
+	createService()
+
 	code = m.Run()
 }
 
 func createCRUD() {
-	testCRUD = New(testDB, Options{})
+	testCRUD = structcrud.New(testDB, structcrud.Options{})
+}
+
+func createService() {
+	testService = New(map[string]func() interface{}{
+		"teststruct": func() interface{} {
+			return &test.TestStruct{}
+		},
+	}, testDB)
 }
 
 func recreateTestStructTable() {

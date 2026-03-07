@@ -5,19 +5,21 @@ import (
 	"errors"
 	"testing"
 	"time"
+
+	"miko.gs/struct-crud/pkg/test"
 )
 
 // TestSave tests if Save properly inserts and updates an object in the database
 func TestSave(t *testing.T) {
 	recreateTestStructTable()
 
-	objSaved := testStructWithData()
+	objSaved := test.TestStructWithData()
 	err := testCRUD.Save(context.Background(), objSaved, SaveOptions{})
 	if err != nil {
 		t.Fatalf("Save failed to insert struct to the table: %s", err.(*CRUDError).Op)
 	}
 
-	objLoaded := &TestStruct{}
+	objLoaded := &test.TestStruct{}
 	fieldsPtrs := []interface{}{&objLoaded.ID}
 	fieldsPtrs = append(fieldsPtrs, ObjFieldInterfaces(objLoaded, false)...)
 	err = testDB.QueryRow("SELECT * FROM test_struct ORDER BY id DESC LIMIT 1").Scan(fieldsPtrs...)
@@ -52,7 +54,7 @@ func TestSave(t *testing.T) {
 		t.Fatalf("Save failed to update struct")
 	}
 
-	objLoaded = &TestStruct{}
+	objLoaded = &test.TestStruct{}
 	fieldsPtrs = []interface{}{&objLoaded.ID}
 	fieldsPtrs = append(fieldsPtrs, ObjFieldInterfaces(objLoaded, false)...)
 	err = testDB.QueryRow("SELECT * FROM test_struct ORDER BY id DESC LIMIT 1").Scan(fieldsPtrs...)
@@ -68,7 +70,7 @@ func TestSave(t *testing.T) {
 func TestSaveWithModifiedAt(t *testing.T) {
 	recreateTestStructTable()
 
-	objSaved := testStructWithData()
+	objSaved := test.TestStructWithData()
 	err := testCRUD.Save(context.Background(), objSaved, SaveOptions{
 		ModifiedBy: 4,
 		ModifiedAt: time.Now().Unix(),
@@ -77,7 +79,7 @@ func TestSaveWithModifiedAt(t *testing.T) {
 		t.Fatalf("Save failed to insert struct to the table: %s", err.(*CRUDError).Op)
 	}
 
-	objLoaded := &TestStruct{}
+	objLoaded := &test.TestStruct{}
 	fieldsPtrs := []interface{}{&objLoaded.ID}
 	fieldsPtrs = append(fieldsPtrs, ObjFieldInterfaces(objLoaded, false)...)
 	err = testDB.QueryRow("SELECT * FROM test_struct ORDER BY id DESC LIMIT 1").Scan(fieldsPtrs...)
@@ -103,7 +105,7 @@ func TestSaveWithModifiedAt(t *testing.T) {
 		t.Fatalf("Save failed to update struct")
 	}
 
-	objLoaded = &TestStruct{}
+	objLoaded = &test.TestStruct{}
 	fieldsPtrs = []interface{}{&objLoaded.ID}
 	fieldsPtrs = append(fieldsPtrs, ObjFieldInterfaces(objLoaded, false)...)
 	err = testDB.QueryRow("SELECT * FROM test_struct ORDER BY id DESC LIMIT 1").Scan(fieldsPtrs...)
@@ -120,7 +122,7 @@ func TestSaveWithModifiedAt(t *testing.T) {
 func TestSaveInsertWithID(t *testing.T) {
 	recreateTestStructTable()
 
-	objSaved := testStructWithData()
+	objSaved := test.TestStructWithData()
 	objSaved.ID = 99999
 	objSaved.FirstName = "ProvidedID"
 	err := testCRUD.Save(context.Background(), objSaved, SaveOptions{})
@@ -128,7 +130,7 @@ func TestSaveInsertWithID(t *testing.T) {
 		t.Fatalf("Save failed to insert struct with provided ID to the table: %s", err.(*CRUDError).Op)
 	}
 
-	objLoaded := &TestStruct{}
+	objLoaded := &test.TestStruct{}
 	fieldsPtrs := ObjFieldInterfaces(objLoaded, true)
 	err = testDB.QueryRow("SELECT * FROM test_struct WHERE id=99999 ORDER BY id DESC LIMIT 1").Scan(fieldsPtrs...)
 	if err != nil {
@@ -146,7 +148,7 @@ func TestSaveInsertWithID(t *testing.T) {
 		t.Fatalf("Save failed to update struct previously inserted with provided ID to the table: %s", err.(*CRUDError).Op)
 	}
 
-	objLoadedAgain := &TestStruct{}
+	objLoadedAgain := &test.TestStruct{}
 	fieldsPtrs = ObjFieldInterfaces(objLoadedAgain, true)
 	err = testDB.QueryRow("SELECT * FROM test_struct WHERE id=99999 ORDER BY id DESC LIMIT 1").Scan(fieldsPtrs...)
 	if err != nil {
@@ -161,7 +163,7 @@ func TestSaveInsertWithID(t *testing.T) {
 func TestSaveInsertWithIDAndNoInsert(t *testing.T) {
 	recreateTestStructTable()
 
-	objSaved := testStructWithData()
+	objSaved := test.TestStructWithData()
 	objSaved.ID = 99999
 	objSaved.FirstName = "ProvidedID"
 	err := testCRUD.Save(context.Background(), objSaved, SaveOptions{
@@ -185,11 +187,11 @@ func TestSaveInsertWithIDAndNoInsert(t *testing.T) {
 func TestErrUniq(t *testing.T) {
 	recreateTestStructTable()
 
-	objSaved := testStructWithData()
+	objSaved := test.TestStructWithData()
 	objSaved.Key = "gottabeunique123456789012345678901234567890"
 	_ = testCRUD.Save(context.Background(), objSaved, SaveOptions{})
 
-	objWithSameKey := testStructWithData()
+	objWithSameKey := test.TestStructWithData()
 	objWithSameKey.Key = "gottabeunique123456789012345678901234567890"
 	err := testCRUD.Save(context.Background(), objWithSameKey, SaveOptions{})
 	var uniqError *UniqError
@@ -201,7 +203,7 @@ func TestErrUniq(t *testing.T) {
 func TestErrUniqUsingGetCount(t *testing.T) {
 	recreateTestStructTable()
 
-	objSaved := testStructWithData()
+	objSaved := test.TestStructWithData()
 	objSaved.Key = "gottabeunique123456789012345678901234567890"
 	_ = testCRUD.Save(context.Background(), objSaved, SaveOptions{})
 
@@ -212,7 +214,7 @@ func TestErrUniqUsingGetCount(t *testing.T) {
 		t.Fatalf("Exec failed to remove UNIQUE constraint: %s", err.Error())
 	}
 
-	objWithSameKey := testStructWithData()
+	objWithSameKey := test.TestStructWithData()
 	objWithSameKey.Key = "gottabeunique123456789012345678901234567890"
 	err = testCRUD.Save(context.Background(), objWithSameKey, SaveOptions{})
 	var uniqError *UniqError

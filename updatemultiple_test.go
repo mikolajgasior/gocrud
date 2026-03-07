@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	sqlfilters "miko.gs/pgsql-builder/pkg/filters"
+	"miko.gs/struct-crud/pkg/test"
 )
 
 // TestUpdateMultiple tests if UpdateMultiple update objects from database based on specified filters
@@ -13,7 +14,7 @@ func TestUpdateMultiple(t *testing.T) {
 
 	// Insert some data that should not be removed
 	for i := 1; i < 51; i++ {
-		ts := testStructWithData()
+		ts := test.TestStructWithData()
 		ts.ID = 0
 		ts.Age = 10 + i
 		ts.PrimaryEmail = "another@example.com"
@@ -22,7 +23,7 @@ func TestUpdateMultiple(t *testing.T) {
 
 	// Insert data that should be updated
 	for i := 1; i < 151; i++ {
-		ts := testStructWithData()
+		ts := test.TestStructWithData()
 		ts.ID = 0
 		ts.Age = 30
 		ts.PrimaryEmail = "changeme@example.com"
@@ -30,7 +31,7 @@ func TestUpdateMultiple(t *testing.T) {
 	}
 
 	// Update multiple rows from the database
-	err := testCRUD.UpdateMultiple(context.Background(), &TestStruct{}, map[string]interface{}{
+	err := testCRUD.UpdateMultiple(context.Background(), &test.TestStruct{}, map[string]interface{}{
 		"PrimaryEmail": "newemail@example.com",
 		"Age":          98,
 	},
@@ -50,7 +51,7 @@ func TestUpdateMultiple(t *testing.T) {
 		t.Fatalf("UpdateMultiple failed to update objects: %s %s", err.(*CRUDError).Op, err.(*CRUDError).Err.Error())
 	}
 
-	cnt, _ := testCRUD.GetCount(context.Background(), &TestStruct{}, GetCountOptions{
+	cnt, _ := testCRUD.GetCount(context.Background(), &test.TestStruct{}, GetCountOptions{
 		Filters: &sqlfilters.Filters{
 			"PrimaryEmail": {
 				Op:  sqlfilters.OpEqual,
