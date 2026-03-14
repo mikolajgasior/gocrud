@@ -1,4 +1,4 @@
-package builder
+package input
 
 import (
 	"fmt"
@@ -6,23 +6,30 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
-
-	uiinput "miko.gs/struct-crud/pkg/ui/input"
 )
 
-// BuildInputs takes a struct and generates Input structs for each field
-func BuildInputs(obj interface{}, options *Options) ([]uiinput.Input, []string) {
+type Options struct {
+	RestrictFields  map[string]struct{}
+	ExcludeFields   map[string]struct{}
+	TagName         string
+	IDPrefix        string
+	NamePrefix      string
+	OverwriteValues map[string]string
+	Values          bool
+}
+
+func BuildInputs(obj interface{}, options *Options) ([]Input, []string) {
 	v := reflect.ValueOf(obj)
 	i := reflect.Indirect(v)
 	s := i.Type()
 	elem := v.Elem()
 
-	tagName := uiinput.DefaultTagName
+	tagName := DefaultTagName
 	if options != nil && options.TagName != "" {
 		tagName = options.TagName
 	}
 
-	inputs := []uiinput.Input{}
+	inputs := []Input{}
 	fieldsOrder := []string{}
 
 	for j := 0; j < s.NumField(); j++ {
@@ -45,18 +52,15 @@ func BuildInputs(obj interface{}, options *Options) ([]uiinput.Input, []string) 
 			}
 		}
 
-		// generate only ints, string and bool
 		if !isInt(fieldKind) && fieldKind != reflect.String && fieldKind != reflect.Bool {
 			continue
 		}
 
-		input := uiinput.Input{
+		input := Input{
 			FieldName: field.Name,
 			Name:      field.Name,
-			HasValue:  true, // default to having value
 		}
 
-		// value
 		if options != nil {
 			if options.Values {
 				if fieldKind == reflect.Bool && elem.Field(j).Bool() {
@@ -87,7 +91,6 @@ func BuildInputs(obj interface{}, options *Options) ([]uiinput.Input, []string) 
 			}
 		}
 
-		// get tag values
 		tagVal := field.Tag.Get(tagName)
 		tagRegexpVal := field.Tag.Get(tagName + "_regexp")
 
@@ -98,21 +101,17 @@ func BuildInputs(obj interface{}, options *Options) ([]uiinput.Input, []string) 
 		validationAttrs, inputType := attributes(tagVal)
 		input.InputType = inputType
 
-		// parse additional validation attributes from tag
 		parseValidationAttrs(validationAttrs, &input)
 
-		// set input type based on field kind
 		if fieldKind == reflect.Bool {
-			input.InputType = uiinput.TypeCheckbox
+			input.InputType = TypeCheckbox
 		} else if isInt(fieldKind) {
-			input.InputType = uiinput.TypeNumber
+			input.InputType = TypeNumber
 		} else if input.InputType == "" {
-			input.InputType = uiinput.TypeText
+			input.InputType = TypeText
 		}
 
-		// Password fields should never have value attribute
-		if input.InputType == uiinput.TypePassword {
-			input.HasValue = false
+		if input.InputType == TypePassword {
 			input.Value = ""
 		}
 
@@ -123,8 +122,7 @@ func BuildInputs(obj interface{}, options *Options) ([]uiinput.Input, []string) 
 	return inputs, fieldsOrder
 }
 
-// parseValidationAttrs extracts validation attributes from the tag string
-func parseValidationAttrs(attrs string, input *uiinput.Input) {
+func parseValidationAttrs(attrs string, input *Input) {
 	if strings.Contains(attrs, "required") {
 		input.Required = true
 	}
@@ -174,10 +172,9 @@ func parseValidationAttrs(attrs string, input *uiinput.Input) {
 	}
 }
 
-// attributes parses the tag string and returns validation attributes and input type
 func attributes(tag string) (string, string) {
 	attrs := ""
-	inputType := uiinput.TypeText
+	inputType := TypeText
 
 	opts := strings.SplitN(tag, " ", -1)
 	for _, opt := range opts {
@@ -185,14 +182,14 @@ func attributes(tag string) (string, string) {
 			attrs = attrs + " required"
 		}
 		if opt == "uiemail" {
-			inputType = uiinput.TypeEmail
+			inputType = TypeEmail
 			continue
 		}
 		if opt == "uitextarea" {
-			inputType = uiinput.TypeTextarea
+			inputType = TypeTextarea
 		}
 		if opt == "uipassword" {
-			inputType = uiinput.TypePassword
+			inputType = TypePassword
 		}
 		for _, valOpt := range []string{"len", "val", "regexp"} {
 			if !strings.HasPrefix(opt, valOpt+":") {
@@ -235,8 +232,5 @@ func attributes(tag string) (string, string) {
 }
 
 func isInt(k reflect.Kind) bool {
-	if k == reflect.Int64 || k == reflect.Int32 || k == reflect.Int16 || k == reflect.Int8 || k == reflect.Int || k == reflect.Uint64 || k == reflect.Uint32 || k == reflect.Uint16 || k == reflect.Uint8 || k == reflect.Uint {
-		return true
-	}
-	return false
+	return k == reflect.Int64 || k == reflect.Int32 || k == reflect.Int16 || k == reflect.Int8 || k == reflect.Int || k == reflect.Uint64 || k == reflect.Uint32 || k == reflect.Uint16 || k == reflect.Uint8 || k == reflect.Uint
 }
