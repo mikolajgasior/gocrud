@@ -8,7 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"miko.gs/struct-crud/pkg/test"
+	"miko.gs/gocrud/pkg/test"
 )
 
 func TestServe_CreateUpdate(t *testing.T) {

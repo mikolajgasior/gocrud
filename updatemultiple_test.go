@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	sqlfilters "miko.gs/pgsql-builder/pkg/filters"
-	"miko.gs/struct-crud/pkg/test"
+	sqlfilters "miko.gs/gocrud/pkg/filters"
+	"miko.gs/gocrud/pkg/test"
 )
 
 // TestUpdateMultiple tests if UpdateMultiple update objects from database based on specified filters

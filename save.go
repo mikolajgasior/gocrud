@@ -6,7 +6,7 @@ import (
 
 	"github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
-	sqlfilters "miko.gs/pgsql-builder/pkg/filters"
+	sqlfilters "miko.gs/gocrud/pkg/filters"
 )
 
 type SaveOptions struct {

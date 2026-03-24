@@ -3,7 +3,7 @@ package crud
 import (
 	"reflect"
 
-	structInfo "miko.gs/pgsql-builder/pkg/structinfo"
+	structInfo "miko.gs/gocrud/pkg/structinfo"
 )
 
 // ObjFieldInterfaces returns a list of interfaces to object's fields

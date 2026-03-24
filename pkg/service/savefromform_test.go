@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"miko.gs/struct-crud/pkg/test"
+	"miko.gs/gocrud/pkg/test"
 )
 
 func TestSaveFromForm(t *testing.T) {

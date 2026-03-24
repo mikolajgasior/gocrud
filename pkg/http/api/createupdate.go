@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"time"
 
-	"miko.gs/struct-crud/pkg/http/jsonreq"
-	"miko.gs/struct-crud/pkg/http/jsonresp"
-	svccrud "miko.gs/struct-crud/pkg/service"
+	"miko.gs/gocrud/pkg/http/jsonreq"
+	"miko.gs/gocrud/pkg/http/jsonresp"
+	svccrud "miko.gs/gocrud/pkg/service"
 )
 
 func (h *Handler) handleAPICreateUpdate(ctx context.Context, w http.ResponseWriter, r *http.Request, path, id string) {

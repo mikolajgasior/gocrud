@@ -7,8 +7,8 @@ import (
 	"net/url"
 	"strings"
 
-	sqlbuilder "miko.gs/pgsql-builder"
-	"miko.gs/struct-crud/pkg/logger"
+	"miko.gs/gocrud/pkg/logger"
+	sqlbuilder "miko.gs/gocrud/pkg/sql/builder"
 	validator "miko.gs/struct-validator"
 )
 

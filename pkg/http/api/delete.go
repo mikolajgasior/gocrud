@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"miko.gs/struct-crud/pkg/http/jsonresp"
-	svccrud "miko.gs/struct-crud/pkg/service"
+	"miko.gs/gocrud/pkg/http/jsonresp"
+	svccrud "miko.gs/gocrud/pkg/service"
 )
 
 func (h *Handler) handleAPIDelete(ctx context.Context, w http.ResponseWriter, path, id string) {

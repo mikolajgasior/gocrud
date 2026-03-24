@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"miko.gs/struct-crud/pkg/test"
+	"miko.gs/gocrud/pkg/test"
 )
 
 // TestSave tests if Save properly inserts and updates an object in the database

@@ -8,9 +8,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	structcrud "miko.gs/struct-crud"
-	"miko.gs/struct-crud/pkg/http/jsonresp"
-	"miko.gs/struct-crud/pkg/test"
+	structcrud "miko.gs/gocrud"
+	"miko.gs/gocrud/pkg/http/jsonresp"
+	"miko.gs/gocrud/pkg/test"
 )
 
 func TestServe_Read(t *testing.T) {

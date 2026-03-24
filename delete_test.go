@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"miko.gs/struct-crud/pkg/test"
+	"miko.gs/gocrud/pkg/test"
 )
 
 // TestDelete tests if Delete removes an object from the database.

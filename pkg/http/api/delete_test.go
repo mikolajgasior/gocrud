@@ -7,8 +7,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	structcrud "miko.gs/struct-crud"
-	"miko.gs/struct-crud/pkg/test"
+	structcrud "miko.gs/gocrud"
+	"miko.gs/gocrud/pkg/test"
 )
 
 func TestServe_Delete(t *testing.T) {

@@ -3,8 +3,8 @@ package api
 import (
 	"regexp"
 
-	"miko.gs/struct-crud/pkg/http/cors"
-	svccrud "miko.gs/struct-crud/pkg/service"
+	"miko.gs/gocrud/pkg/http/cors"
+	svccrud "miko.gs/gocrud/pkg/service"
 )
 
 const (

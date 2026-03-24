@@ -5,7 +5,7 @@ import (
 	"html"
 	"html/template"
 
-	uiinput "miko.gs/struct-crud/pkg/ui/input"
+	uiinput "miko.gs/gocrud/pkg/ui/input"
 )
 
 type Form struct {

@@ -8,7 +8,7 @@ import (
 
 	_ "github.com/lib/pq"
 	"github.com/ory/dockertest/v3"
-	"miko.gs/struct-crud/pkg/test"
+	"miko.gs/gocrud/pkg/test"
 )
 
 var testUser = "testuser"

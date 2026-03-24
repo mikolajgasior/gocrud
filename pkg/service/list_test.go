@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	structcrud "miko.gs/struct-crud"
-	"miko.gs/struct-crud/pkg/test"
+	structcrud "miko.gs/gocrud"
+	"miko.gs/gocrud/pkg/test"
 )
 
 func TestList_WithFilters(t *testing.T) {

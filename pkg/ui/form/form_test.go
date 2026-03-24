@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	uiinput "miko.gs/struct-crud/pkg/ui/input"
+	uiinput "miko.gs/gocrud/pkg/ui/input"
 )
 
 func TestFormRendering(t *testing.T) {

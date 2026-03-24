@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"testing"
 
-	structInfo "miko.gs/pgsql-builder/pkg/structinfo"
+	structInfo "miko.gs/gocrud/pkg/structinfo"
 )
 
 const IDField = "ID"

@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	sqlfilters "miko.gs/pgsql-builder/pkg/filters"
-	"miko.gs/struct-crud/pkg/test"
+	sqlfilters "miko.gs/gocrud/pkg/filters"
+	"miko.gs/gocrud/pkg/test"
 )
 
 // TestGet tests if Get properly gets many objects from the database, filtered and ordered, with results limited to specific number

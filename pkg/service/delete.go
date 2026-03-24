@@ -4,8 +4,8 @@ import (
 	"context"
 	"log/slog"
 
-	structcrud "miko.gs/struct-crud"
-	"miko.gs/struct-crud/pkg/logger"
+	structcrud "miko.gs/gocrud"
+	"miko.gs/gocrud/pkg/logger"
 )
 
 func (c *CRUD) Delete(ctx context.Context, path string, id int64) error {

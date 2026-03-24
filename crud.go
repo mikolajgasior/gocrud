@@ -3,7 +3,7 @@ package crud
 import (
 	"database/sql"
 
-	sqlbuilder "miko.gs/pgsql-builder"
+	sqlbuilder "miko.gs/gocrud/pkg/sql/builder"
 )
 
 type CRUD struct {

@@ -1,6 +1,6 @@
 package form
 
-import "miko.gs/struct-crud/pkg/ui/input"
+import "miko.gs/gocrud/pkg/ui/input"
 
 type FormOptions struct {
 	input.Options

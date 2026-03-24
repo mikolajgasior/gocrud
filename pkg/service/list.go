@@ -5,9 +5,9 @@ import (
 	"errors"
 	"log/slog"
 
-	sqlfilters "miko.gs/pgsql-builder/pkg/filters"
-	structcrud "miko.gs/struct-crud"
-	"miko.gs/struct-crud/pkg/logger"
+	structcrud "miko.gs/gocrud"
+	sqlfilters "miko.gs/gocrud/pkg/filters"
+	"miko.gs/gocrud/pkg/logger"
 	validator "miko.gs/struct-validator"
 )
 

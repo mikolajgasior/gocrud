@@ -3,7 +3,7 @@ package crud
 import (
 	"context"
 
-	sqlfilters "miko.gs/pgsql-builder/pkg/filters"
+	sqlfilters "miko.gs/gocrud/pkg/filters"
 )
 
 type DeleteMultipleOptions struct {

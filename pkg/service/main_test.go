@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	"github.com/ory/dockertest/v3"
-	structcrud "miko.gs/struct-crud"
-	"miko.gs/struct-crud/pkg/test"
+	structcrud "miko.gs/gocrud"
+	"miko.gs/gocrud/pkg/test"
 )
 
 var testUser = "testuser"

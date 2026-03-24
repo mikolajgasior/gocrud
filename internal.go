@@ -6,8 +6,8 @@ import (
 	"reflect"
 	"strings"
 
-	sqlbuilder "miko.gs/pgsql-builder"
-	sqlfilters "miko.gs/pgsql-builder/pkg/filters"
+	sqlfilters "miko.gs/gocrud/pkg/filters"
+	sqlbuilder "miko.gs/gocrud/pkg/sql/builder"
 )
 
 func (c *CRUD) builder(obj interface{}) (*sqlbuilder.Builder, error) {

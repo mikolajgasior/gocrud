@@ -3,8 +3,8 @@ package crud
 import (
 	"context"
 
-	sqlbuilder "miko.gs/pgsql-builder"
-	sqlfilters "miko.gs/pgsql-builder/pkg/filters"
+	sqlfilters "miko.gs/gocrud/pkg/filters"
+	sqlbuilder "miko.gs/gocrud/pkg/sql/builder"
 	validator "miko.gs/struct-validator"
 )
 
