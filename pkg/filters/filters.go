@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"sort"
 
-	"miko.gs/gocrud/pkg/structinfo"
+	"codeberg.org/mikolajgasior/gocrud/pkg/structinfo"
 )
 
 type Filters map[string]OpVal

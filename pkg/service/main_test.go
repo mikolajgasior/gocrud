@@ -6,9 +6,9 @@ import (
 	"os"
 	"testing"
 
+	structcrud "codeberg.org/mikolajgasior/gocrud"
+	"codeberg.org/mikolajgasior/gocrud/pkg/test"
 	"github.com/ory/dockertest/v3"
-	structcrud "miko.gs/gocrud"
-	"miko.gs/gocrud/pkg/test"
 )
 
 var testUser = "testuser"

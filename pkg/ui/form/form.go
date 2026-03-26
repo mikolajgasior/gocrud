@@ -5,7 +5,7 @@ import (
 	"html"
 	"html/template"
 
-	uiinput "miko.gs/gocrud/pkg/ui/input"
+	uiinput "codeberg.org/mikolajgasior/gocrud/pkg/ui/input"
 )
 
 type Form struct {

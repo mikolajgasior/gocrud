@@ -1,4 +1,4 @@
-# struct-crud
+# gocrud
 
 Package `crud` uses reflection to create CRUD operations for structs.
 

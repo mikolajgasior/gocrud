@@ -1,7 +1,7 @@
 package crud
 
 import (
-	sqlfilters "miko.gs/gocrud/pkg/filters"
+	sqlfilters "codeberg.org/mikolajgasior/gocrud/pkg/filters"
 )
 
 type deleteByIDQueryBuilder interface {

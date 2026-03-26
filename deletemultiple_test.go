@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	sqlfilters "miko.gs/gocrud/pkg/filters"
-	"miko.gs/gocrud/pkg/test"
+	sqlfilters "codeberg.org/mikolajgasior/gocrud/pkg/filters"
+	"codeberg.org/mikolajgasior/gocrud/pkg/test"
 )
 
 // TestDeleteMultiple tests if DeleteMultiple removes objects from database based on specified filters

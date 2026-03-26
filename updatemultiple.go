@@ -3,9 +3,9 @@ package crud
 import (
 	"context"
 
-	sqlfilters "miko.gs/gocrud/pkg/filters"
-	sqlbuilder "miko.gs/gocrud/pkg/sql/builder"
-	validator "miko.gs/struct-validator"
+	sqlfilters "codeberg.org/mikolajgasior/gocrud/pkg/filters"
+	sqlbuilder "codeberg.org/mikolajgasior/gocrud/pkg/sql/builder"
+	validator "github.com/mikolajgasior/struct-validator"
 )
 
 type UpdateMultipleOptions struct {

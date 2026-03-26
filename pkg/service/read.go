@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log/slog"
 
-	structcrud "miko.gs/gocrud"
-	"miko.gs/gocrud/pkg/logger"
+	structcrud "codeberg.org/mikolajgasior/gocrud"
+	"codeberg.org/mikolajgasior/gocrud/pkg/logger"
 )
 
 func (c *CRUD) Read(ctx context.Context, path string, id int64) (interface{}, error) {

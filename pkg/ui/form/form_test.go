@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	uiinput "miko.gs/gocrud/pkg/ui/input"
+	uiinput "codeberg.org/mikolajgasior/gocrud/pkg/ui/input"
 )
 
 func TestFormRendering(t *testing.T) {

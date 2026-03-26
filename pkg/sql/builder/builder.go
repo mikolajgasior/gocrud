@@ -1,10 +1,10 @@
 package builder
 
 import (
-	"miko.gs/gocrud/pkg/filters"
-	postgresQueryBuilder "miko.gs/gocrud/pkg/sql/builder/querybuilder/postgres"
-	postgresQueryContainer "miko.gs/gocrud/pkg/sql/builder/querycontainer/postgres"
-	"miko.gs/gocrud/pkg/structinfo"
+	"codeberg.org/mikolajgasior/gocrud/pkg/filters"
+	postgresQueryBuilder "codeberg.org/mikolajgasior/gocrud/pkg/sql/builder/querybuilder/postgres"
+	postgresQueryContainer "codeberg.org/mikolajgasior/gocrud/pkg/sql/builder/querycontainer/postgres"
+	"codeberg.org/mikolajgasior/gocrud/pkg/structinfo"
 )
 
 const (

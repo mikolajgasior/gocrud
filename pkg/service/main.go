@@ -6,9 +6,9 @@ import (
 	"errors"
 	"log/slog"
 
-	structcrud "miko.gs/gocrud"
-	sqlfilters "miko.gs/gocrud/pkg/filters"
-	"miko.gs/gocrud/pkg/logger"
+	structcrud "codeberg.org/mikolajgasior/gocrud"
+	sqlfilters "codeberg.org/mikolajgasior/gocrud/pkg/filters"
+	"codeberg.org/mikolajgasior/gocrud/pkg/logger"
 )
 
 var (

@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	structcrud "miko.gs/gocrud"
-	"miko.gs/gocrud/pkg/test"
+	structcrud "codeberg.org/mikolajgasior/gocrud"
+	"codeberg.org/mikolajgasior/gocrud/pkg/test"
 )
 
 func TestNum(t *testing.T) {

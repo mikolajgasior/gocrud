@@ -5,8 +5,8 @@ import (
 	"reflect"
 	"strings"
 
-	"miko.gs/gocrud/pkg/sql/builder/querycontainer"
-	"miko.gs/gocrud/pkg/structinfo"
+	"codeberg.org/mikolajgasior/gocrud/pkg/sql/builder/querycontainer"
+	"codeberg.org/mikolajgasior/gocrud/pkg/structinfo"
 )
 
 type QueryContainer struct {

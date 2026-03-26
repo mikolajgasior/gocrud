@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	structcrud "miko.gs/gocrud"
-	"miko.gs/gocrud/pkg/test"
+	structcrud "codeberg.org/mikolajgasior/gocrud"
+	"codeberg.org/mikolajgasior/gocrud/pkg/test"
 )
 
 func TestList_WithFilters(t *testing.T) {

@@ -6,8 +6,8 @@ import (
 	"sort"
 	"strings"
 
-	pkgfilters "miko.gs/gocrud/pkg/filters"
-	postgresQueryContainer "miko.gs/gocrud/pkg/sql/builder/querycontainer/postgres"
+	pkgfilters "codeberg.org/mikolajgasior/gocrud/pkg/filters"
+	postgresQueryContainer "codeberg.org/mikolajgasior/gocrud/pkg/sql/builder/querycontainer/postgres"
 )
 
 func (b *QueryBuilder) queryOrder(order []string) (string, error) {

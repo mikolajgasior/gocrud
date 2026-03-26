@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 
+	sqlfilters "codeberg.org/mikolajgasior/gocrud/pkg/filters"
 	"github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
-	sqlfilters "miko.gs/gocrud/pkg/filters"
 )
 
 type SaveOptions struct {

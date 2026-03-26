@@ -3,8 +3,8 @@ package api
 import (
 	"regexp"
 
-	"miko.gs/gocrud/pkg/http/cors"
-	svccrud "miko.gs/gocrud/pkg/service"
+	"codeberg.org/mikolajgasior/gocrud/pkg/http/cors"
+	svccrud "codeberg.org/mikolajgasior/gocrud/pkg/service"
 )
 
 const (

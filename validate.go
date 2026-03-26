@@ -1,8 +1,8 @@
 package crud
 
 import (
-	sqlfilters "miko.gs/gocrud/pkg/filters"
-	validator "miko.gs/struct-validator"
+	sqlfilters "codeberg.org/mikolajgasior/gocrud/pkg/filters"
+	validator "github.com/mikolajgasior/struct-validator"
 )
 
 func Validate(obj interface{}, restrictFields map[string]bool, tagName string) (bool, map[string]int, error) {

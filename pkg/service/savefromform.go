@@ -7,9 +7,9 @@ import (
 	"net/url"
 	"strings"
 
-	"miko.gs/gocrud/pkg/logger"
-	sqlbuilder "miko.gs/gocrud/pkg/sql/builder"
-	validator "miko.gs/struct-validator"
+	"codeberg.org/mikolajgasior/gocrud/pkg/logger"
+	sqlbuilder "codeberg.org/mikolajgasior/gocrud/pkg/sql/builder"
+	validator "github.com/mikolajgasior/struct-validator"
 )
 
 func (c *CRUD) SaveFromForm(ctx context.Context, obj interface{}, values url.Values, namePrefix string, now, userID int64) error {

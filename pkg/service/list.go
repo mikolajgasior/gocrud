@@ -5,10 +5,10 @@ import (
 	"errors"
 	"log/slog"
 
-	structcrud "miko.gs/gocrud"
-	sqlfilters "miko.gs/gocrud/pkg/filters"
-	"miko.gs/gocrud/pkg/logger"
-	validator "miko.gs/struct-validator"
+	structcrud "codeberg.org/mikolajgasior/gocrud"
+	sqlfilters "codeberg.org/mikolajgasior/gocrud/pkg/filters"
+	"codeberg.org/mikolajgasior/gocrud/pkg/logger"
+	validator "github.com/mikolajgasior/struct-validator"
 )
 
 func (c *CRUD) List(ctx context.Context, path string, limit, offset int, order, orderDirection string, filterVals, filterOps map[string]string, rowFunc func(interface{}) interface{}) ([]interface{}, error) {

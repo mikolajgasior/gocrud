@@ -1,6 +1,6 @@
 package form
 
-import "miko.gs/gocrud/pkg/ui/input"
+import "codeberg.org/mikolajgasior/gocrud/pkg/ui/input"
 
 type FormOptions struct {
 	input.Options

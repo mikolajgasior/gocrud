@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"miko.gs/gocrud/pkg/test"
+	"codeberg.org/mikolajgasior/gocrud/pkg/test"
 )
 
 // TestDelete tests if Delete removes an object from the database.

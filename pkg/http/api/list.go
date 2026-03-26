@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 
-	"miko.gs/gocrud/pkg/http/jsonresp"
-	svccrud "miko.gs/gocrud/pkg/service"
+	"codeberg.org/mikolajgasior/gocrud/pkg/http/jsonresp"
+	svccrud "codeberg.org/mikolajgasior/gocrud/pkg/service"
 )
 
 func (h *Handler) handleAPIList(ctx context.Context, w http.ResponseWriter, r *http.Request, path string) {

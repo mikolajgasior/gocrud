@@ -7,9 +7,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	structcrud "miko.gs/gocrud"
-	"miko.gs/gocrud/pkg/http/jsonresp"
-	"miko.gs/gocrud/pkg/test"
+	structcrud "codeberg.org/mikolajgasior/gocrud"
+	"codeberg.org/mikolajgasior/gocrud/pkg/http/jsonresp"
+	"codeberg.org/mikolajgasior/gocrud/pkg/test"
 )
 
 func TestServe_List(t *testing.T) {

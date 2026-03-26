@@ -6,9 +6,9 @@ import (
 	"os"
 	"testing"
 
+	"codeberg.org/mikolajgasior/gocrud/pkg/test"
 	_ "github.com/lib/pq"
 	"github.com/ory/dockertest/v3"
-	"miko.gs/gocrud/pkg/test"
 )
 
 var testUser = "testuser"

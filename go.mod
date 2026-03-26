@@ -1,12 +1,12 @@
-module miko.gs/gocrud
+module codeberg.org/mikolajgasior/gocrud
 
-go 1.25.0
+go 1.25.6
 
 require (
 	github.com/lib/pq v1.12.0
+	github.com/mikolajgasior/struct-validator v0.9.0
 	github.com/ory/dockertest/v3 v3.12.0
 	golang.org/x/crypto v0.49.0
-	miko.gs/struct-validator v0.9.0
 )
 
 require (
