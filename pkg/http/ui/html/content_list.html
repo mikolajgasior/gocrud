@@ -1,0 +1,158 @@
+<script>
+    DeleteObject = function (id) {
+        if (!confirm("Are you sure you want to delete this object?")) {
+            return;
+        }
+
+        fetch("{{ .ObjectFetchDeletePath }}/" + id, {
+            method: 'DELETE'
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok === true && data.code === "SUCCESS") {
+                    document.getElementById("object_tr_" + id).remove();
+                } else {
+                    alert("Deletion failed");
+                }
+            })
+            .catch(error => {
+                alert("Deletion failed");
+            });
+    }
+
+    SelectAll = function () {
+        document.querySelectorAll('input[type="checkbox"][id^="object_select_"]').forEach(checkbox => {
+            checkbox.checked = true;
+        });
+    }
+
+    DeselectAll = function () {
+        document.querySelectorAll('input[type="checkbox"][id^="object_select_"]').forEach(checkbox => {
+            checkbox.checked = false;
+        });
+    }
+
+    InvertAll = function () {
+        document.querySelectorAll('input[type="checkbox"][id^="object_select_"]').forEach(checkbox => {
+            checkbox.checked = !checkbox.checked;
+        });
+    }
+
+    ResetFilters = function () {
+        location.href='{{ $.ObjectListPath }}';
+    }
+
+    ClearFilter = function (fieldName) {
+        document.getElementById('filter_' + fieldName).value = '';
+        document.getElementById('filter_op_' + fieldName).value = '';
+    }
+
+    ApplyFilters = function (limit, order, orderDirection) {
+        url = '{{ $.ObjectListPath }}?page=1'
+        if (limit != '') {
+            url += '&limit=' + limit
+        }
+        if (order != '') {
+            url += '&order=' + order
+        }
+        if (orderDirection != '') {
+            url += '&order_direction=' + orderDirection
+        }
+
+        {{ range .ObjectFieldNames }}
+        filterVal = document.getElementById('filter_val_{{ . }}').value;
+        filterOp = document.getElementById('filter_op_{{ . }}').value;
+        if (filterOp != '') {
+            url += '&filter_val_{{ . }}=' + filterVal;
+            url += '&filter_op_{{ . }}=' + filterOp;
+        }
+        {{ end }}
+
+        location.href=url;
+    }
+
+</script>
+
+<div class="objects_list_row1">
+    <p><button onclick="location.href='{{ .ObjectCreatePath }}'">Create new object</button></p>
+    <p><b>{{ .NumObjects }} objects found.</b></p>
+</div>
+<div class="objects_list_row2">
+    <div>
+        Page:
+        {{ range $i := .NumPages }}
+        {{ $page := add $i 1 }}
+        <a href="?page={{ $page }}&limit={{ $.ParamLimit }}&order={{ $.ParamOrder }}&order_direction={{ $.ParamOrderDirection }}{{ range $.ObjectFieldNames }}{{ $filterVal := index $.ParamFilterVals . }}{{ $filterOp := index $.ParamFilterOps . }}{{ if ne $filterVal "" }}&filter_val_{{ . }}={{ index $.ParamFilterVals . }}{{ end }}{{ if ne $filterOp "" }}&filter_op_{{ . }}={{ index $.ParamFilterOps . }}{{ end }}{{ end }}" {{ if eq $.ParamPage $page }} class="current" {{ end }}>{{
+            $page }}</a>
+        {{ end }}
+    </div>
+    <div>
+        Objects per page:
+        <a href="?page=1&limit=10&order={{ $.ParamOrder }}&order_direction={{ $.ParamOrderDirection }}{{ range $.ObjectFieldNames }}{{ $filterVal := index $.ParamFilterVals . }}{{ $filterOp := index $.ParamFilterOps . }}{{ if ne $filterVal "" }}&filter_val_{{ . }}={{ index $.ParamFilterVals . }}{{ end }}{{ if ne $filterOp "" }}&filter_op_{{ . }}={{ index $.ParamFilterOps . }}{{ end }}{{ end }}" {{ if eq $.ParamLimit 10 }} class="current" {{ end }}>10</a>
+        <a href="?page=1&limit=20&order={{ $.ParamOrder }}&order_direction={{ $.ParamOrderDirection }}{{ range $.ObjectFieldNames }}{{ $filterVal := index $.ParamFilterVals . }}{{ $filterOp := index $.ParamFilterOps . }}{{ if ne $filterVal "" }}&filter_val_{{ . }}={{ index $.ParamFilterVals . }}{{ end }}{{ if ne $filterOp "" }}&filter_op_{{ . }}={{ index $.ParamFilterOps . }}{{ end }}{{ end }}" {{ if eq $.ParamLimit 20 }} class="current" {{ end }}>20</a>
+        <a href="?page=1&limit=50&order={{ $.ParamOrder }}&order_direction={{ $.ParamOrderDirection }}{{ range $.ObjectFieldNames }}{{ $filterVal := index $.ParamFilterVals . }}{{ $filterOp := index $.ParamFilterOps . }}{{ if ne $filterVal "" }}&filter_val_{{ . }}={{ index $.ParamFilterVals . }}{{ end }}{{ if ne $filterOp "" }}&filter_op_{{ . }}={{ index $.ParamFilterOps . }}{{ end }}{{ end }}" {{ if eq $.ParamLimit 50 }} class="current" {{ end }}>50</a>
+        <a href="?page=1&limit=100&order={{ $.ParamOrder }}&order_direction={{ $.ParamOrderDirection }}{{ range $.ObjectFieldNames }}{{ $filterVal := index $.ParamFilterVals . }}{{ $filterOp := index $.ParamFilterOps . }}{{ if ne $filterVal "" }}&filter_val_{{ . }}={{ index $.ParamFilterVals . }}{{ end }}{{ if ne $filterOp "" }}&filter_op_{{ . }}={{ index $.ParamFilterOps . }}{{ end }}{{ end }}" {{ if eq $.ParamLimit 100 }} class="current" {{ end }}>100</a>
+        <a href="?page=1&limit=200&order={{ $.ParamOrder }}&order_direction={{ $.ParamOrderDirection }}{{ range $.ObjectFieldNames }}{{ $filterVal := index $.ParamFilterVals . }}{{ $filterOp := index $.ParamFilterOps . }}{{ if ne $filterVal "" }}&filter_val_{{ . }}={{ index $.ParamFilterVals . }}{{ end }}{{ if ne $filterOp "" }}&filter_op_{{ . }}={{ index $.ParamFilterOps . }}{{ end }}{{ end }}" {{ if eq $.ParamLimit 200 }} class="current" {{ end }}>200</a>
+    </div>
+</div>
+<!-- <div class="objects_list_row3">
+    <p>
+        Selection:
+        <button onclick="SelectAll()">Select All</button>
+        <button onclick="DeselectAll()">Deselect All</button>
+        <button onclick="InvertAll()">Invert All</button>
+    </p>
+</div> -->
+
+<table style="width: 100%;" class="objects_list_table">
+    <thead>
+        <tr>
+            <th></th>
+            {{- range .ObjectFieldNames -}}
+            <th>
+                {{ . }}
+                <a href="?page=1&limit={{ $.ParamLimit }}&order={{ . }}&order_direction=asc{{ range $.ObjectFieldNames }}{{ $filterVal := index $.ParamFilterVals . }}{{ $filterOp := index $.ParamFilterOps . }}{{ if ne $filterVal "" }}&filter_val_{{ . }}={{ index $.ParamFilterVals . }}{{ end }}{{ if ne $filterOp "" }}&filter_op_{{ . }}={{ index $.ParamFilterOps . }}{{ end }}{{ end }}" {{ if and (eq $.ParamOrder .) (eq $.ParamOrderDirection "asc") }} class="current" {{ end }}>↑</a>
+                <a href="?page=1&limit={{ $.ParamLimit }}&order={{ . }}&order_direction=desc{{ range $.ObjectFieldNames }}{{ $filterVal := index $.ParamFilterVals . }}{{ $filterOp := index $.ParamFilterOps . }}{{ if ne $filterVal "" }}&filter_val_{{ . }}={{ index $.ParamFilterVals . }}{{ end }}{{ if ne $filterOp "" }}&filter_op_{{ . }}={{ index $.ParamFilterOps . }}{{ end }}{{ end }}" {{ if and (eq $.ParamOrder .) (eq $.ParamOrderDirection "desc") }} class="current" {{ end }}>↓</a>
+            </th>
+            {{- end -}}
+            <th></th>
+        </tr>
+        <tr>
+            <th></th>
+            {{- range .ObjectFieldNames -}}
+            <th>
+                <div style="display: flex; align-items: stretch; gap: 4px;">
+                    <select id="filter_op_{{ . }}" style="padding: 4px; font-size: 12px; background: var(--color-5); color: var(--color-1); border: 0; border-radius: 3px; cursor: pointer; flex-shrink: 0;">
+                        <option value="">--</option>
+                        <option value="eq"{{ if eq (index $.ParamFilterOps .) "eq"}} selected{{ end }}>equals</option>
+                    </select>
+                    <button onclick="ClearFilter('{{ . }}')" style="padding: 4px 6px; font-size: 12px; background: var(--color-5); color: var(--color-1); border: 0; border-radius: 3px; cursor: pointer; flex-shrink: 0;" title="Clear filter">✕
+                    </button>
+                </div>
+                <div>
+                    <input type="text" id="filter_val_{{ . }}" placeholder="" value="{{ index $.ParamFilterVals . }}" style="width: 100%; box-sizing: border-box;">
+                </div>
+            </th>
+            {{- end -}}
+            <th class="object_actions">
+                <button onclick="ApplyFilters('{{ .ParamLimit }}', '{{ .ParamOrder }}', '{{ .ParamOrderDirection }}')">Filter</button>
+                <button onclick="ResetFilters()">Reset</button>
+            </th>
+        </tr>
+
+    </thead>
+    <tbody>
+    {{- range $idx, $obj := .Objects -}}
+    <tr id="object_tr_{{ $obj.ID }}">
+        <td><!-- <input type="checkbox" id="object_select_{{ $obj.ID }}"/> --></td>
+        {{- range $.ObjectFieldNames -}}
+        <td>{{ index $obj . }}</td>
+        {{- end -}}
+        <td class="object_actions">
+            <button onclick="location.href='{{ $.ObjectUpdatePath }}/{{ $obj.ID }}'">Update</button>
+            <button onclick="DeleteObject({{ $obj.ID }})">Delete</button>
+        </td>
+        </tr>
+    {{- end -}}
+    </tbody>
+</table>
