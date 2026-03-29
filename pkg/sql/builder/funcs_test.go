@@ -3,7 +3,7 @@ package builder
 import "testing"
 
 type structFieldValueFromString struct {
-	Int64Field int64
+	Int64Field uint64
 }
 
 func TestStructFieldValueFromString(t *testing.T) {
@@ -14,7 +14,7 @@ func TestStructFieldValueFromString(t *testing.T) {
 		t.Fatal("Failed to parse string value")
 	}
 
-	if value.(int64) != 0 {
+	if value.(uint64) != 0 {
 		t.Fatal("Parsed value is invalid")
 	}
 }
@@ -27,7 +27,7 @@ func TestSetStructFieldValueFromString(t *testing.T) {
 		t.Fatal("Failed to parse string value")
 	}
 
-	if value.(int64) != 8 {
+	if value.(uint64) != 8 {
 		t.Fatal("Parsed value is invalid")
 	}
 }

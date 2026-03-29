@@ -13,13 +13,13 @@ import (
 )
 
 func (h *Handler) handleAPICreateUpdate(ctx context.Context, w http.ResponseWriter, r *http.Request, path, id string) {
-	var idInt int64
+	var idInt uint64
 	var err error
 
 	var obj interface{}
 
 	if id != "" {
-		idInt, err := strconv.ParseInt(id, 10, 64)
+		idInt, err := strconv.ParseUint(id, 10, 64)
 		if err != nil {
 			jsonresp.Write(w, http.StatusBadRequest, &jsonresp.Response{
 				Ok:   true,
@@ -52,8 +52,8 @@ func (h *Handler) handleAPICreateUpdate(ctx context.Context, w http.ResponseWrit
 		return
 	}
 
-	now := time.Now().UTC().Unix()
-	userID := int64(0)
+	now := uint64(time.Now().UTC().Unix())
+	userID := uint64(0)
 
 	err = h.svc.Save(ctx, obj, now, userID)
 	if err != nil {

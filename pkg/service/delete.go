@@ -8,7 +8,7 @@ import (
 	"codeberg.org/mikolajgasior/gocrud/pkg/logger"
 )
 
-func (c *CRUD) Delete(ctx context.Context, path string, id int64) error {
+func (c *CRUD) Delete(ctx context.Context, path string, id uint64) error {
 	logAttrService := logger.AttrService(c, "Delete")
 
 	obj, err := c.Read(ctx, path, id)
@@ -18,7 +18,7 @@ func (c *CRUD) Delete(ctx context.Context, path string, id int64) error {
 
 	err = c.crud.Delete(ctx, obj, structcrud.DeleteOptions{})
 	if err != nil {
-		slog.Error("error deleting", logAttrService, slog.Int64("id", id))
+		slog.Error("error deleting", logAttrService, slog.Uint64("id", id))
 		return err
 	}
 

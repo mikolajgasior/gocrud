@@ -11,7 +11,7 @@ import (
 )
 
 func (h *Handler) handleAPIDelete(ctx context.Context, w http.ResponseWriter, path, id string) {
-	idInt, err := strconv.ParseInt(id, 10, 64)
+	idInt, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
 		jsonresp.Write(w, http.StatusBadRequest, &jsonresp.Response{
 			Ok:   true,

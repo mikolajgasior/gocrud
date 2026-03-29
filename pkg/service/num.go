@@ -11,10 +11,10 @@ import (
 	validator "github.com/mikolajgasior/struct-validator"
 )
 
-func (c *CRUD) Num(ctx context.Context, path string, filterVals, filterOps map[string]string) (int64, error) {
+func (c *CRUD) Num(ctx context.Context, path string, filterVals, filterOps map[string]string) (uint64, error) {
 	logAttrService := logger.AttrService(c, "Num")
 
-	filterViolations := map[string]int{}
+	filterViolations := map[string]uint64{}
 	filters := sqlfilters.Filters{}
 	for name, value := range filterVals {
 		op := sqlfilters.OpEqual

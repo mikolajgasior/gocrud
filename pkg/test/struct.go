@@ -7,8 +7,8 @@ import (
 
 // Test struct for all the tests
 type TestStruct struct {
-	ID             int64
-	Flags          int64
+	ID             uint64
+	Flags          uint64
 	PrimaryEmail   string `crud:"req"`
 	EmailSecondary string `crud:"req email"`
 	FirstName      string `crud:"req len:2,30"`
@@ -19,10 +19,10 @@ type TestStruct struct {
 	PostCode2      string `crud:"len:6" 2db_regexp:"^[0-9]{2}\\-[0-9]{3}$"`
 	Password       string `json:"password"`
 	Key            string `crud:"req uniq len:30,255"`
-	CreatedAt      int64
-	CreatedBy      int64
-	ModifiedAt     int64
-	ModifiedBy     int64
+	CreatedAt      uint64
+	CreatedBy      uint64
+	ModifiedAt     uint64
+	ModifiedBy     uint64
 }
 
 func TestStructWithData() *TestStruct {

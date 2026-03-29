@@ -19,5 +19,5 @@ func IsFieldKindSupported(k reflect.Kind) bool {
 }
 
 func IsFieldModification(name string, typeKind reflect.Kind) bool {
-	return (name == "CreatedAt" || name == "CreatedBy" || name == "ModifiedAt" || name == "ModifiedBy") && typeKind == reflect.Int64
+	return (name == "CreatedAt" || name == "CreatedBy" || name == "ModifiedAt" || name == "ModifiedBy") && typeKind == reflect.Uint64
 }

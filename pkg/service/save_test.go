@@ -12,7 +12,7 @@ func TestSave(t *testing.T) {
 	recreateTestStructTable()
 
 	objSaved := test.TestStructWithData()
-	now := time.Now().UTC().Unix()
+	now := uint64(time.Now().UTC().Unix())
 	err := testService.Save(context.Background(), objSaved, now, 311)
 	if err != nil {
 		t.Fatalf("Save failed to insert struct to the table: %s", err.Error())

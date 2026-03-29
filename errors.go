@@ -16,7 +16,7 @@ func (e *CRUDError) Error() string {
 }
 
 type ValidationError struct {
-	Violations map[string]int
+	Violations map[string]uint64
 }
 
 func (e *ValidationError) Error() string {
@@ -90,7 +90,7 @@ var getValidateObjCRUDError = func(err error) *CRUDError {
 	}
 }
 
-var getObjInvalidCRUDError = func(violations map[string]int) *CRUDError {
+var getObjInvalidCRUDError = func(violations map[string]uint64) *CRUDError {
 	return &CRUDError{
 		Op: "validate object violations",
 		Err: &ValidationError{

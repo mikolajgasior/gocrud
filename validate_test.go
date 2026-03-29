@@ -7,8 +7,8 @@ import (
 )
 
 type ValidationTestStruct struct {
-	ID             int64
-	Flags          int64
+	ID             uint64
+	Flags          uint64
 	PrimaryEmail   string `crud:"req email"`
 	EmailSecondary string `crud:"req email"`
 	FirstName      string `crud:"req len:2,30"`
@@ -18,7 +18,7 @@ type ValidationTestStruct struct {
 	PostCode       string `crud:"req len:6 regexp:^[0-9]{2}\\-[0-9]{3}$"`
 	PostCode2      string `crud:"len:6" crud_regexp:"^[0-9]{2}\\-[0-9]{3}$"`
 	Password       string
-	CreatedBy      int64
+	CreatedBy      uint64
 	Key            string `crud:"req uniq len:30,255"`
 }
 

@@ -90,6 +90,19 @@ func valueFromString(obj interface{}, name string, value string, set bool) (bool
 
 		if field.Name == name {
 			switch kind {
+			case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+				if intRegex.MatchString(value) {
+					v, err := strconv.ParseUint(value, 10, 64)
+					if err == nil {
+						if set {
+							fieldValue := objIndirect.Field(j)
+							if fieldValue.CanSet() {
+								fieldValue.SetUint(v)
+							}
+						}
+						return true, v
+					}
+				}
 			case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 				if intRegex.MatchString(value) {
 					v, err := strconv.ParseInt(value, 10, 64)

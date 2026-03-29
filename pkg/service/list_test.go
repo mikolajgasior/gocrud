@@ -115,6 +115,9 @@ func TestList_WithRowObjTransformFunc(t *testing.T) {
 			if fieldType == reflect.Int || fieldType == reflect.Int64 {
 				out += fmt.Sprintf("%d", elem.Field(j).Int())
 			}
+			if fieldType == reflect.Uint || fieldType == reflect.Uint64 {
+				out += fmt.Sprintf("%d", elem.Field(j).Uint())
+			}
 			out += "</td>"
 		}
 

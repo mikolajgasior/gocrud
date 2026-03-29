@@ -11,7 +11,7 @@ type CRUD struct {
 	builders        map[string]*sqlbuilder.Builder
 	tagName         string
 	tableNamePrefix string
-	flags           int64
+	flags           uint64
 }
 
 func New(db *sql.DB, options Options) *CRUD {
@@ -34,7 +34,7 @@ func New(db *sql.DB, options Options) *CRUD {
 	return crud
 }
 
-func (c *CRUD) SetFlag(flag int64) {
+func (c *CRUD) SetFlag(flag uint64) {
 	if c.flags&flag == 0 {
 		c.flags |= flag
 	}

@@ -19,8 +19,8 @@ func (h *Handler) handleFormCreate(ctx context.Context, path string, userID, use
 
 	obj := h.svc.New(path)
 
-	now := time.Now().UTC().Unix()
-	userIDInt, err := strconv.ParseInt(userID, 10, 64)
+	now := uint64(time.Now().UTC().Unix())
+	userIDInt, err := strconv.ParseUint(userID, 10, 64)
 	if err != nil {
 		errCode := logger.LogError("error converting user id to int", logAttrHandler, logAttrPath, logger.AttrError(err))
 		redirect(w, h.pathPrefix+"/"+path+"/"+pathPartCreate+"?error=unauthorized&error_code="+errCode)

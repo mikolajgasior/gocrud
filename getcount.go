@@ -14,7 +14,7 @@ type GetCountOptions struct {
 }
 
 // GetCount runs a 'SELECT COUNT(*)' query on the database with specified filters, order, limit and offset and returns count of rows
-func (c *CRUD) GetCount(ctx context.Context, obj interface{}, options GetCountOptions) (int64, error) {
+func (c *CRUD) GetCount(ctx context.Context, obj interface{}, options GetCountOptions) (uint64, error) {
 	builder, err := c.builder(obj)
 	if err != nil {
 		return 0, getBuilderObjectCRUDError(err)
@@ -32,14 +32,14 @@ func (c *CRUD) GetCount(ctx context.Context, obj interface{}, options GetCountOp
 
 			valueAsString, ok := filterOpVal.Val.(string)
 			if !ok {
-				return 0, getObjInvalidCRUDError(map[string]int{
+				return 0, getObjInvalidCRUDError(map[string]uint64{
 					filterName: validator.FailType,
 				})
 			}
 
 			ok, valueAsFieldType := sqlbuilder.StructFieldValueFromString(obj, filterName, valueAsString)
 			if !ok {
-				return 0, getObjInvalidCRUDError(map[string]int{
+				return 0, getObjInvalidCRUDError(map[string]uint64{
 					filterName: validator.FailType,
 				})
 			}
@@ -73,7 +73,7 @@ func (c *CRUD) GetCount(ctx context.Context, obj interface{}, options GetCountOp
 	}
 
 	row := c.db.QueryRowContext(ctx, query, sqlfilters.FiltersInterfaces(options.Filters)...)
-	var cnt int64
+	var cnt uint64
 	err = row.Scan(&cnt)
 	if err != nil {
 		return 0, getDBFuncCRUDError("query row scan", err)

@@ -11,7 +11,7 @@ type LoadOptions struct {
 }
 
 func (c *CRUD) Load(ctx context.Context, obj interface{}, id string, options LoadOptions) error {
-	idInt, err := strconv.Atoi(id)
+	idInt, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
 		return getConvertIDToIntCRUDError(err)
 	}
@@ -33,7 +33,7 @@ func (c *CRUD) Load(ctx context.Context, obj interface{}, id string, options Loa
 		query = builder.SelectByID()
 	}
 
-	err = c.db.QueryRowContext(ctx, query, int64(idInt)).Scan(ObjFieldInterfaces(obj, true)...)
+	err = c.db.QueryRowContext(ctx, query, idInt).Scan(ObjFieldInterfaces(obj, true)...)
 	switch {
 	case err == sql.ErrNoRows:
 		ZeroObjFields(obj)

@@ -50,8 +50,9 @@ func TestServe_CreateUpdate(t *testing.T) {
 		t.Fatalf("id value is not a number")
 	}
 
-	if int(idFloat) <= 0 {
-		t.Fatalf("id value is not greater than 0, got %d", int(idFloat))
+	idInt := uint64(idFloat)
+	if idInt <= 0 {
+		t.Fatalf("id value is not greater than 0, got %d", idInt)
 	}
 
 	objSaved := &test.TestStruct{}
@@ -67,7 +68,7 @@ func TestServe_CreateUpdate(t *testing.T) {
 	// Update
 	objJSON = test.TestStructJSON()
 
-	req = httptest.NewRequest(http.MethodPut, fmt.Sprintf("/teststruct/%d", int(idFloat)), bytes.NewReader(objJSON))
+	req = httptest.NewRequest(http.MethodPut, fmt.Sprintf("/teststruct/%d", idInt), bytes.NewReader(objJSON))
 	w = httptest.NewRecorder()
 
 	if w.Code != http.StatusOK {

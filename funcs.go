@@ -34,8 +34,8 @@ func ObjIDInterface(obj interface{}) interface{} {
 	return reflect.ValueOf(obj).Elem().FieldByName(IDField).Addr().Interface()
 }
 
-func ObjIDValue(obj interface{}) int64 {
-	return reflect.ValueOf(obj).Elem().FieldByName(IDField).Int()
+func ObjIDValue(obj interface{}) uint64 {
+	return reflect.ValueOf(obj).Elem().FieldByName(IDField).Uint()
 }
 
 func ObjFieldValue(obj interface{}, fieldName string) interface{} {
@@ -102,7 +102,7 @@ func ZeroObjFields(obj interface{}) {
 			field.SetInt(0)
 		}
 		if kind == reflect.Uint || kind == reflect.Uint8 || kind == reflect.Uint16 || kind == reflect.Uint32 || kind == reflect.Uint64 {
-			field.SetInt(0)
+			field.SetUint(0)
 		}
 		if kind == reflect.Float32 || kind == reflect.Float64 {
 			field.SetFloat(0.0)
@@ -116,14 +116,14 @@ func ZeroObjFields(obj interface{}) {
 	}
 }
 
-func SetObjCreated(obj interface{}, at int64, by int64) {
-	reflect.ValueOf(obj).Elem().FieldByName("CreatedAt").SetInt(at)
-	reflect.ValueOf(obj).Elem().FieldByName("CreatedBy").SetInt(by)
+func SetObjCreated(obj interface{}, at uint64, by uint64) {
+	reflect.ValueOf(obj).Elem().FieldByName("CreatedAt").SetUint(at)
+	reflect.ValueOf(obj).Elem().FieldByName("CreatedBy").SetUint(by)
 }
 
-func SetObjModified(obj interface{}, at int64, by int64) {
-	reflect.ValueOf(obj).Elem().FieldByName("ModifiedAt").SetInt(at)
-	reflect.ValueOf(obj).Elem().FieldByName("ModifiedBy").SetInt(by)
+func SetObjModified(obj interface{}, at uint64, by uint64) {
+	reflect.ValueOf(obj).Elem().FieldByName("ModifiedAt").SetUint(at)
+	reflect.ValueOf(obj).Elem().FieldByName("ModifiedBy").SetUint(by)
 }
 
 func SetObjStringField(obj interface{}, passField, hashField string) {

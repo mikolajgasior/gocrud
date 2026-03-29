@@ -6,65 +6,67 @@ import (
 )
 
 type TestCompany struct {
-	ID            int64
+	ID            uint64
 	Name          string
 	TestEmployees []TestEmployee `crud:"on_del:del del_field:TestCompanyID"`
 }
 
 type TestEmployee struct {
-	ID              int64
+	ID              uint64
 	Name            string
-	TestCompanyID   int64
+	TestCompanyID   uint64
 	TestCreditCards []TestCreditCard `crud:"on_del:del del_field:TestEmployeeID"`
 	TestComments    []TestComment    `crud:"on_del:upd del_field:TestEmployeeID del_upd_field:TestEmployeeID del_upd_val:0"`
 }
 
 type TestComment struct {
-	ID             int64
+	ID             uint64
 	Comment        string
-	TestEmployeeID int64
+	TestEmployeeID uint64
 }
 
 type TestCreditCard struct {
-	ID             int64
+	ID             uint64
 	Number         string
-	TestEmployeeID int64
+	TestEmployeeID uint64
 }
 
 func createTestCascadeDeleteObjects() interface{} {
 	recreateTestDeleteCascadeTables()
 
 	// create two companies
-	i := 1
+	var i uint64 = 1
 
 	company := &TestCompany{
 		Name: "Company",
-		ID:   int64(i),
+		ID:   i,
 	}
 	_ = testCRUD.Save(context.Background(), company, SaveOptions{})
 
 	// create two employees in each company
 	for j := 1; j < 3; j++ {
+		jUint64 := uint64(j)
 		employee := &TestEmployee{
 			Name:          "Employee",
-			ID:            int64(i*10 + j),
-			TestCompanyID: int64(i),
+			ID:            i*10 + jUint64,
+			TestCompanyID: i,
 		}
 		_ = testCRUD.Save(context.Background(), employee, SaveOptions{})
 
 		// create two credit cards and two comments for each employee
 		for k := 1; k < 3; k++ {
+			kUint64 := uint64(k)
 			creditCard := &TestCreditCard{
-				ID:             int64(i*100 + j*10 + k),
+				ID:             i*100 + jUint64*10 + kUint64,
 				Number:         "number",
-				TestEmployeeID: int64(i*10 + j),
+				TestEmployeeID: i*10 + jUint64,
 			}
 			_ = testCRUD.Save(context.Background(), creditCard, SaveOptions{})
 
 			comment := &TestComment{
-				ID:             int64(i*100 + j*10 + k),
+				ID:             i*100 + jUint64*10 + kUint64,
 				Comment:        "comment",
-				TestEmployeeID: int64(i*10 + j),
+				TestEmployeeID: i*10 + jUint64,
 			}
 			_ = testCRUD.Save(context.Background(), comment, SaveOptions{})
 		}

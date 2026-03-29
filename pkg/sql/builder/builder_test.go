@@ -7,8 +7,8 @@ import (
 )
 
 type TestStruct struct {
-	ID             int64  `json:"id"`
-	Flags          int64  `json:"flags"`
+	ID             uint64 `json:"id"`
+	Flags          uint64 `json:"flags"`
 	PrimaryEmail   string `json:"email"`
 	EmailSecondary string `json:"email2"`
 	FirstName      string `json:"first_name"`
@@ -18,12 +18,12 @@ type TestStruct struct {
 	PostCode       string `json:"post_code"`
 	PostCode2      string `json:"post_code2"`
 	Password       string `json:"password"`
-	CreatedBy      int64  `json:"created_by"`
+	CreatedBy      uint64 `json:"created_by"`
 	Key            string `json:"key" sql:"uniq type:varchar(2000)"`
 }
 
 type TestStructWithCustomSelect struct {
-	ID    int64  `json:"id"`
+	ID    uint64 `json:"id"`
 	Name  string `json:"name"`
 	Price int64  `json:"price"`
 }
@@ -33,7 +33,7 @@ func (s *TestStructWithCustomSelect) BuildSelectPrefixQuery(tableNamePrefix stri
 }
 
 type TestStructWithIgnoredFields struct {
-	ID        int64  `json:"id"`
+	ID        uint64 `json:"id"`
 	Name      string `json:"name"`
 	IgnoreMe  string `json:"-" sql:"-"`
 	Price     int64  `json:"price"`

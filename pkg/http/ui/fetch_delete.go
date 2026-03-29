@@ -15,7 +15,7 @@ func (h *Handler) handleFetchDelete(ctx context.Context, path string, id string,
 	logAttrHandler := logger.AttrHandler(h)
 	logAttrPath := logger.AttrPath(r.URL.Path)
 
-	idInt, err := strconv.ParseInt(id, 10, 64)
+	idInt, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
 		jsonresp.Write(w, http.StatusBadRequest, &jsonresp.Response{
 			Ok:   true,

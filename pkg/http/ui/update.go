@@ -20,7 +20,7 @@ func (h *Handler) handleUpdate(ctx context.Context, path string, id string, user
 	logAttrHandler := logger.AttrHandler(h)
 	logAttrPath := logger.AttrPath(r.URL.Path)
 
-	idInt, err := strconv.ParseInt(id, 10, 64)
+	idInt, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
 		errCode := logger.LogError("error converting object id to int", logAttrHandler, logAttrPath, logger.AttrError(err))
 		redirect(w, h.pathPrefix+"/"+path+"/"+pathPartList+"?error=unknown&error_code="+errCode)

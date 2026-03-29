@@ -14,7 +14,7 @@ import (
 func (c *CRUD) List(ctx context.Context, path string, limit, offset int, order, orderDirection string, filterVals, filterOps map[string]string, rowFunc func(interface{}) interface{}) ([]interface{}, error) {
 	logAttrService := logger.AttrService(c, "List")
 
-	filterViolations := map[string]int{}
+	filterViolations := map[string]uint64{}
 	filters := sqlfilters.Filters{}
 	for name, value := range filterVals {
 		op := sqlfilters.OpEqual

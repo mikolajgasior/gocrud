@@ -51,7 +51,7 @@ func (c *CRUD) New(path string) interface{} {
 	return constructor()
 }
 
-func (c *CRUD) ID(obj interface{}) int64 {
+func (c *CRUD) ID(obj interface{}) uint64 {
 	return structcrud.ObjIDValue(obj)
 }
 

@@ -73,7 +73,7 @@ func TestSave_WithModifiedAt(t *testing.T) {
 	objSaved := test.TestStructWithData()
 	err := testCRUD.Save(context.Background(), objSaved, SaveOptions{
 		ModifiedBy: 4,
-		ModifiedAt: time.Now().Unix(),
+		ModifiedAt: uint64(time.Now().Unix()),
 	})
 	if err != nil {
 		t.Fatalf("Save failed to insert struct to the table: %s", err.(*CRUDError).Op)
@@ -94,8 +94,8 @@ func TestSave_WithModifiedAt(t *testing.T) {
 	// Now, update the object in the database
 	objSaved.PrimaryEmail = "primary1@example.com"
 
-	modifiedAt := time.Now().Unix()
-	modifiedBy := int64(5)
+	modifiedAt := uint64(time.Now().Unix())
+	modifiedBy := uint64(5)
 
 	err = testCRUD.Save(context.Background(), objSaved, SaveOptions{
 		ModifiedBy: modifiedBy,

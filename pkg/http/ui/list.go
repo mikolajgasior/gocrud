@@ -94,7 +94,7 @@ func (h *Handler) handleList(ctx context.Context, path string, userID, userName 
 		return
 	}
 
-	pages := int(numObjs) / limit
+	pages := numObjs / uint64(limit)
 	if int(numObjs)%limit != 0 {
 		pages++
 	}
@@ -107,8 +107,8 @@ func (h *Handler) handleList(ctx context.Context, path string, userID, userName 
 		ObjectFetchDeletePath string
 		ObjectListPath        string
 		Objects               []interface{}
-		NumObjects            int64
-		NumPages              int
+		NumObjects            uint64
+		NumPages              uint64
 		ObjectFieldNames      []string
 		ParamLimit            int
 		ParamPage             int

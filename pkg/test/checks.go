@@ -33,8 +33,8 @@ func ObjFieldInterfaces(obj interface{}, includeID bool) []interface{} {
 	return fieldInterfaces
 }
 
-func FatalIfTestStructNotDeletedInTheDatabase(t *testing.T, db *sql.DB, id int64) {
-	var rowCount int64
+func FatalIfTestStructNotDeletedInTheDatabase(t *testing.T, db *sql.DB, id uint64) {
+	var rowCount uint64
 	err := db.QueryRow(fmt.Sprintf("SELECT COUNT(*) AS c FROM test_struct WHERE id = %d", id)).Scan(&rowCount)
 	if err != nil {
 		t.Fatalf("Delete failed to delete struct from the table")

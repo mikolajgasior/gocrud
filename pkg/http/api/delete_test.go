@@ -19,7 +19,7 @@ func TestServe_Delete(t *testing.T) {
 	_ = testCRUD.Save(context.Background(), objSaved, structcrud.SaveOptions{})
 
 	// Delete it
-	req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/teststruct/%d", int(objSaved.ID)), nil)
+	req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/teststruct/%d", objSaved.ID), nil)
 	w := httptest.NewRecorder()
 
 	testHandler.Serve(w, req)
@@ -31,7 +31,7 @@ func TestServe_Delete(t *testing.T) {
 	test.FatalIfTestStructNotDeletedInTheDatabase(t, testDB, objSaved.ID)
 
 	// Try to delete it again - should return NotFound
-	req = httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/teststruct/%d", int(objSaved.ID)), nil)
+	req = httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/teststruct/%d", objSaved.ID), nil)
 	w = httptest.NewRecorder()
 
 	testHandler.Serve(w, req)

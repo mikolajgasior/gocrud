@@ -43,10 +43,10 @@ func (c *CRUD) DeleteMultiple(ctx context.Context, obj interface{}, options Dele
 	}
 	defer rows.Close()
 
-	returnedIDs := []int64{}
+	returnedIDs := []uint64{}
 
 	for rows.Next() {
-		var returnedID int64
+		var returnedID uint64
 		errScan := rows.Scan(&returnedID)
 		if errScan != nil {
 			return getDBFuncCRUDError("rows scan", errScan)

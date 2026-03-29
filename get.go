@@ -37,14 +37,14 @@ func (c *CRUD) Get(ctx context.Context, newObjFunc func() interface{}, options G
 
 			valueAsString, ok := filterOpVal.Val.(string)
 			if !ok {
-				return nil, getObjInvalidCRUDError(map[string]int{
+				return nil, getObjInvalidCRUDError(map[string]uint64{
 					filterName: validator.FailType,
 				})
 			}
 
 			ok, valueAsFieldType := sqlbuilder.StructFieldValueFromString(obj, filterName, valueAsString)
 			if !ok {
-				return nil, getObjInvalidCRUDError(map[string]int{
+				return nil, getObjInvalidCRUDError(map[string]uint64{
 					filterName: validator.FailType,
 				})
 			}

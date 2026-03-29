@@ -48,7 +48,7 @@ func (c *CRUD) builderName(obj interface{}) string {
 	return nameArr[1]
 }
 
-func (c *CRUD) runOnDelete(ctx context.Context, obj interface{}, ids []int64, lastDepth int8) error {
+func (c *CRUD) runOnDelete(ctx context.Context, obj interface{}, ids []uint64, lastDepth int8) error {
 	objValue := reflect.ValueOf(obj)
 	objIndirect := reflect.Indirect(objValue)
 	objType := objIndirect.Type()

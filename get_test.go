@@ -207,6 +207,9 @@ func TestGet_WithRowObjTransformFunc(t *testing.T) {
 				if fieldType == reflect.Int || fieldType == reflect.Int64 {
 					out += fmt.Sprintf("%d", elem.Field(j).Int())
 				}
+				if fieldType == reflect.Uint || fieldType == reflect.Uint64 {
+					out += fmt.Sprintf("%d", elem.Field(j).Uint())
+				}
 				out += "</td>"
 			}
 
@@ -221,6 +224,7 @@ func TestGet_WithRowObjTransformFunc(t *testing.T) {
 	if len(testCustomList) != 2 {
 		t.Fatalf("Get with transform func returned invalid number of objects, wanted %d got %d", 2, len(testCustomList))
 	}
+
 	// One of the columns is a random number so testing just the beginning
 	if !strings.HasPrefix(testCustomList[0].(string), "<tr><td>1</td><td>primary@example.com</td>") || !strings.HasPrefix(testCustomList[1].(string), "<tr><td>2</td><td>primary@example.com</td>") {
 		t.Fatalf("Get with transform func returned invalid objects")

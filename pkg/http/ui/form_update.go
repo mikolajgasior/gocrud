@@ -17,7 +17,7 @@ func (h *Handler) handleFormUpdate(ctx context.Context, path string, id string, 
 	logAttrHandler := logger.AttrHandler(h)
 	logAttrPath := logger.AttrPath(r.URL.Path)
 
-	idInt, err := strconv.ParseInt(id, 10, 64)
+	idInt, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
 		errCode := logger.LogError("error converting object id to int", logAttrHandler, logAttrPath, logger.AttrError(err))
 		redirect(w, h.pathPrefix+"/"+path+"/"+pathPartList+"?error=unknown&error_code="+errCode)
@@ -36,8 +36,8 @@ func (h *Handler) handleFormUpdate(ctx context.Context, path string, id string, 
 		return
 	}
 
-	now := time.Now().UTC().Unix()
-	userIDInt, err := strconv.ParseInt(userID, 10, 64)
+	now := uint64(time.Now().UTC().Unix())
+	userIDInt, err := strconv.ParseUint(userID, 10, 64)
 	if err != nil {
 		errCode := logger.LogError("error converting user id to int", logAttrHandler, logAttrPath, logger.AttrError(err))
 		redirect(w, h.pathPrefix+"/"+path+"/"+pathPartUpdate+"/"+id+"?error=unauthorized&error_code="+errCode)

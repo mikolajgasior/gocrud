@@ -9,7 +9,7 @@ import (
 	"codeberg.org/mikolajgasior/gocrud/pkg/logger"
 )
 
-func (c *CRUD) Read(ctx context.Context, path string, id int64) (interface{}, error) {
+func (c *CRUD) Read(ctx context.Context, path string, id uint64) (interface{}, error) {
 	logAttrService := logger.AttrService(c, "Read")
 
 	constructor, ok := c.paths[path]
@@ -26,7 +26,7 @@ func (c *CRUD) Read(ctx context.Context, path string, id int64) (interface{}, er
 
 	objID := structcrud.ObjIDValue(obj)
 	if objID == 0 {
-		slog.Error("error not found", logAttrService, slog.Int64("id", objID))
+		slog.Error("error not found", logAttrService, slog.Uint64("id", objID))
 		return nil, NotFoundError
 	}
 

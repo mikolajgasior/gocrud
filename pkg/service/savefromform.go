@@ -12,10 +12,10 @@ import (
 	validator "github.com/mikolajgasior/struct-validator"
 )
 
-func (c *CRUD) SaveFromForm(ctx context.Context, obj interface{}, values url.Values, namePrefix string, now, userID int64) error {
+func (c *CRUD) SaveFromForm(ctx context.Context, obj interface{}, values url.Values, namePrefix string, now, userID uint64) error {
 	logAttrService := logger.AttrService(c, "SaveFromForm")
 
-	fieldViolations := map[string]int{}
+	fieldViolations := map[string]uint64{}
 	for key, value := range values {
 		name := strings.Replace(key, namePrefix, "", 1)
 

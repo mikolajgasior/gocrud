@@ -5,7 +5,7 @@ import (
 	validator "github.com/mikolajgasior/struct-validator"
 )
 
-func Validate(obj interface{}, restrictFields map[string]bool, tagName string) (bool, map[string]int, error) {
+func Validate(obj interface{}, restrictFields map[string]bool, tagName string) (bool, map[string]uint64, error) {
 	ok, violations, err := validator.Validate(obj, &validator.ValidateOptions{
 		RestrictFields: restrictFields,
 		TagName:        tagName,
