@@ -19,9 +19,9 @@ type TestStruct struct {
 	PostCode2      string `crud:"len:6" 2db_regexp:"^[0-9]{2}\\-[0-9]{3}$"`
 	Password       string `json:"password"`
 	Key            string `crud:"req uniq len:30,255"`
-	CreatedAt      uint64
+	CreatedAt      int64
 	CreatedBy      uint64
-	ModifiedAt     uint64
+	ModifiedAt     int64
 	ModifiedBy     uint64
 }
 

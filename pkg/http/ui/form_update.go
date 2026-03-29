@@ -36,7 +36,7 @@ func (h *Handler) handleFormUpdate(ctx context.Context, path string, id string, 
 		return
 	}
 
-	now := uint64(time.Now().UTC().Unix())
+	now := time.Now().UTC().Unix()
 	userIDInt, err := strconv.ParseUint(userID, 10, 64)
 	if err != nil {
 		errCode := logger.LogError("error converting user id to int", logAttrHandler, logAttrPath, logger.AttrError(err))

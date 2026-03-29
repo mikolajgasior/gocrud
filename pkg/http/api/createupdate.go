@@ -52,7 +52,7 @@ func (h *Handler) handleAPICreateUpdate(ctx context.Context, w http.ResponseWrit
 		return
 	}
 
-	now := uint64(time.Now().UTC().Unix())
+	now := time.Now().UTC().Unix()
 	userID := uint64(0)
 
 	err = h.svc.Save(ctx, obj, now, userID)

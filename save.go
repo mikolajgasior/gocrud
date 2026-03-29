@@ -12,7 +12,7 @@ import (
 type SaveOptions struct {
 	NoInsert   bool
 	ModifiedBy uint64
-	ModifiedAt uint64
+	ModifiedAt int64
 }
 
 // Save takes an object, validates its field values, and saves it in the database.

@@ -12,7 +12,7 @@ import (
 	validator "github.com/mikolajgasior/struct-validator"
 )
 
-func (c *CRUD) SaveFromForm(ctx context.Context, obj interface{}, values url.Values, namePrefix string, now, userID uint64) error {
+func (c *CRUD) SaveFromForm(ctx context.Context, obj interface{}, values url.Values, namePrefix string, now int64, userID uint64) error {
 	logAttrService := logger.AttrService(c, "SaveFromForm")
 
 	fieldViolations := map[string]uint64{}

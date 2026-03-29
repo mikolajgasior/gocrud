@@ -9,7 +9,7 @@ import (
 	"codeberg.org/mikolajgasior/gocrud/pkg/logger"
 )
 
-func (c *CRUD) Save(ctx context.Context, obj interface{}, now, userID uint64) error {
+func (c *CRUD) Save(ctx context.Context, obj interface{}, now int64, userID uint64) error {
 	logAttrService := logger.AttrService(c, "Save")
 
 	err := c.crud.Save(ctx, obj, structcrud.SaveOptions{

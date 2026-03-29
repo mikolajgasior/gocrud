@@ -14,7 +14,7 @@ func TestSaveFromForm(t *testing.T) {
 	objSaved := &test.TestStruct{}
 	urlValues := test.TestStructURLValues()
 	prefix := "prefix"
-	now := uint64(time.Now().UTC().Unix())
+	now := time.Now().UTC().Unix()
 	err := testService.SaveFromForm(context.Background(), objSaved, urlValues, prefix, now, 311)
 	if err != nil {
 		t.Fatalf("Save failed to insert struct to the table: %s", err.Error())
