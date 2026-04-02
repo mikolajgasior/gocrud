@@ -1,0 +1,32 @@
+site_name: gocrud
+site_url: https://codeberg.org/mikolajgasior/gocrud
+theme:
+  icon:
+    repo: fontawesome/brands/github
+  name: material
+  palette:
+    scheme: slate
+    primary: teal
+    accent: red
+nav:
+  - Overview: index.md
+  - Demo: demo.md
+  - Struct definition: struct.md
+  - CRUD object:
+    - Initialization: crud/init.md
+    - Operations: crud/ops.md
+    - More operations: crud/more-ops.md
+  - Helper functions: helper-functions.md
+  - Additional packages:
+    - Service: pkgs/service.md
+    - HTTP handlers: pkgs/http.md
+    - HTML elements: pkgs/ui.md
+    - SQL builder: sql-builder.md
+  - Development: development.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://codeberg.org/mikolajgasior/gocrud
+
+copyright: Copyright &copy; 2024-2026 Mikołaj Gąsior
