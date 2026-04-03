@@ -12,8 +12,8 @@ import (
 	"syscall"
 	"time"
 
+	"codeberg.org/mikolajgasior/gocrud/internal/poc/module"
 	"codeberg.org/mikolajgasior/gocrud/pkg/logger"
-	"codeberg.org/mikolajgasior/gocrud/pkg/poc/module"
 )
 
 const (

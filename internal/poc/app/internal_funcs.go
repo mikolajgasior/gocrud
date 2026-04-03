@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"time"
 
+	"codeberg.org/mikolajgasior/gocrud/internal/poc/dbconn"
 	"codeberg.org/mikolajgasior/gocrud/pkg/logger"
-	"codeberg.org/mikolajgasior/gocrud/pkg/poc/dbconn"
 )
 
 func portFromEnvOrExit() string {

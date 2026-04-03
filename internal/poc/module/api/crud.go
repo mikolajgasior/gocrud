@@ -6,11 +6,11 @@ import (
 	"net/http"
 	"strings"
 
+	"codeberg.org/mikolajgasior/gocrud/internal/poc/handler"
+	"codeberg.org/mikolajgasior/gocrud/internal/poc/module"
 	handcrudapi "codeberg.org/mikolajgasior/gocrud/pkg/http/api"
 	"codeberg.org/mikolajgasior/gocrud/pkg/http/cors"
 	"codeberg.org/mikolajgasior/gocrud/pkg/logger"
-	"codeberg.org/mikolajgasior/gocrud/pkg/poc/handler"
-	"codeberg.org/mikolajgasior/gocrud/pkg/poc/module"
 	svccrud "codeberg.org/mikolajgasior/gocrud/pkg/service"
 )
 
