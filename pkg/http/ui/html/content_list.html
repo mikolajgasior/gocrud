@@ -80,8 +80,7 @@
 <div class="objects_list_row2">
     <div>
         Page:
-        {{ range $i := .NumPages }}
-        {{ $page := add $i 1 }}
+        {{ range $page := .PagesList }}
         <a href="?page={{ $page }}&limit={{ $.ParamLimit }}&order={{ $.ParamOrder }}&order_direction={{ $.ParamOrderDirection }}{{ range $.ObjectFieldNames }}{{ $filterVal := index $.ParamFilterVals . }}{{ $filterOp := index $.ParamFilterOps . }}{{ if ne $filterVal "" }}&filter_val_{{ . }}={{ index $.ParamFilterVals . }}{{ end }}{{ if ne $filterOp "" }}&filter_op_{{ . }}={{ index $.ParamFilterOps . }}{{ end }}{{ end }}" {{ if eq $.ParamPage $page }} class="current" {{ end }}>{{
             $page }}</a>
         {{ end }}

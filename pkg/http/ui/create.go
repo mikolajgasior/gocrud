@@ -70,7 +70,7 @@ func (h *Handler) handleCreate(ctx context.Context, path string, userID, userNam
 	}
 
 	buf := &bytes.Buffer{}
-	t := texttemplate.Must(texttemplate.New("login").Parse(string(objectTemplate)))
+	t := texttemplate.Must(texttemplate.New("create").Parse(string(objectTemplate)))
 	err = t.Execute(buf, &tplObj)
 	if err != nil {
 		errCode := logger.LogError("error executing template for object create", logAttrHandler, logAttrPath, logger.AttrError(err))

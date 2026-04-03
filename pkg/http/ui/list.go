@@ -88,7 +88,7 @@ func (h *Handler) handleList(ctx context.Context, path string, userID, userName 
 
 	numObjs, err := h.svc.Num(ctx, path, filterVals, filterOps)
 	if err != nil {
-		// Filters are the same as above so we're assuming that they are valid
+		// Filters are the same as above, so we're assuming that they are valid
 		errCode := logger.LogError("error with service getting num of objs", logAttrHandler, logAttrPath, logger.AttrError(err))
 		redirect(w, pathHome+"?error=unknown&error_code="+errCode)
 		return
@@ -97,6 +97,11 @@ func (h *Handler) handleList(ctx context.Context, path string, userID, userName 
 	pages := numObjs / uint64(limit)
 	if int(numObjs)%limit != 0 {
 		pages++
+	}
+
+	pagesList := make([]uint64, pages)
+	for i := range pages {
+		pagesList[i] = i + 1 // 1-indexed pages
 	}
 
 	objectTemplate, _ := embed.FS.ReadFile(h.embedHTML, "html/content_list.html")
@@ -109,6 +114,7 @@ func (h *Handler) handleList(ctx context.Context, path string, userID, userName 
 		Objects               []interface{}
 		NumObjects            uint64
 		NumPages              uint64
+		PagesList             []uint64
 		ObjectFieldNames      []string
 		ParamLimit            int
 		ParamPage             int
@@ -124,6 +130,7 @@ func (h *Handler) handleList(ctx context.Context, path string, userID, userName 
 		Objects:               objs,
 		NumObjects:            numObjs,
 		NumPages:              pages,
+		PagesList:             pagesList,
 		ObjectFieldNames:      fieldNames,
 		ParamLimit:            limit,
 		ParamPage:             page,
@@ -134,11 +141,7 @@ func (h *Handler) handleList(ctx context.Context, path string, userID, userName 
 	}
 
 	buf := &bytes.Buffer{}
-	t := htmltemplate.Must(htmltemplate.New("login").Funcs(htmltemplate.FuncMap{
-		"add": func(a, b int) int {
-			return a + b
-		},
-	}).Parse(string(objectTemplate)))
+	t := htmltemplate.Must(htmltemplate.New("list").Parse(string(objectTemplate)))
 	err = t.Execute(buf, &tplObj)
 	if err != nil {
 		errCode := logger.LogError("error executing template for object list", logAttrHandler, logAttrPath, logger.AttrError(err))

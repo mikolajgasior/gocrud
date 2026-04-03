@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"codeberg.org/mikolajgasior/gocrud/internal/poc/handler"
+	"codeberg.org/mikolajgasior/gocrud/internal/poc/layout"
 	"codeberg.org/mikolajgasior/gocrud/internal/poc/module"
 	handcrudapi "codeberg.org/mikolajgasior/gocrud/pkg/http/api"
 	"codeberg.org/mikolajgasior/gocrud/pkg/http/cors"
@@ -48,4 +49,8 @@ func (a *API) Init(ctx context.Context, input module.InitInput) error {
 
 func (a *API) AddHandler(serveMux *http.ServeMux) {
 	handler.AddHandler(serveMux, "/v0/crudapi", a.handler)
+}
+
+func (a *API) Sitemap() *layout.Sitemap {
+	return nil
 }

@@ -2,7 +2,6 @@ package ui
 
 import (
 	"embed"
-	"fmt"
 	"net/http"
 	"reflect"
 	"regexp"
@@ -38,10 +37,6 @@ const (
 )
 
 type ContextValue string
-
-const (
-	CtxValueUserID = "LoggedUserID"
-)
 
 var (
 	pathCreateRegexp      = regexp.MustCompile("^" + pathPartCreate + "[/]{0,1}$")
@@ -100,18 +95,6 @@ func New(input HandlerInput) *Handler {
 func redirect(w http.ResponseWriter, urlPath string) {
 	w.Header().Set("Location", urlPath)
 	w.WriteHeader(http.StatusSeeOther)
-}
-
-func requestUser(r *http.Request) (string, string) {
-	ctxID := r.Context().Value(ContextValue(CtxValueUserID))
-
-	userID := "0"
-	if ctxID != nil {
-		userID = fmt.Sprintf("%d", ctxID)
-	}
-	userName := ""
-
-	return userID, userName
 }
 
 func structName(obj interface{}) string {

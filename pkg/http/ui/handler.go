@@ -1,22 +1,20 @@
 package ui
 
 import (
-	"codeberg.org/mikolajgasior/gocrud/pkg/http/urlpath"
-	"codeberg.org/mikolajgasior/gocrud/pkg/logger"
 	"log/slog"
 	"net/http"
 	"strings"
+
+	"codeberg.org/mikolajgasior/gocrud/pkg/http/urlpath"
+	"codeberg.org/mikolajgasior/gocrud/pkg/logger"
 )
 
 func (h *Handler) Handler(w http.ResponseWriter, r *http.Request) {
 	logAttrHandler := logger.AttrHandler(h)
 	logAttrPath := logger.AttrPath(r.URL.Path)
 
-	userID, userName := requestUser(r)
-
-	if userID == "" || userID == "0" {
-		redirect(w, pathLogin)
-	}
+	userID := "1"
+	userName := "nameless"
 
 	foundPath := ""
 	actionPath := ""
