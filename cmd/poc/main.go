@@ -6,7 +6,9 @@ import (
 
 	"codeberg.org/mikolajgasior/gocrud/internal/poc/app"
 	"codeberg.org/mikolajgasior/gocrud/internal/poc/layout"
-	modelpage "codeberg.org/mikolajgasior/gocrud/internal/poc/model/page"
+	modelrestaurant "codeberg.org/mikolajgasior/gocrud/internal/poc/model/restaurant"
+	modeltask "codeberg.org/mikolajgasior/gocrud/internal/poc/model/task"
+	modelwarehouse "codeberg.org/mikolajgasior/gocrud/internal/poc/model/warehouse"
 	"codeberg.org/mikolajgasior/gocrud/internal/poc/module"
 	modapi "codeberg.org/mikolajgasior/gocrud/internal/poc/module/api"
 	modhome "codeberg.org/mikolajgasior/gocrud/internal/poc/module/home"
@@ -22,39 +24,72 @@ func main() {
 		HTML: embedHTML,
 	}
 
-	apiModule := &modapi.API{
-		Paths: map[string]func() interface{}{
-			"pages": func() interface{} {
-				return &modelpage.Page{}
-			},
-			"rows": func() interface{} {
-				return &modelpage.Row{}
-			},
-			"cols": func() interface{} {
-				return &modelpage.Col{}
-			},
-			"elements": func() interface{} {
-				return &modelpage.Element{}
-			},
+	paths := map[string]func() interface{}{
+		// Warehouse Module
+		"warehouse/suppliers": func() interface{} {
+			return &modelwarehouse.Supplier{}
 		},
+		"warehouse/products": func() interface{} {
+			return &modelwarehouse.Product{}
+		},
+		"warehouse/categories": func() interface{} {
+			return &modelwarehouse.Category{}
+		},
+		"warehouse/warehouses": func() interface{} {
+			return &modelwarehouse.Warehouse{}
+		},
+		"warehouse/stock_movements": func() interface{} {
+			return &modelwarehouse.StockMovement{}
+		},
+		"warehouse/purchase_orders": func() interface{} {
+			return &modelwarehouse.PurchaseOrder{}
+		},
+
+		// Restaurant Module
+		"restaurant/menu_items": func() interface{} {
+			return &modelrestaurant.MenuItem{}
+		},
+		"restaurant/categories": func() interface{} {
+			return &modelrestaurant.Category{}
+		},
+		"restaurant/tables": func() interface{} {
+			return &modelrestaurant.Table{}
+		},
+		"restaurant/orders": func() interface{} {
+			return &modelrestaurant.Order{}
+		},
+		"restaurant/order_items": func() interface{} {
+			return &modelrestaurant.OrderItem{}
+		},
+		"restaurant/staff": func() interface{} {
+			return &modelrestaurant.Staff{}
+		},
+
+		// Task Management Module
+		"task/projects": func() interface{} {
+			return &modeltask.Project{}
+		},
+		"task/tasks": func() interface{} {
+			return &modeltask.Task{}
+		},
+		"task/users": func() interface{} {
+			return &modeltask.User{}
+		},
+		"task/comments": func() interface{} {
+			return &modeltask.Comment{}
+		},
+		"task/attachments": func() interface{} {
+			return &modeltask.Attachment{}
+		},
+	}
+
+	apiModule := &modapi.API{
+		Paths: paths,
 	}
 
 	uiModule := &modui.UI{
 		Layout: layout,
-		Paths: map[string]func() interface{}{
-			"pages": func() interface{} {
-				return &modelpage.Page{}
-			},
-			"rows": func() interface{} {
-				return &modelpage.Row{}
-			},
-			"cols": func() interface{} {
-				return &modelpage.Col{}
-			},
-			"elements": func() interface{} {
-				return &modelpage.Element{}
-			},
-		},
+		Paths:  paths,
 	}
 
 	homeModule := &modhome.UI{

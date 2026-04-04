@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Midnight.frontend</title>
+    <style>
+        {{ .ConfigCSS }}
+
+        {{ .StylesCSS }}
+    </style>
+</head>
+<body>
+<header id="header">
+    <div class="title">Midnight.frontend</div>
+    <div class="login">
+        {{ range $idx, $page := .Pages }}
+        {{ if or (eq $page.Auth $.PageAuthorizedAndUnauthorized) (and (eq $.UserID "0") (eq $page.Auth $.PageUnauthorizedOnly)) (and (ne $.UserID "0") (eq $page.Auth $.PageAuthorizedOnly)) }}
+        <button onclick="location.href='{{ $page.Path }}'">{{ $page.Title }}</button>
+        {{ end }}
+        {{ end }}
+    </div>
+</header>
+<main id="main">{{ .Content }}</main>
+</body>
+</html>
