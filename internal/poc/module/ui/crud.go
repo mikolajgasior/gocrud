@@ -19,9 +19,10 @@ const (
 )
 
 type UI struct {
-	Layout  *layout.Layout
-	Paths   map[string]func() interface{}
-	handler http.HandlerFunc
+	Layout   *layout.Layout
+	Paths    map[string]func() interface{}
+	XSitemap map[string]map[string]string
+	handler  http.HandlerFunc
 }
 
 func (u *UI) Init(ctx context.Context, input module.InitInput) error {
@@ -51,7 +52,8 @@ func (u *UI) AddHandler(serveMux *http.ServeMux) {
 
 func (u *UI) Sitemap() *layout.Sitemap {
 	sitemap := &layout.Sitemap{
-		Pages: make(map[string]*layout.Page, len(u.Paths)),
+		Pages:       make(map[string]*layout.Page, len(u.Paths)),
+		XPageGroups: make([]*layout.XPageGroup, len(u.XSitemap)),
 	}
 
 	for path := range u.Paths {
@@ -60,6 +62,24 @@ func (u *UI) Sitemap() *layout.Sitemap {
 			Title: path,
 			Auth:  layout.AuthorizedOnly,
 		}
+	}
+
+	for groupTitle, pages := range u.XSitemap {
+		pageGroup := &layout.XPageGroup{
+			Title: groupTitle,
+			Pages: make([]*layout.Page, len(pages)),
+		}
+
+		for pageTitle, pagePath := range pages {
+			page := &layout.Page{
+				Path:  uriCrudUi + "/" + pagePath + "/list",
+				Title: pageTitle,
+				Auth:  layout.AuthorizedOnly,
+			}
+			pageGroup.Pages = append(pageGroup.Pages, page)
+		}
+
+		sitemap.XPageGroups = append(sitemap.XPageGroups, pageGroup)
 	}
 
 	return sitemap

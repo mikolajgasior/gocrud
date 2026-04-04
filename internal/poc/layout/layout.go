@@ -5,6 +5,7 @@ import (
 	"embed"
 	"errors"
 	"fmt"
+	"log"
 	"log/slog"
 	"sort"
 	"text/template"
@@ -26,6 +27,8 @@ func (l *Layout) Render(uri string, userID, userName string, content string) ([]
 	// path, title, path, title, ..
 	var pages []*Page
 
+	var xpageGroups []*XPageGroup
+
 	for _, sitemap := range l.sitemaps {
 		sortedPageKeys := []string{}
 		for page := range sitemap.Pages {
@@ -36,8 +39,12 @@ func (l *Layout) Render(uri string, userID, userName string, content string) ([]
 		for _, page := range sortedPageKeys {
 			pages = append(pages, sitemap.Pages[page])
 		}
-	}
 
+		if len(sitemap.XPageGroups) > 0 {
+			xpageGroups = append(xpageGroups, sitemap.XPageGroups...)
+		}
+	}
+	log.Printf("xpageGroups: %v\n", xpageGroups)
 	tplObj := struct {
 		URI                           string
 		ConfigCSS                     string
@@ -49,6 +56,7 @@ func (l *Layout) Render(uri string, userID, userName string, content string) ([]
 		PageAuthorizedAndUnauthorized int
 		PageAuthorizedOnly            int
 		PageUnauthorizedOnly          int
+		XPageGroups                   []*XPageGroup
 	}{
 		URI:                           uri,
 		ConfigCSS:                     string(configCss),
@@ -60,6 +68,7 @@ func (l *Layout) Render(uri string, userID, userName string, content string) ([]
 		PageAuthorizedAndUnauthorized: AuthorizedAndUnauthorized,
 		PageAuthorizedOnly:            AuthorizedOnly,
 		PageUnauthorizedOnly:          UnauthorizedOnly,
+		XPageGroups:                   xpageGroups,
 	}
 
 	buf := &bytes.Buffer{}

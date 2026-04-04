@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Midnight.frontend</title>
+    <title>gocrud - proof of concept</title>
     <style>
         {{ .ConfigCSS }}
 
@@ -12,7 +12,7 @@
 </head>
 <body>
 <header id="header">
-    <div class="title">Midnight.frontend</div>
+    <div class="title">gocrud PoC</div>
     <div class="login">
         {{ range $idx, $page := .Pages }}
         {{ if or (eq $page.Auth $.PageAuthorizedAndUnauthorized) (and (eq $.UserID "0") (eq $page.Auth $.PageUnauthorizedOnly)) (and (ne $.UserID "0") (eq $page.Auth $.PageAuthorizedOnly)) }}

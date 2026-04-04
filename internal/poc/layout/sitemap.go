@@ -1,5 +1,6 @@
 package layout
 
 type Sitemap struct {
-	Pages map[string]*Page
+	Pages       map[string]*Page
+	XPageGroups []*XPageGroup
 }

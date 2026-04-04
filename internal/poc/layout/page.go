@@ -11,3 +11,8 @@ type Page struct {
 	Title string
 	Auth  int
 }
+
+type XPageGroup struct {
+	Title string
+	Pages []*Page
+}

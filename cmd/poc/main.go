@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"embed"
 
 	"codeberg.org/mikolajgasior/gocrud/internal/poc/app"
 	"codeberg.org/mikolajgasior/gocrud/internal/poc/layout"
@@ -15,14 +14,9 @@ import (
 	modui "codeberg.org/mikolajgasior/gocrud/internal/poc/module/ui"
 )
 
-//go:embed html
-var embedHTML embed.FS
-
 func main() {
 
-	layout := &layout.Layout{
-		HTML: embedHTML,
-	}
+	layoutInstance := &layout.Layout{}
 
 	paths := map[string]func() interface{}{
 		// Warehouse Module
@@ -88,22 +82,47 @@ func main() {
 	}
 
 	uiModule := &modui.UI{
-		Layout: layout,
+		Layout: layoutInstance,
 		Paths:  paths,
+		XSitemap: map[string]map[string]string{
+			"Warehouse": {
+				"Suppliers":       "suppliers",
+				"Products":        "products",
+				"Categories":      "categories",
+				"Warehouses":      "warehouses",
+				"Stock Movements": "stock_movements",
+				"Purchase Orders": "purchase_orders",
+			},
+			"Restaurant": {
+				"Menu Items":  "menu_items",
+				"Categories":  "categories",
+				"Tables":      "tables",
+				"Orders":      "orders",
+				"Order Items": "order_items",
+				"Staff":       "staff",
+			},
+			"Task": {
+				"Projects":    "projects",
+				"Tasks":       "tasks",
+				"Users":       "users",
+				"Comments":    "comments",
+				"Attachments": "attachments",
+			},
+		},
 	}
 
 	homeModule := &modhome.UI{
-		Layout: layout,
+		Layout: layoutInstance,
 	}
 
 	uiSitemap := uiModule.Sitemap()
 	if uiSitemap != nil {
-		layout.AddSitemap(uiSitemap)
+		layoutInstance.AddSitemap(uiSitemap)
 	}
 
 	homeSitemap := homeModule.Sitemap()
 	if homeSitemap != nil {
-		layout.AddSitemap(homeSitemap)
+		layoutInstance.AddSitemap(homeSitemap)
 	}
 
 	var appObj = app.App{
