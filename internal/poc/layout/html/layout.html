@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>gocrud - proof of concept</title>
+    <style>
+        {{ .StyleCSS }}
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="/" class="logo">gocrud</a>
+    <ul class="nav-links">
+        {{ range $idx, $xPageGroup := .XPageGroups }}
+
+        <li class="nav-dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ $xPageGroup.Title }} ▾</a>
+            <ul class="dropdown-menu">
+
+                {{ range $idx2, $page := $xPageGroup.Pages }}
+
+                {{ if or (eq $page.Auth $.PageAuthorizedAndUnauthorized) (and (eq $.UserID "0") (eq $page.Auth $.PageUnauthorizedOnly)) (and (ne $.UserID "0") (eq $page.Auth $.PageAuthorizedOnly)) }}
+                <li><a href="{{ $page.Path }}">{{ $page.Title }}</a></li>
+                {{ end }}
+
+                {{ end }}
+            </ul>
+        </li>
+
+        {{ end }}
+    </ul>
+    <a href="#" class="btn-signin">Sign In</a>
+</nav>
+
+<main>{{ .Content }}</main>
+
+<!-- External JS -->
+<script>{{ .ScriptJS }}</script>
+</body>
+</html>

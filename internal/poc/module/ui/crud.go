@@ -53,7 +53,7 @@ func (u *UI) AddHandler(serveMux *http.ServeMux) {
 func (u *UI) Sitemap() *layout.Sitemap {
 	sitemap := &layout.Sitemap{
 		Pages:       make(map[string]*layout.Page, len(u.Paths)),
-		XPageGroups: make([]*layout.XPageGroup, len(u.XSitemap)),
+		XPageGroups: make([]*layout.XPageGroup, 0, len(u.XSitemap)),
 	}
 
 	for path := range u.Paths {
@@ -67,7 +67,7 @@ func (u *UI) Sitemap() *layout.Sitemap {
 	for groupTitle, pages := range u.XSitemap {
 		pageGroup := &layout.XPageGroup{
 			Title: groupTitle,
-			Pages: make([]*layout.Page, len(pages)),
+			Pages: make([]*layout.Page, 0, len(pages)),
 		}
 
 		for pageTitle, pagePath := range pages {

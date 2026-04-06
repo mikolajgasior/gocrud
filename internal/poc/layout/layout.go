@@ -5,9 +5,7 @@ import (
 	"embed"
 	"errors"
 	"fmt"
-	"log"
 	"log/slog"
-	"sort"
 	"text/template"
 
 	"codeberg.org/mikolajgasior/gocrud/pkg/logger"
@@ -15,43 +13,31 @@ import (
 
 var ExecuteTemplateError = errors.New("error executing template")
 
+//go:embed html
+var embedHTML embed.FS
+
 type Layout struct {
-	HTML     embed.FS
 	sitemaps []*Sitemap
 }
 
 func (l *Layout) Render(uri string, userID, userName string, content string) ([]byte, error) {
-	configCss, stylesCss := l.css()
+	styleCSS, scriptJS := l.assets()
 	pageHTMLTemplate := l.pageHTML("layout")
-
-	// path, title, path, title, ..
-	var pages []*Page
 
 	var xpageGroups []*XPageGroup
 
 	for _, sitemap := range l.sitemaps {
-		sortedPageKeys := []string{}
-		for page := range sitemap.Pages {
-			sortedPageKeys = append(sortedPageKeys, page)
-		}
-		sort.Strings(sortedPageKeys)
-
-		for _, page := range sortedPageKeys {
-			pages = append(pages, sitemap.Pages[page])
-		}
-
 		if len(sitemap.XPageGroups) > 0 {
 			xpageGroups = append(xpageGroups, sitemap.XPageGroups...)
 		}
 	}
-	log.Printf("xpageGroups: %v\n", xpageGroups)
+
 	tplObj := struct {
 		URI                           string
-		ConfigCSS                     string
-		StylesCSS                     string
+		StyleCSS                      string
+		ScriptJS                      string
 		Username                      string
 		UserID                        string
-		Pages                         []*Page
 		Content                       string
 		PageAuthorizedAndUnauthorized int
 		PageAuthorizedOnly            int
@@ -59,11 +45,10 @@ func (l *Layout) Render(uri string, userID, userName string, content string) ([]
 		XPageGroups                   []*XPageGroup
 	}{
 		URI:                           uri,
-		ConfigCSS:                     string(configCss),
-		StylesCSS:                     string(stylesCss),
+		StyleCSS:                      string(styleCSS),
+		ScriptJS:                      string(scriptJS),
 		Username:                      userName,
 		UserID:                        userID,
-		Pages:                         pages,
 		Content:                       content,
 		PageAuthorizedAndUnauthorized: AuthorizedAndUnauthorized,
 		PageAuthorizedOnly:            AuthorizedOnly,
@@ -86,15 +71,15 @@ func (l *Layout) AddSitemap(sitemap *Sitemap) {
 	l.sitemaps = append(l.sitemaps, sitemap)
 }
 
-func (l *Layout) css() ([]byte, []byte) {
-	configCSS, _ := embed.FS.ReadFile(l.HTML, "html/config.css")
-	stylesCSS, _ := embed.FS.ReadFile(l.HTML, "html/styles.css")
+func (l *Layout) assets() ([]byte, []byte) {
+	scriptJS, _ := embed.FS.ReadFile(embedHTML, "html/script.js")
+	styleCSS, _ := embed.FS.ReadFile(embedHTML, "html/style.css")
 
-	return configCSS, stylesCSS
+	return styleCSS, scriptJS
 }
 
 func (l *Layout) pageHTML(page string) []byte {
-	pageTemplate, _ := embed.FS.ReadFile(l.HTML, fmt.Sprintf("html/%s.html", page))
+	pageTemplate, _ := embed.FS.ReadFile(embedHTML, fmt.Sprintf("html/%s.html", page))
 
 	return pageTemplate
 }
