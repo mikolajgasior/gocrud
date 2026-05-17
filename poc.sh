@@ -106,17 +106,17 @@ case "$1" in
   test-api)
     for i in $(seq 1 321); do
       curl -X PUT \
-        -d "{\"title\": \"Title $i\", \"description\": \"Desc $i\", \"uri\": \"page_$i\", \"status_id\": 1, \"created_at\": 0, \"created_by\": 0, \"modified_at\": 0, \"modified_by\": 0}" \
-        http://localhost:8080/v0/crudapi/pages/;
+        -d "{\"username\": \"user$i\", \"email\": \"user$i@example.com\", \"first_name\": \"FirstName$i\", \"last_name\": \"LastName$i\", \"phone\": \"1234567$i\", \"department\": \"Department$i\", \"role\": \"user\", \"is_active\": true, \"last_login\": 0}" \
+        http://localhost:8080/v0/crudapi/task/users/;
     done
 
-    num=$(curl -q http://localhost:8080/v0/crudapi/pages/?limit=13 2>/dev/null | jq '.data[].id' | wc -l)
+    num=$(curl -q http://localhost:8080/v0/crudapi/task/users/?limit=13 2>/dev/null | jq '.data[].id' | wc -l)
     if [[ "$num" != "13" ]]; then
       echo "❌ Listing failed"
       exit 1
     fi
 
-    code=$(curl -X DELETE http://localhost:8080/v0/crudapi/pages/11 2>/dev/null | jq -r '.code')
+    code=$(curl -X DELETE http://localhost:8080/v0/crudapi/task/users/11 2>/dev/null | jq -r '.code')
     if [[ "$code" != "SUCCESS" && "$code" != "NOT_FOUND" ]]; then
       echo "❌ Delete failed"
       exit 1
@@ -124,11 +124,11 @@ case "$1" in
 
     for i in $(seq 20 27); do
       curl -X PUT \
-        -d "{\"title\": \"Tytul $i\", \"description\": \"Opis $i\", \"uri\": \"page_$i\", \"status_id\": 3, \"created_at\": 0, \"created_by\": 0, \"modified_at\": 0, \"modified_by\": 0}" \
-        http://localhost:8080/v0/crudapi/pages/$i;
+        -d "{\"username\": \"ModifiedUser$i\", \"email\": \"modifieduser$i@example.com\", \"first_name\": \"ModifiedFirstName$i\", \"last_name\": \"ModifiedLastName$i\", \"phone\": \"1234567$i\", \"department\": \"ModifiedDepartment$i\", \"role\": \"admin\", \"is_active\": true, \"last_login\": 0, \"modified_at\": $(date +%s), \"modified_by\": 1}" \
+        http://localhost:8080/v0/crudapi/task/users/$i;
     done
 
-    num=$(curl -q http://localhost:8080/v0/crudapi/pages/?filter_val_StatusID=3 2>/dev/null | jq '.data[].id' | wc -l)
+    num=$(curl -q http://localhost:8080/v0/crudapi/task/users/?filter_val_Role=admin 2>/dev/null | jq '.data[].id' | wc -l)
     if [[ "$num" != "8" ]]; then
       echo "❌ Update failed"
       exit 1
