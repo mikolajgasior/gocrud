@@ -42,7 +42,7 @@ func (i Input) HTML() template.HTML {
 	var buf bytes.Buffer
 
 	if i.InputType == TypeTextarea {
-		buf.WriteString("<textarea")
+		buf.WriteString("<textarea class=\"form-textarea\"")
 		if i.ID != "" {
 			buf.WriteString(fmt.Sprintf(` id="%s"`, html.EscapeString(i.ID)))
 		}
@@ -65,7 +65,7 @@ func (i Input) HTML() template.HTML {
 		buf.WriteString(html.EscapeString(i.Value))
 		buf.WriteString("</textarea>")
 	} else if i.InputType == TypeCheckbox {
-		buf.WriteString("<input type=\"checkbox\"")
+		buf.WriteString("<div class=\"checkbox-group\"><label class=\"checkbox-option\"><input type=\"checkbox\"")
 		if i.ID != "" {
 			buf.WriteString(fmt.Sprintf(` id="%s"`, html.EscapeString(i.ID)))
 		}
@@ -76,7 +76,7 @@ func (i Input) HTML() template.HTML {
 			buf.WriteString(" checked")
 		}
 
-		buf.WriteString(">")
+		buf.WriteString("></label></div>")
 	} else {
 		buf.WriteString(fmt.Sprintf("<input type=\"%s\"", html.EscapeString(i.InputType)))
 
@@ -118,7 +118,7 @@ func (i Input) HTML() template.HTML {
 		if i.ReadOnly {
 			buf.WriteString(" readonly")
 		}
-		buf.WriteString("/>")
+		buf.WriteString(" class=\"form-input\">")
 	}
 
 	return template.HTML(buf.String())
