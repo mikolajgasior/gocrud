@@ -1,0 +1,335 @@
+# Operations
+
+## Save
+
+The `Save` method handles both creating new records and updating existing ones based on the presence of an identifier.
+
+**Signature**
+
+```go
+func (c *CRUD) Save(ctx context.Context, obj interface{}, options SaveOptions) error
+```
+
+**Behavior**
+
+* **Default Behavior (Upsert)**: By default, `Save` attempts to insert a new record. If a record with the same `ID` already exists in the database, it automatically falls back to performing an update.
+* **Update Only**: To force an update operation without attempting an insertion (if the ID is known to exist), set the `NoInsert` flag to `true` in the options.
+
+**Parameters**
+
+* `ctx context.Context`: The execution context for the operation.
+* `obj interface{}`: The object instance containing the data to be saved.
+* `options SaveOptions`: Configuration flags for the save operation.
+
+**SaveOptions**
+
+```go
+type SaveOptions struct {
+    NoInsert   bool    // If true, skips the INSERT attempt and performs only UPDATE.
+    ModifiedBy uint64  // Optional ID of the user performing the modification.
+    ModifiedAt int64   // Optional timestamp of the modification.
+}
+```
+
+The `ModifiedBy` and `ModifiedAt` fields are optional. If provided, the system will automatically populate the corresponding columns in the database table with the user ID and timestamp, respectively. If omitted, these columns remain unaffected or rely on database defaults.
+
+## Delete
+
+The `Delete` method removes a record from the database based on the identifier within the provided object.
+
+**Signature**
+
+```go
+func (c *CRUD) Delete(ctx context.Context, obj interface{}, options DeleteOptions) error
+```
+
+**Behavior**
+
+* **Removal**: Executes a database deletion for the record matching the `ID` in obj.
+* **State Reset**: Upon successful removal, the obj instance passed to the function is modified in-place. All its fields are reset to their zero values (e.g., 0, "", nil, false), effectively clearing the object's state in memory.
+
+**Parameters**
+
+* `ctx context.Context`: The execution context for the operation.
+* `obj interface{}`: The object instance representing the record to be deleted.
+* `options DeleteOptions`: Currently an empty struct reserved for future configuration.
+
+**DeleteOptions**
+
+```go
+type DeleteOptions struct {
+    // Reserved for future options (e.g., soft delete flags, cascade settings)
+}
+```
+
+## Load
+
+The `Load` method retrieves a record from the database based on a specific ID and populates the provided struct instance with the data.
+
+**Signature**
+
+```go
+func (c *CRUD) Load(ctx context.Context, obj interface{}, id string, options LoadOptions) error
+```
+
+**Behavior**
+
+* **Data Retrieval**: Fetches the row corresponding to the provided id and maps the database columns to the fields of the obj struct.
+* **Not Found Handling**: If no record exists with the given id, the method returns no error (typically), but the obj instance is zeroed out. This means all fields in the struct are reset to their default zero values (e.g., 0, "", nil, false), ensuring the caller receives a clean, empty object rather than partial or stale data.
+
+**Parameters**
+
+* `ctx context.Context`: The execution context for the operation.
+* `obj interface{}`: The target struct instance to be populated with data. It must be a pointer to a struct.
+* `id string`: The unique identifier of the record to load.
+* `options LoadOptions`: Configuration options for the load operation (currently empty or reserved for future use).
+
+**LoadOptions**
+
+```go
+type LoadOptions struct {
+    // Reserved for future options (e.g., loading related entities, specific column selection)
+}
+```
+
+## Get
+
+The `Get` method retrieves a collection of objects from the database. Unlike `Load`, which fetches a single record by `ID`, `Get` supports complex filtering, sorting, pagination, and result transformation.
+
+**Signature**
+
+```go
+func (c *CRUD) Get(
+    ctx context.Context, 
+    newObjFunc func() interface{}, 
+    options GetOptions
+) ([]interface{}, error)
+```
+
+**Behavior**
+
+* **Dynamic Instantiation**: Uses `newObjFunc` to create a fresh instance of the target struct for every row fetched. This ensures type safety and avoids shared state issues.
+* **Result Set**: Returns a slice of `interface{}` containing the populated objects (or transformed results).
+* **Filtering & Sorting**: Supports standard SQL-like filtering (`WHERE`), ordering (`ORDER BY`), and pagination (`LIMIT/OFFSET`).
+* **Transformation**: Allows custom processing of each row before it is added to the result slice via `RowObjTransformFunc`.
+
+**Parameters**
+
+* `ctx context.Context`: Execution context.
+* `newObjFunc func() interface{}`: A factory function that returns a pointer to a new struct instance (e.g., `func() interface{} { return &MyStruct{} }`).
+* `options GetOptions`: Configuration for the query.
+
+**GetOptions**
+
+```go
+type GetOptions struct {
+    // Sorting: List of alternating field names and directions ("ASC" or "DESC")
+    // Example: []string{"Age", "ASC", "Name", "DESC"}
+    Order []string
+
+    // Pagination
+    Limit  int   // Maximum number of rows to return (SQL LIMIT)
+    Offset int   // Number of rows to skip (SQL OFFSET)
+
+    // Filtering
+    Filters *sqlfilters.Filters // Structured WHERE clause conditions
+
+    // Transformation
+    RowObjTransformFunc func(interface{}) interface{} // Custom function applied to every row
+
+    // Type Conversion
+    ConvertFiltersFromString bool // Converts string filter values to target field types (useful for URL params)
+}
+```
+
+* **Sorting (Order)**: Accepts a flat list of strings where pairs represent Field and Direction.
+  * Example: `[]string{"Age", "ASC", "Price", "DESC"}` sorts by `Age` ascending, then `Price` descending.
+
+* **Filtering (Filters)**: Uses `sqlfilters.Filters` to build `WHERE` clauses.
+  * **Standard Filters**: Map field names to operators (`Op`) and values (`Val`).
+  * *Raw SQL (`sqlfilters.Raw`)**: Allows injecting raw SQL fragments for complex logic. Warning: Use with caution as it bypasses automatic escaping.
+
+* **Type Conversion (ConvertFiltersFromString)**: Automatically casts string inputs (e.g., from HTTP query parameters) to the correct Go data types required by the database columns.
+
+* **Row Transformation (RowObjTransformFunc)**: Instead of returning raw structs, you can transform each row into a different format (e.g., a map for JSON, a string for CSV, or HTML snippets).
+
+** Note: ** The `sqlfilters.Raw` option allows direct SQL injection if not handled carefully. Ensure that any dynamic values passed to raw filters are strictly validated or parameterized. Refer to get_test.go in the source code for examples.
+
+
+## GetCount
+
+The `GetCount` method returns the total number of rows in a database table, optionally filtered by specific conditions.
+
+**Signature**
+
+```go
+func (c *CRUD) GetCount(ctx context.Context, obj interface{}, options GetCountOptions) (uint64, error)
+```
+
+**Behavior**
+
+* Executes a `SELECT COUNT(*)` query against the table associated with the provided struct type.
+* Returns the number of matching rows as a uint64.
+* Without filters, returns the total row count for the entire table.
+
+**Parameters**
+
+* `ctx context.Context`: Execution context.
+* `obj interface{}`: A struct instance (or pointer) used to identify the target database table. The struct's field values are not used for filtering — only its type determines which table to query.
+* `options GetCountOptions`: Configuration for filtering the count query.
+
+**GetCountOptions**
+
+```go
+type GetCountOptions struct {
+    Filters                  *sqlfilters.Filters // Structured WHERE clause conditions
+    ConvertFiltersFromString bool                // Converts string filter values to target field types
+}
+```
+
+* **Filtering (Filters)**: Uses the same `sqlfilters.Filters` mechanism as `Get`, allowing you to count only rows that match specific conditions. This is particularly useful for pagination — combining GetCount with `Get`'s `Limit`/`Offset` gives you total records alongside a paginated subset.
+
+* **Type Conversion (`ConvertFiltersFromString`)**: Identical behavior to `Get`. When enabled, string-based filter values (e.g., from URL query parameters) are automatically converted to the correct Go data types before being applied to the query.
+
+## Cascade Delete
+
+The CRUD system supports automatic cascade operations when a parent object is deleted. This behavior is controlled entirely through struct tags on the slice fields that define parent-child relationships.
+
+**Tag Syntax**
+
+The `crud` tag is applied to child slice fields and supports the following keys:
+
+|Key|Description|
+|---|-----------|
+|`on_del`	|Action to perform on children: `del` (delete) or `upd` (update)|
+|`del_field`	|The field in the child struct that serves as the foreign key linking it to the parent|
+|`del_upd_field`	|(Only when `on_del:upd`) The field in the child struct to update|
+|`del_upd_val`	|(Only when `on_del:upd`) The value to set on `del_upd_field`|
+
+**Delete Cascade (`on_del:del`)**
+
+When `on_del` is set to `del`, deleting the parent object will also remove all associated child records from the database. The `del_field` specifies which column in the child table holds the reference to the parent's ID.
+
+**Update Cascade (`on_del:upd`)**
+
+When `on_del` is set to `upd`, deleting the parent object will not remove the child records. Instead, a specified field in each child record is updated to a given value. This is useful for preserving child records while severing the relationship (e.g., setting a foreign key to zero rather than deleting the row).
+
+Alongside `del_field`, two additional keys are required:
+
+* `del_upd_field` — the field in the child struct to modify.
+* `del_upd_val` — the value to assign to that field.
+
+**Example**
+
+```go
+type TestCompany struct {
+    ID            uint64
+    Name          string
+    TestEmployees []TestEmployee `crud:"on_del:del del_field:TestCompanyID"`
+}
+
+type TestEmployee struct {
+    ID              uint64
+    Name            string
+    TestCompanyID   uint64
+    TestCreditCards []TestCreditCard `crud:"on_del:del del_field:TestEmployeeID"`
+    TestComments    []TestComment    `crud:"on_del:upd del_field:TestEmployeeID del_upd_field:TestEmployeeID del_upd_val:0"`
+}
+
+type TestComment struct {
+    ID             uint64
+    Comment        string
+    TestEmployeeID uint64
+}
+
+type TestCreditCard struct {
+    ID             uint64
+    Number         string
+    TestEmployeeID uint64
+}
+```
+
+**What happens on deletion:**
+
+* Deleting a `TestCompany` → All `TestEmployee` records where `TestCompanyID` matches the company's `ID` are deleted. This cascades further: deleting those employees will also delete their `TestCreditCard` records and update their `TestComment` records.
+* Deleting a `TestEmployee` → Two things happen:
+  * All `TestCreditCard` records where `TestEmployeeID` matches are deleted.
+  * All `TestComment` records where `TestEmployeeID` matches have their `TestEmployeeID` field updated to `0`, preserving the comments but unlinking them from the removed employee.
+
+
+**Cascading Chains**
+
+Cascade operations chain automatically. In the example above, deleting a `TestCompany` triggers deletion of its `TestEmployee` records, which in turn triggers deletion of their `TestCreditCard` records and the update of their `TestComment` records. Be mindful of deep cascade chains to avoid unintended data loss.
+
+## DeleteMultiple
+
+The `DeleteMultiple` method removes multiple records from the database table that match specific filter criteria, similar to how `Get` retrieves them. It also supports controlled cascade deletion.
+
+**Signature**
+
+```go
+func (c *CRUD) DeleteMultiple(ctx context.Context, obj interface{}, options DeleteMultipleOptions) error
+```
+
+**Behavior**
+
+* **Batch Deletion**: Executes a `DELETE` query based on the `Filters` provided, removing all rows that satisfy the conditions.
+* **Cascading**: If the deleted rows have child relationships defined via struct tags (see Cascade Delete), the system will automatically process those children according to their on_del rules.
+* **Depth Control**: The `CascadeDeleteDepth` option limits how many levels deep the cascade deletion propagates, preventing accidental mass deletions in deeply nested data structures.
+
+**Parameters**
+
+* `ctx context.Context`: Execution context.
+* `obj interface{}`: A struct instance used to identify the target table.
+* `options DeleteMultipleOptions`: Configuration for the batch deletion.
+
+**DeleteMultipleOptions**
+
+```go
+type DeleteMultipleOptions struct {
+    Filters            *sqlfilters.Filters // Conditions to select rows for deletion
+    CascadeDeleteDepth int8                // Maximum depth for cascade operations (-1 for unlimited, 0 for none)
+}
+```
+
+## UpdateMultiple
+
+The `UpdateMultiple` method updates multiple records in the database table that match specific filter criteria. It allows selective field updates across all matching rows.
+
+**Signature**
+
+```go
+func (c *CRUD) UpdateMultiple(ctx context.Context, obj interface{}, fieldsToUpdate map[string]interface{}, options UpdateMultipleOptions) error
+```
+
+**Behavior**
+
+* **Batch Update**: Executes an `UPDATE` query that modifies only the specified fields for all rows matching the filter conditions.
+* **Selective Updates**: Only the fields listed in fieldsToUpdate are modified; all other fields remain unchanged.
+* **Filtering**: Uses `sqlfilters.Filters` to determine which rows should be updated, similar to Get and DeleteMultiple.
+
+**Parameters**
+
+* `ctx context.Context`: Execution context.
+* `obj interface{}`: A struct instance used to identify the target table.
+* `fieldsToUpdate map[string]interface{}`: A map where keys are field names and values are the new values to set.
+* `options UpdateMultipleOptions`: Configuration for the batch update.
+
+**UpdateMultipleOptions**
+
+```go
+type UpdateMultipleOptions struct {
+    Filters                 *sqlfilters.Filters // Conditions to select rows for update
+    ConvertValuesFromString bool                // Converts string values to target field types
+}
+```
+
+* Field Mapping (`fieldsToUpdate`):
+  * Keys are the field names as they appear in the struct (matching database column names).
+  * Values are the new values to assign.
+  * Only these fields are updated; others remain untouched.
+
+* Type Conversion (`ConvertValuesFromString`):
+  * When enabled, string values in fieldsToUpdate are automatically converted to the correct Go data types before being written to the database.
+  * Useful when values come from external sources (e.g., HTTP form data, URL parameters).
+

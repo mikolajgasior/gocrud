@@ -11,11 +11,10 @@ theme:
 nav:
   - Overview: index.md
   - Demo: demo.md
-  #- Struct definition: struct.md
-  #- CRUD object:
-  #  - Initialization: crud/init.md
-  #  - Operations: crud/ops.md
-  #  - More operations: crud/more-ops.md
+  - Struct Definition: struct.md
+  - CRUD object:
+    - Initialization: crud/init.md
+    - Operations: crud/ops.md
   #- Helper functions: helper-functions.md
   #- Additional packages:
   #  - Service: pkgs/service.md

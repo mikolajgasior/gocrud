@@ -8,14 +8,14 @@
       
       
       
-        <link rel="canonical" href="https://codeberg.org/mikolajgasior/gocrud/demo/">
+        <link rel="canonical" href="https://codeberg.org/mikolajgasior/gocrud/struct/">
       
       <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-8.4.2">
     
     
       
-        <title>Demo - gocrud</title>
+        <title>Struct Definition - gocrud</title>
       
     
     
@@ -66,7 +66,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#demo" class="md-skip">
+        <a href="#struct" class="md-skip">
           Skip to content
         </a>
       
@@ -99,7 +99,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Demo
+              Struct Definition
             
           </span>
         </div>
@@ -198,6 +198,21 @@
 
   
   
+  
+    <li class="md-nav__item">
+      <a href="../demo/" class="md-nav__link">
+        Demo
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
     
   
   
@@ -210,12 +225,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Demo
+          Struct Definition
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        Demo
+        Struct Definition
       </a>
       
         
@@ -234,72 +249,23 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-define-your-model-and-entry-point" class="md-nav__link">
-    1. Define Your Model and Entry Point
+  <a href="#basic-requirements" class="md-nav__link">
+    Basic requirements
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#2-initialize-the-crud-controller" class="md-nav__link">
-    2. Initialize the CRUD Controller
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#3-create-the-database-table" class="md-nav__link">
-    3. Create the Database Table
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#4-perform-crud-operations" class="md-nav__link">
-    4. Perform CRUD Operations
-  </a>
-  
-    <nav class="md-nav" aria-label="4. Perform CRUD Operations">
+    <nav class="md-nav" aria-label="Basic requirements">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#create-insert-new-records" class="md-nav__link">
-    Create — Insert New Records
+  <a href="#1-the-id-field" class="md-nav__link">
+    1. The ID Field
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#read-load-a-single-record-by-id" class="md-nav__link">
-    Read — Load a Single Record by ID
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#update-modify-existing-records" class="md-nav__link">
-    Update — Modify Existing Records
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#list-fetch-multiple-records-with-filters" class="md-nav__link">
-    List — Fetch Multiple Records with Filters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#delete-remove-records" class="md-nav__link">
-    Delete — Remove Records
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#operation-summary" class="md-nav__link">
-    Operation Summary
+  <a href="#2-supported-data-types" class="md-nav__link">
+    2. Supported Data Types
   </a>
   
 </li>
@@ -309,25 +275,57 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#tagging" class="md-nav__link">
+    Tagging
+  </a>
+  
+    <nav class="md-nav" aria-label="Tagging">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-json-tag" class="md-nav__link">
+    The json Tag
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-crud-tag" class="md-nav__link">
+    The crud Tag
+  </a>
+  
+    <nav class="md-nav" aria-label="The crud Tag">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common-validation-rules" class="md-nav__link">
+    Common Validation Rules
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complete-example" class="md-nav__link">
+    Complete Example
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
       
-    </li>
-  
-
-    
-      
-      
-      
-
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../struct/" class="md-nav__link">
-        Struct Definition
-      </a>
     </li>
   
 
@@ -421,78 +419,76 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-define-your-model-and-entry-point" class="md-nav__link">
-    1. Define Your Model and Entry Point
+  <a href="#basic-requirements" class="md-nav__link">
+    Basic requirements
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#2-initialize-the-crud-controller" class="md-nav__link">
-    2. Initialize the CRUD Controller
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#3-create-the-database-table" class="md-nav__link">
-    3. Create the Database Table
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#4-perform-crud-operations" class="md-nav__link">
-    4. Perform CRUD Operations
-  </a>
-  
-    <nav class="md-nav" aria-label="4. Perform CRUD Operations">
+    <nav class="md-nav" aria-label="Basic requirements">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#create-insert-new-records" class="md-nav__link">
-    Create — Insert New Records
+  <a href="#1-the-id-field" class="md-nav__link">
+    1. The ID Field
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#read-load-a-single-record-by-id" class="md-nav__link">
-    Read — Load a Single Record by ID
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#update-modify-existing-records" class="md-nav__link">
-    Update — Modify Existing Records
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#list-fetch-multiple-records-with-filters" class="md-nav__link">
-    List — Fetch Multiple Records with Filters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#delete-remove-records" class="md-nav__link">
-    Delete — Remove Records
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#operation-summary" class="md-nav__link">
-    Operation Summary
+  <a href="#2-supported-data-types" class="md-nav__link">
+    2. Supported Data Types
   </a>
   
 </li>
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tagging" class="md-nav__link">
+    Tagging
+  </a>
+  
+    <nav class="md-nav" aria-label="Tagging">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-json-tag" class="md-nav__link">
+    The json Tag
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-crud-tag" class="md-nav__link">
+    The crud Tag
+  </a>
+  
+    <nav class="md-nav" aria-label="The crud Tag">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common-validation-rules" class="md-nav__link">
+    Common Validation Rules
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complete-example" class="md-nav__link">
+    Complete Example
+  </a>
   
 </li>
       
@@ -510,306 +506,87 @@
                 
 
 
-<h1 id="demo">Demo</h1>
-<p>This demo walks you through setting up a complete, runnable example. We will define a model, initialize the controller, create the database table, and perform Create, Read, Update, List, and Delete operations.</p>
-<h2 id="1-define-your-model-and-entry-point">1. Define Your Model and Entry Point</h2>
-<p>Start by defining your <code>User</code> struct and wrapping the logic in a standard Go main function. This ensures the code is executable and demonstrates how the model integrates with the application lifecycle.</p>
-<pre><code class="language-go">package main
-
-import (
-    &quot;context&quot;
-    &quot;fmt&quot;
-    &quot;log/slog&quot;
-    &quot;os&quot;
-    &quot;time&quot;
-
-    // Import your database driver here (e.g., github.com/lib/pq or modernc.org/sqlite)
-    // &quot;database/sql&quot;
-    // _ &quot;your-db-driver&quot;
-
-    structcrud &quot;codeberg.org/mikolajgasior/gocrud&quot;
-    // Import the filters package for advanced querying
-    sqlfilters &quot;codeberg.org/mikolajgasior/gocrud/pkg/filters&quot;
-)
-
-// User represents the data model to be stored and exposed via the API.
-type User struct {
+<h1 id="struct">Struct</h1>
+<p>To utilize the library's automatic CRUD capabilities, your Go structs must adhere to a specific naming convention and tagging strategy. These definitions allow the library to map your data structures to database records and RESTful API endpoints while enforcing validation rules automatically.</p>
+<h2 id="basic-requirements">Basic requirements</h2>
+<h3 id="1-the-id-field">1. The ID Field</h3>
+<p>Every struct intended for CRUD operations must include an ID field which must be uint64. This serves as the primary key for database operations.</p>
+<h3 id="2-supported-data-types">2. Supported Data Types</h3>
+<p>At this stage, the library supports the following basic data types for struct fields:</p>
+<ul>
+<li>Integers: int, int8, int16, int32, int64</li>
+<li>Unsigned Integers: uint, uint8, uint16, uint32, uint64</li>
+<li>Floats: float32, float64</li>
+<li>Strings: string</li>
+<li>Booleans: bool</li>
+</ul>
+<p>Complex types (such as slices, maps, or nested structs) are not currently supported for direct mapping in this context.</p>
+<h2 id="tagging">Tagging</h2>
+<p>To configure field behavior, you will use two primary struct tags: json and crud.</p>
+<h3 id="the-json-tag">The <code>json</code> Tag</h3>
+<p>Use the <code>json</code> tag to define the field name as it appears in your RESTful API payloads. This ensures your API follows standard naming conventions (e.g., snake_case) while your Go code uses idiomatic naming (PascalCase).</p>
+<ul>
+<li><strong>Format</strong>: <code>json:"api_field_name"</code></li>
+<li><strong>Example</strong>: <code>json:"first_name"</code> maps the Go field FirstName to first_name in JSON.</li>
+</ul>
+<h3 id="the-crud-tag">The <code>crud</code> Tag</h3>
+<p>The <code>crud</code> tag is the core mechanism for validation. It defines rules that are enforced in two specific scenarios:</p>
+<ul>
+<li><strong>Saving Data</strong>: Before a record is saved to the database via the <code>Save</code> function.</li>
+<li><strong>Filtering Data</strong>: When using filters in the <code>Get</code> method to ensure query parameters are valid.</li>
+</ul>
+<p>These tags leverage the underlying validation logic provided by the <a href="https://github.com/mikolajgasior/struct-validator">struct-validator</a> library.</p>
+<h4 id="common-validation-rules">Common Validation Rules</h4>
+<p>You can combine multiple rules within a single crud tag string.</p>
+<ul>
+<li><code>req</code>: Marks the field as required.</li>
+<li><code>len:min,max</code>: Validates string length.</li>
+<li><code>val:min,max</code>: Validates numeric range.</li>
+<li><code>email</code>: Validates that the string is a properly formatted email address.</li>
+<li><code>crud_regexp</code>:"pattern": Validates the field against a regular expression.</li>
+</ul>
+<p>At least one of <code>min</code>, <code>max</code> must be specified.</p>
+<p><strong>Note on Special Characters:</strong> When using regular expressions inside struct tags, remember to escape double quotes. For example: <code>crud_regexp:"^[a-z]+$"</code>.</p>
+<h2 id="complete-example">Complete Example</h2>
+<p>Below is a comprehensive example of a <code>User</code> struct that demonstrates all the requirements and tagging strategies discussed.</p>
+<pre><code class="language-go">type User struct {
+    // Required ID field (uint64)
     ID         uint64 `json:&quot;id&quot;`
+
+    // Username: Required, length 3-30, must match regex
     Username   string `json:&quot;username&quot; crud:&quot;req len:3,30 crud_regexp:\&quot;^[a-z0-9_-]+$\&quot;&quot;`
+
+    // Email: Required, must be valid email format
     Email      string `json:&quot;email&quot; crud:&quot;req email&quot;`
+
+    // First Name: Required, length 2-50
     FirstName  string `json:&quot;first_name&quot; crud:&quot;req len:2,50&quot;`
+
+    // Last Name: Required, length 2-50
     LastName   string `json:&quot;last_name&quot; crud:&quot;req len:2,50&quot;`
+
+    // Phone: Optional, length 7-20
     Phone      string `json:&quot;phone&quot; crud:&quot;len:7,20&quot;`
+
+    // Department: Optional, max length 100 (empty string allowed)
     Department string `json:&quot;department&quot; crud:&quot;len:0,100&quot;`
+
+    // Role: Required, length 3-30
     Role       string `json:&quot;role&quot; crud:&quot;req len:3,30&quot;`
+
+    // IsActive: Boolean flag (no specific validation rules applied here)
     IsActive   bool   `json:&quot;is_active&quot;`
+
+    // LastLogin: Must be 0 or a positive timestamp
     LastLogin  int64  `json:&quot;last_login&quot; crud:&quot;val:0&quot;`
+
+    // Timestamps and Audit Fields
     CreatedAt  int64  `json:&quot;created_at&quot;`
     CreatedBy  uint64 `json:&quot;created_by&quot;`
     ModifiedAt int64  `json:&quot;modified_at&quot;`
     ModifiedBy uint64 `json:&quot;modified_by&quot;`
 }
-
-func main() {
-    slog.SetLogLoggerLevel(slog.LevelDebug)
-
-    ctx := context.Background()
-
-    // NOTE: Replace this with your actual database connection logic.
-    // dbConn, err := sql.Open(&quot;postgres&quot;, &quot;user=... dbname=...&quot;)
-    // if err != nil {
-    //     slog.Error(&quot;failed to connect to DB&quot;, slog.Any(&quot;error&quot;, err))
-    //     os.Exit(1)
-    // }
-    var dbConn interface{} // Replace with *sql.DB in real usage
-
-    // 2. Initialize the CRUD Controller
-    crudInstance := structcrud.New(dbConn, structcrud.Options{})
-
-    // 3. Create the Database Table
-    err := crudInstance.CreateTable(ctx, &amp;User{})
-    if err != nil {
-        slog.Error(&quot;error creating table&quot;, slog.Any(&quot;error&quot;, err))
-        os.Exit(1)
-    }
-
-    // 4. Perform CRUD Operations
-    runOperations(ctx, crudInstance)
-}
 </code></pre>
-<p>A few important conventions:</p>
-<ul>
-<li>Every struct must include an <code>ID</code> field of type <code>uint64</code>. This maps to a BIGINT primary key in the database.</li>
-<li>Fields tracking creation and modification (<code>CreatedAt</code>, <code>CreatedBy</code>, <code>ModifiedAt</code>, <code>ModifiedBy</code>) are recognized automatically. When present, gocrud populates their values on insert and update. </li>
-<li>Validation rules are expressed via the <code>crud</code> tag (and <code>crud_regexp</code> for regex patterns). <code>gocrud</code> leverages the <a href="https://github.com/mikolajgasior/struct-validator"><code>struct-validator</code> library</a> under the hood—refer to its documentation for the full list of supported validators. </li>
-<li>At present, <code>gocrud</code> is optimized for rapid prototyping and supports only <code>int</code>, <code>uint</code>, <code>float</code>, <code>string</code>, and <code>bool</code> field types.</li>
-</ul>
-<h2 id="2-initialize-the-crud-controller">2. Initialize the CRUD Controller</h2>
-<p>Import the gocrud package and create a controller instance tied to your database connection. As shown in the main function above:</p>
-<pre><code class="language-go">crudInstance := structcrud.New(dbConn, structcrud.Options{})
-</code></pre>
-<p>Replace <code>dbConn</code> with your active database connection (for example, a <code>*sql.DB</code>or compatible interface expected by your setup).</p>
-<h2 id="3-create-the-database-table">3. Create the Database Table</h2>
-<p>With the controller ready, instruct gocrud to create the corresponding table if it doesn't already exist:</p>
-<pre><code class="language-go">err := crudInstance.CreateTable(ctx, &amp;User{})
-if err != nil {
-    slog.Error(&quot;error creating table&quot;, slog.Any(&quot;error&quot;, err))
-    os.Exit(1)
-}
-</code></pre>
-<p><code>CreateTable</code> inspects the <code>User</code> struct via reflection, interprets the field tags, and generates the necessary <code>CREATE TABLE IF NOT EXISTS SQL</code> statement. This ensures your schema aligns with the struct definition without manual SQL.</p>
-<h2 id="4-perform-crud-operations">4. Perform CRUD Operations</h2>
-<p>Now let's put the controller to work. We'll create several users, read one back, update it, list users with advanced filtering, and finally delete one.
-Each operation is demonstrated separately below. All helper functions are called from runOperations() which is invoked from main().</p>
-<pre><code class="language-go">func runOperations(ctx context.Context, c *structcrud.Controller) {
-    createUsers(ctx, c)
-    loadUser(ctx, c)
-    updateUser(ctx, c)
-    listUsers(ctx, c)
-    deleteUser(ctx, c)
-}
-</code></pre>
-<h3 id="create-insert-new-records">Create — Insert New Records</h3>
-<p>Use the <code>Save</code> method to insert new records. The <code>ID</code> is auto-generated and populated on the struct after saving.</p>
-<pre><code class="language-go">func createUsers(ctx context.Context, c *structcrud.Controller) {
-    now := time.Now().Unix()
-    userID := uint64(1337)
-
-    // Iterate 5 times to create and save users
-    for i := 0; i &lt; 5; i++ {
-        userInstance := &amp;User{
-            Username:   fmt.Sprintf(&quot;user_%d&quot;, i),
-            Email:      fmt.Sprintf(&quot;user%d@example.com&quot;, i),
-            FirstName:  &quot;Demo&quot;,
-            LastName:   &quot;User&quot;,
-            Role:       &quot;admin&quot;,
-            IsActive:   true,
-            Department: &quot;Engineering&quot;,
-            Phone:      &quot;1234567890&quot;,
-        }
-
-        err := c.crud.Save(ctx, userInstance, structcrud.SaveOptions{
-            ModifiedAt: now,
-            ModifiedBy: userID,
-        })
-        if err != nil {
-            slog.Error(&quot;failed to save user&quot;, slog.Int(&quot;index&quot;, i), slog.Any(&quot;error&quot;, err))
-            os.Exit(1)
-        }
-
-        slog.Info(&quot;saved user&quot;, slog.String(&quot;username&quot;, userInstance.Username), slog.Uint64(&quot;id&quot;, userInstance.ID))
-    }
-}
-</code></pre>
-<h3 id="read-load-a-single-record-by-id">Read — Load a Single Record by ID</h3>
-<p>Use the <code>Load</code> method to fetch a single record by its primary key into an empty struct.</p>
-<pre><code class="language-go">func loadUser(ctx context.Context, c *structcrud.Controller) {
-    userFromDB := &amp;User{}
-    err := c.crud.Load(ctx, userFromDB, 2, structcrud.LoadOptions{})
-    if err != nil {
-        slog.Error(&quot;failed to load user&quot;, slog.Any(&quot;error&quot;, err))
-        os.Exit(1)
-    }
-    slog.Info(&quot;loaded user&quot;, slog.String(&quot;username&quot;, userFromDB.Username), slog.Uint64(&quot;id&quot;, userFromDB.ID))
-}
-</code></pre>
-<h3 id="update-modify-existing-records">Update — Modify Existing Records</h3>
-<p>Call <code>Save</code> on an existing (loaded) struct with modified fields. This updates the record in place.</p>
-<pre><code class="language-go">func updateUser(ctx context.Context, c *structcrud.Controller) {
-    now := time.Now().Unix()
-    userID := uint64(1337)
-
-    // First load the user
-    userFromDB := &amp;User{}
-    err := c.crud.Load(ctx, userFromDB, 2, structcrud.LoadOptions{})
-    if err != nil {
-        slog.Error(&quot;failed to load user&quot;, slog.Any(&quot;error&quot;, err))
-        os.Exit(1)
-    }
-
-    // Modify a field
-    userFromDB.LastName = &quot;Updated&quot;
-
-    // Save the changes
-    err = c.crud.Save(ctx, userFromDB, structcrud.SaveOptions{
-        ModifiedAt: now,
-        ModifiedBy: userID,
-    })
-    if err != nil {
-        slog.Error(&quot;failed to update user&quot;, slog.Any(&quot;error&quot;, err))
-        os.Exit(1)
-    }
-    slog.Info(&quot;updated user&quot;, slog.String(&quot;lastName&quot;, userFromDB.LastName))
-}
-</code></pre>
-<h3 id="list-fetch-multiple-records-with-filters">List — Fetch Multiple Records with Filters</h3>
-<p>Use the <code>Get</code> method to retrieve multiple records with pagination, sorting, and advanced filtering.</p>
-<p><strong>Understanding GetOptions</strong>:</p>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Order</td>
-<td>Slice of strings specifying sort columns (e.g., <code>[]string{"Username", "-CreatedAt"}</code>)</td>
-</tr>
-<tr>
-<td>Limit</td>
-<td>Maximum number of records to return</td>
-</tr>
-<tr>
-<td>Offset</td>
-<td>Number of records to skip (pagination)</td>
-</tr>
-<tr>
-<td>Filters</td>
-<td>Complex filtering logic (equality, ranges, raw SQL)</td>
-</tr>
-<tr>
-<td>RowObjTransformFunc</td>
-<td>Transform each row into any type (e.g., string, HTML, CSV)</td>
-</tr>
-<tr>
-<td>ConvertFiltersFromString</td>
-<td>Auto-convert string filter values to target types</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Note</strong>: To use filters, import: <code>sqlfilters "codeberg.org/mikolajgasior/gocrud/pkg/filters"</code></p>
-<pre><code class="language-go">func listUsers(ctx context.Context, c *structcrud.Controller) {
-    fetchedUsers, err := c.crud.Get(ctx, func() { &amp;User{} }, structcrud.GetOptions{
-        Limit:  10,
-        Offset: 0,
-        Order:  []string{&quot;Username&quot;},
-        Filters: &amp;sqlfilters.Filters{
-            // Filter by Department (String)
-            &quot;Department&quot;: {
-                Op:  sqlfilters.OpEqual,
-                Val: &quot;Engineering&quot;,
-            },
-            // Filter by IsActive (Bool)
-            &quot;IsActive&quot;: {
-                Op:  sqlfilters.OpEqual,
-                Val: true,
-            },
-            // Raw SQL filter: ID &gt; 0 AND ID NOT IN (9999, 9998, 9997)
-            // Note: Use &quot;.FieldName&quot; to reference columns safely
-            sqlfilters.Raw: {
-                Op: sqlfilters.OpAND,
-                Val: []interface{}{
-                    &quot;.ID &gt; ? AND .ID NOT IN (?)&quot;,
-                    0,
-                    []int{9999, 9998, 9997},
-                },
-            },
-        },
-    })
-    if err != nil {
-        slog.Error(&quot;failed to list users&quot;, slog.Any(&quot;error&quot;, err))
-        os.Exit(1)
-    }
-    fmt.Printf(&quot;fetched %d filtered users\n&quot;, len(fetchedUsers))
-}
-</code></pre>
-<h3 id="delete-remove-records">Delete — Remove Records</h3>
-<p>Load a user and then call <code>Delete</code> to remove it from the database.</p>
-<pre><code class="language-go">func deleteUser(ctx context.Context, c *structcrud.Controller) {
-    userToDelete := &amp;User{}
-    err := c.crud.Load(ctx, userToDelete, 2, structcrud.LoadOptions{})
-    if err != nil {
-        slog.Error(&quot;failed to load user for deletion&quot;, slog.Any(&quot;error&quot;, err))
-        os.Exit(1)
-    }
-
-    err = c.crud.Delete(ctx, userToDelete, structcrud.DeleteOptions{})
-    if err != nil {
-        slog.Error(&quot;failed to delete user&quot;, slog.Any(&quot;error&quot;, err))
-        os.Exit(1)
-    }
-    slog.Info(&quot;deleted user&quot;, slog.Uint64(&quot;id&quot;, userToDelete.ID))
-}
-</code></pre>
-<h3 id="operation-summary">Operation Summary</h3>
-<table>
-<thead>
-<tr>
-<th>Operation</th>
-<th>Method</th>
-<th>Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Create</td>
-<td>Save</td>
-<td>Inserts a new record. The ID is auto-generated and populated on the struct after saving.</td>
-</tr>
-<tr>
-<td>Read</td>
-<td>Load</td>
-<td>Fetches a single record by its primary key into an empty struct.</td>
-</tr>
-<tr>
-<td>Update</td>
-<td>Save</td>
-<td>Called on an existing (loaded) struct with modified fields. Updates the record in place.</td>
-</tr>
-<tr>
-<td>List</td>
-<td>Get</td>
-<td>Retrieves multiple records with pagination (Limit, Offset) and ordering.</td>
-</tr>
-<tr>
-<td>Delete</td>
-<td>Delete</td>
-<td>Removes the record corresponding to the loaded struct from the database.</td>
-</tr>
-</tbody>
-</table>
 
 
 
@@ -828,7 +605,7 @@ Each operation is demonstrated separately below. All helper functions are called
     <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
         
-        <a href=".." class="md-footer__link md-footer__link--prev" aria-label="Previous: Overview" rel="prev">
+        <a href="../demo/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Demo" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -837,20 +614,20 @@ Each operation is demonstrated separately below. All helper functions are called
               <span class="md-footer__direction">
                 Previous
               </span>
-              Overview
+              Demo
             </div>
           </div>
         </a>
       
       
         
-        <a href="../struct/" class="md-footer__link md-footer__link--next" aria-label="Next: Struct Definition" rel="next">
+        <a href="../crud/init/" class="md-footer__link md-footer__link--next" aria-label="Next: Initialization" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Struct Definition
+              Initialization
             </div>
           </div>
           <div class="md-footer__button md-icon">

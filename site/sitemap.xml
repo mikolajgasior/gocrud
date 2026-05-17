@@ -8,4 +8,16 @@
          <loc>https://codeberg.org/mikolajgasior/gocrud/demo/</loc>
          <lastmod>2026-05-17</lastmod>
     </url>
+    <url>
+         <loc>https://codeberg.org/mikolajgasior/gocrud/struct/</loc>
+         <lastmod>2026-05-17</lastmod>
+    </url>
+    <url>
+         <loc>https://codeberg.org/mikolajgasior/gocrud/crud/init/</loc>
+         <lastmod>2026-05-17</lastmod>
+    </url>
+    <url>
+         <loc>https://codeberg.org/mikolajgasior/gocrud/crud/ops/</loc>
+         <lastmod>2026-05-17</lastmod>
+    </url>
 </urlset>
