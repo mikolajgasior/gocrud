@@ -1,13 +1,20 @@
 # Overview
 
 **gocrud** is a Go library designed to streamline the development of CRUDL (Create, Read, Update, Delete, List) APIs 
-and interfaces for PostgreSQL-backed applications. By leveraging reflection, gocrud aims to automatically generate 
+and interfaces for SQL-backed applications. By leveraging reflection, gocrud aims to automatically generate 
 database persistence and API layers from Go structs containing basic field types (such as int, string, time.Time, etc.).
 
 The library is intended to provide:
-* Database persistence layer: Maps Go structs to PostgreSQL tables, handling schema creation and data operations.
+* Database persistence layer: Maps Go structs to database tables, handling schema creation and data operations.
 * RESTful API: Generates a ready-to-use CRUD API endpoint set for your struct.
 * Admin UI: A simple web interface to browse and manage records (currently under development).
+
+## Supported Databases
+
+| Database   | Driver                     |
+|------------|----------------------------|
+| PostgreSQL | `github.com/lib/pq`        |
+| SQLite     | `modernc.org/sqlite`       |
 
 ## Motivation
 
