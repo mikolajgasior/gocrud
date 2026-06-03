@@ -23,6 +23,7 @@ func (c *CRUD) builder(obj interface{}) (*sqlbuilder.Builder, error) {
 	builder = sqlbuilder.New(obj, sqlbuilder.Options{
 		TableNamePrefix: c.tableNamePrefix,
 		TagName:         c.tagName,
+		Dialect:         c.dialect,
 	})
 
 	c.buildersMu.Lock()

@@ -3,6 +3,7 @@ package crud
 import (
 	"context"
 	"errors"
+	"strings"
 
 	sqlfilters "codeberg.org/mikolajgasior/gocrud/pkg/filters"
 	"github.com/lib/pq"
@@ -128,16 +129,9 @@ func (c *CRUD) Save(ctx context.Context, obj interface{}, options SaveOptions) e
 		}
 
 		if err != nil {
-			var pgErr *pq.Error
-			if errors.As(err, &pgErr) {
-				// 23505 = unique_violation
-				if pgErr.Code == "23505" {
-					// You can also look at pgErr.Constraint to know which
-					// unique index triggered the error (if you need that detail).
-					return getUniqError(pgErr.Constraint)
-				}
+			if uniqErr := checkUniqueErr(err); uniqErr != nil {
+				return uniqErr
 			}
-
 			return getDBFuncCRUDError("query row", err)
 		}
 
@@ -158,19 +152,29 @@ func (c *CRUD) Save(ctx context.Context, obj interface{}, options SaveOptions) e
 
 	err = c.db.QueryRowContext(ctx, query, ObjFieldInterfaces(obj, false)...).Scan(objIDInterface)
 	if err != nil {
-		var pgErr *pq.Error
-		if errors.As(err, &pgErr) {
-			// 23505 = unique_violation
-			if pgErr.Code == "23505" {
-				// You can also look at pgErr.Constraint to know which
-				// unique index triggered the error (if you need that detail).
-				return getUniqError(pgErr.Constraint)
-			}
+		if uniqErr := checkUniqueErr(err); uniqErr != nil {
+			return uniqErr
 		}
-
 		return getDBFuncCRUDError("query row", err)
 	}
 
 	return nil
+}
 
+// checkUniqueErr returns a *UniqError if err represents a unique-constraint
+// violation from either PostgreSQL (pq code 23505) or SQLite
+// ("UNIQUE constraint failed: table.column"), otherwise returns nil.
+func checkUniqueErr(err error) *UniqError {
+	var pgErr *pq.Error
+	if errors.As(err, &pgErr) && pgErr.Code == "23505" {
+		return getUniqError(pgErr.Constraint)
+	}
+
+	msg := err.Error()
+	const sqlitePrefix = "UNIQUE constraint failed: "
+	if idx := strings.Index(msg, sqlitePrefix); idx >= 0 {
+		return getUniqError(msg[idx+len(sqlitePrefix):])
+	}
+
+	return nil
 }

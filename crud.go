@@ -13,6 +13,7 @@ type CRUD struct {
 	builders        map[string]*sqlbuilder.Builder
 	tagName         string
 	tableNamePrefix string
+	dialect         string
 	flags           uint64
 }
 
@@ -31,6 +32,7 @@ func New(db *sql.DB, options Options) *CRUD {
 		crud.tableNamePrefix = options.TableNamePrefix
 	}
 
+	crud.dialect = options.Dialect
 	crud.flags = options.Flags
 
 	return crud

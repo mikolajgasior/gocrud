@@ -3,12 +3,14 @@ package crud
 import (
 	"context"
 	"database/sql"
+	"log"
 	"os"
 	"testing"
 
 	"codeberg.org/mikolajgasior/gocrud/pkg/test"
 	_ "github.com/lib/pq"
 	"github.com/ory/dockertest/v3"
+	_ "modernc.org/sqlite"
 )
 
 var testUser = "testuser"
@@ -21,17 +23,28 @@ var dockerResource *dockertest.Resource
 
 var testCRUD *CRUD
 
+var testDBSQLite *sql.DB
+var testCRUDSQLite *CRUD
+
 func TestMain(m *testing.M) {
 	dockerPool, dockerResource, testDB = test.CreateDocker(testUser, testPassword, testName)
+
+	var err error
+	testDBSQLite, err = sql.Open("sqlite", ":memory:")
+	if err != nil {
+		log.Fatalf("Could not open SQLite in-memory database: %s", err)
+	}
 
 	var code int
 
 	defer func() {
 		test.RemoveDocker(dockerPool, dockerResource)
+		testDBSQLite.Close()
 		os.Exit(code)
 	}()
 
 	createCRUD()
+	createCRUDSQLite()
 	code = m.Run()
 }
 
@@ -39,7 +52,27 @@ func createCRUD() {
 	testCRUD = New(testDB, Options{})
 }
 
+func createCRUDSQLite() {
+	testCRUDSQLite = New(testDBSQLite, Options{Dialect: DialectSQLite})
+}
+
 func recreateTestStructTable() {
 	_ = testCRUD.DropTable(context.Background(), &test.TestStruct{})
 	_ = testCRUD.CreateTable(context.Background(), &test.TestStruct{})
+}
+
+func recreateTestStructTableSQLite() {
+	_ = testCRUDSQLite.DropTable(context.Background(), &test.TestStruct{})
+	_ = testCRUDSQLite.CreateTable(context.Background(), &test.TestStruct{})
+}
+
+func recreateTestCascadeTablesSQLite() {
+	_ = testCRUDSQLite.DropTable(context.Background(), &TestCompany{})
+	_ = testCRUDSQLite.DropTable(context.Background(), &TestEmployee{})
+	_ = testCRUDSQLite.DropTable(context.Background(), &TestCreditCard{})
+	_ = testCRUDSQLite.DropTable(context.Background(), &TestComment{})
+	_ = testCRUDSQLite.CreateTable(context.Background(), &TestCompany{})
+	_ = testCRUDSQLite.CreateTable(context.Background(), &TestEmployee{})
+	_ = testCRUDSQLite.CreateTable(context.Background(), &TestCreditCard{})
+	_ = testCRUDSQLite.CreateTable(context.Background(), &TestComment{})
 }
