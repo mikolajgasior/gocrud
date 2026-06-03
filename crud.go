@@ -2,12 +2,14 @@ package crud
 
 import (
 	"database/sql"
+	"sync"
 
 	sqlbuilder "codeberg.org/mikolajgasior/gocrud/pkg/sql/builder"
 )
 
 type CRUD struct {
 	db              *sql.DB
+	buildersMu      sync.RWMutex
 	builders        map[string]*sqlbuilder.Builder
 	tagName         string
 	tableNamePrefix string

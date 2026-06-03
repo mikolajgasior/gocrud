@@ -13,7 +13,9 @@ import (
 func (c *CRUD) builder(obj interface{}) (*sqlbuilder.Builder, error) {
 	name := c.builderName(obj)
 
+	c.buildersMu.RLock()
 	builder, ok := c.builders[name]
+	c.buildersMu.RUnlock()
 	if ok {
 		return builder, nil
 	}
@@ -23,7 +25,9 @@ func (c *CRUD) builder(obj interface{}) (*sqlbuilder.Builder, error) {
 		TagName:         c.tagName,
 	})
 
+	c.buildersMu.Lock()
 	c.builders[name] = builder
+	c.buildersMu.Unlock()
 
 	return builder, nil
 }
@@ -65,8 +69,7 @@ func (c *CRUD) runOnDelete(ctx context.Context, obj interface{}, ids []uint64, l
 		}
 	}
 
-	// Assume that the parent id field is the same as the object name + ID.
-	parentIDField := objName + "ID"
+	defaultParentIDField := objName + "ID"
 
 	// tagWithValRegexp
 	for i := 0; i < objType.NumField(); i++ {
@@ -95,6 +98,7 @@ func (c *CRUD) runOnDelete(ctx context.Context, obj interface{}, ids []uint64, l
 
 		// Perform delete
 		if tagsMap["on_del"] == "del" {
+			parentIDField := defaultParentIDField
 			if tagsMap["del_field"] != "" {
 				parentIDField = tagsMap["del_field"]
 			}
@@ -125,6 +129,7 @@ func (c *CRUD) runOnDelete(ctx context.Context, obj interface{}, ids []uint64, l
 				return getUpdateFieldFromTagsCRUDError()
 			}
 
+			parentIDField := defaultParentIDField
 			if tagsMap["del_field"] != "" {
 				parentIDField = tagsMap["del_field"]
 			}

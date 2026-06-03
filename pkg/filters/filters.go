@@ -64,6 +64,13 @@ func FiltersInterfaces(filters *Filters) []interface{} {
 			continue
 		}
 
+		valInterfaces, ok := rawFilters.Val.([]interface{})[i].([]interface{})
+		if ok {
+			for j := 0; j < len(valInterfaces); j++ {
+				interfaces = append(interfaces, valInterfaces[j])
+			}
+			continue
+		}
 		valInt8s, ok := rawFilters.Val.([]interface{})[i].([]int8)
 		if ok {
 			for j := 0; j < len(valInt8s); j++ {

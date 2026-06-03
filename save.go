@@ -50,7 +50,12 @@ func (c *CRUD) Save(ctx context.Context, obj interface{}, options SaveOptions) e
 
 	for _, passField := range passFields {
 		fieldValue := ObjFieldValue(obj, passField)
-		hash, err := bcrypt.GenerateFromPassword([]byte(fieldValue.(string)), bcrypt.DefaultCost)
+		fieldStr := fieldValue.(string)
+		// Skip fields that are already a bcrypt hash to prevent double-hashing on updates.
+		if _, costErr := bcrypt.Cost([]byte(fieldStr)); costErr == nil {
+			continue
+		}
+		hash, err := bcrypt.GenerateFromPassword([]byte(fieldStr), bcrypt.DefaultCost)
 		if err != nil {
 			return err
 		}

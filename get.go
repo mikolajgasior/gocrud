@@ -26,7 +26,7 @@ func (c *CRUD) Get(ctx context.Context, newObjFunc func() interface{}, options G
 	}
 
 	// Filter values can be passed as string. We do not want any use of reflect outside of CRUD.
-	if options.ConvertFiltersFromString {
+	if options.ConvertFiltersFromString && options.Filters != nil {
 		newFilters := &sqlfilters.Filters{}
 
 		for filterName, filterOpVal := range *(options.Filters) {
