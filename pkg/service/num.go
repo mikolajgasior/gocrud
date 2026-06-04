@@ -23,15 +23,15 @@ func (c *CRUD) Num(ctx context.Context, path string, filterVals, filterOps map[s
 		return 0, err
 	}
 
-	numObjs, err := c.crud.GetCount(ctx, constructor(), crud.GetCountOptions{
+	numObjs, err := c.crud.GetCount(ctx, constructor(), gocrud.GetCountOptions{
 		Filters:                  filters,
 		ConvertFiltersFromString: true,
 	})
 
 	if err != nil {
-		var crudErr *crud.CRUDError
+		var crudErr *gocrud.CRUDError
 		if errors.As(err, &crudErr) {
-			var validationErr *crud.ValidationError
+			var validationErr *gocrud.ValidationError
 			if errors.As(crudErr.Err, &validationErr) {
 				slog.Error("error with validation", logAttrService, logger.AttrError(validationErr))
 				return 0, &FilterValidationError{

@@ -22,7 +22,7 @@ func TestList_WithFilters(t *testing.T) {
 		ts.Age = 10 + i
 		ts.Price = 444
 		ts.PrimaryEmail = "another@example.com"
-		_ = testCRUD.Save(context.Background(), ts, crud.SaveOptions{})
+		_ = testCRUD.Save(context.Background(), ts, gocrud.SaveOptions{})
 	}
 
 	// Insert data that should be selected by filters
@@ -30,7 +30,7 @@ func TestList_WithFilters(t *testing.T) {
 		ts := test.TestStructWithData()
 		ts.ID = 0
 		ts.Age = 30 + i
-		_ = testCRUD.Save(context.Background(), ts, crud.SaveOptions{})
+		_ = testCRUD.Save(context.Background(), ts, gocrud.SaveOptions{})
 	}
 
 	// Get the data from the database
@@ -60,7 +60,7 @@ func TestList_WithoutFilters(t *testing.T) {
 		ts := test.TestStructWithData()
 		ts.ID = 0
 		ts.Age = 30 + i
-		_ = testCRUD.Save(context.Background(), ts, crud.SaveOptions{})
+		_ = testCRUD.Save(context.Background(), ts, gocrud.SaveOptions{})
 	}
 
 	// Get the data
@@ -85,7 +85,7 @@ func TestList_WithRowObjTransformFunc(t *testing.T) {
 		ts.ID = 0
 		ts.Age = 30 + i
 		ts.FirstName = fmt.Sprintf("%s %d", ts.FirstName, i)
-		_ = testCRUD.Save(context.Background(), ts, crud.SaveOptions{})
+		_ = testCRUD.Save(context.Background(), ts, gocrud.SaveOptions{})
 	}
 
 	// Get the data

@@ -1,4 +1,4 @@
-package crud
+package gocrud
 
 type Options struct {
 	TableNamePrefix string

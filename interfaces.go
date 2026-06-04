@@ -1,4 +1,4 @@
-package crud
+package gocrud
 
 import (
 	sqlfilters "codeberg.org/mikolajgasior/gocrud/pkg/filters"

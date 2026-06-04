@@ -21,7 +21,7 @@ var testDB *sql.DB
 var dockerPool *dockertest.Pool
 var dockerResource *dockertest.Resource
 
-var testCRUD *crud.CRUD
+var testCRUD *gocrud.CRUD
 var testService *service.CRUD
 var testHandler *Handler
 
@@ -43,7 +43,7 @@ func TestMain(m *testing.M) {
 }
 
 func createCRUD() {
-	testCRUD = crud.New(testDB, crud.Options{Dialect: crud.DialectPostgres})
+	testCRUD = gocrud.New(testDB, gocrud.Options{Dialect: gocrud.DialectPostgres})
 }
 
 func createService() {
@@ -51,7 +51,7 @@ func createService() {
 		"teststruct": func() interface{} {
 			return &test.TestStruct{}
 		},
-	}, testDB, crud.DialectPostgres)
+	}, testDB, gocrud.DialectPostgres)
 }
 
 func createHandler() {

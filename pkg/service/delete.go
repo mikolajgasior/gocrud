@@ -16,7 +16,7 @@ func (c *CRUD) Delete(ctx context.Context, path string, id uint64) error {
 		return err
 	}
 
-	err = c.crud.Delete(ctx, obj, crud.DeleteOptions{})
+	err = c.crud.Delete(ctx, obj, gocrud.DeleteOptions{})
 	if err != nil {
 		slog.Error("error deleting", logAttrService, slog.Uint64("id", id))
 		return err

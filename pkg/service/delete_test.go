@@ -13,7 +13,7 @@ func TestDelete(t *testing.T) {
 
 	// Insert an object first
 	objSaved := test.TestStructWithData()
-	_ = testCRUD.Save(context.Background(), objSaved, crud.SaveOptions{})
+	_ = testCRUD.Save(context.Background(), objSaved, gocrud.SaveOptions{})
 
 	// Delete it
 	err := testService.Delete(context.Background(), "teststruct", objSaved.ID)

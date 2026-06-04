@@ -18,13 +18,13 @@ var (
 
 type CRUD struct {
 	paths map[string]func() interface{}
-	crud  *crud.CRUD
+	crud  *gocrud.CRUD
 }
 
 func New(paths map[string]func() interface{}, dbConn *sql.DB, dialect string) *CRUD {
 	return &CRUD{
 		paths: paths,
-		crud:  crud.New(dbConn, crud.Options{Dialect: dialect}),
+		crud:  gocrud.New(dbConn, gocrud.Options{Dialect: dialect}),
 	}
 }
 
@@ -51,7 +51,7 @@ func (c *CRUD) New(path string) interface{} {
 }
 
 func (c *CRUD) ID(obj interface{}) uint64 {
-	return crud.ObjIDValue(obj)
+	return gocrud.ObjIDValue(obj)
 }
 
 // buildFilters converts the string-keyed filter maps coming from HTTP layers

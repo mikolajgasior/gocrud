@@ -18,7 +18,7 @@ func TestServe_Read(t *testing.T) {
 
 	// Insert an object first
 	objSaved := test.TestStructWithData()
-	_ = testCRUD.Save(context.Background(), objSaved, crud.SaveOptions{})
+	_ = testCRUD.Save(context.Background(), objSaved, gocrud.SaveOptions{})
 
 	// Get object
 	req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/teststruct/%d", objSaved.ID), nil)

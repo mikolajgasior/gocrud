@@ -18,7 +18,7 @@ func TestNum(t *testing.T) {
 		ts.Age = 10 + i
 		ts.Price = 444
 		ts.PrimaryEmail = "another@example.com"
-		_ = testCRUD.Save(context.Background(), ts, crud.SaveOptions{})
+		_ = testCRUD.Save(context.Background(), ts, gocrud.SaveOptions{})
 	}
 
 	// Insert data that should be selected by filters
@@ -26,7 +26,7 @@ func TestNum(t *testing.T) {
 		ts := test.TestStructWithData()
 		ts.ID = 0
 		ts.Age = 30
-		_ = testCRUD.Save(context.Background(), ts, crud.SaveOptions{})
+		_ = testCRUD.Save(context.Background(), ts, gocrud.SaveOptions{})
 	}
 
 	// Get the data from the database

@@ -1,4 +1,4 @@
-package crud
+package gocrud
 
 const (
 	IDField = "ID"

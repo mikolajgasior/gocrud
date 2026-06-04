@@ -12,14 +12,14 @@ import (
 func (c *CRUD) Save(ctx context.Context, obj interface{}, now int64, userID uint64) error {
 	logAttrService := logger.AttrService(c, "Save")
 
-	err := c.crud.Save(ctx, obj, crud.SaveOptions{
+	err := c.crud.Save(ctx, obj, gocrud.SaveOptions{
 		ModifiedAt: now,
 		ModifiedBy: userID,
 	})
 	if err != nil {
-		var crudErr *crud.CRUDError
+		var crudErr *gocrud.CRUDError
 		if errors.As(err, &crudErr) {
-			var validationErr *crud.ValidationError
+			var validationErr *gocrud.ValidationError
 			if errors.As(crudErr.Err, &validationErr) {
 				slog.Error("error with validation", logAttrService, logger.AttrError(err))
 				return &ModelValidationError{

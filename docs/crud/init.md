@@ -7,12 +7,12 @@ To begin using the CRUD library, you must initialize a new instance by passing y
 Create a new CRUD instance using the `New` function:
 
 ```go
-crudInstance := crud.New(dbConn, crud.Options{
-    Dialect: crud.DialectPostgres,
+crudInstance := gocrud.New(dbConn, gocrud.Options{
+    Dialect: gocrud.DialectPostgres,
 })
 ```
 
-`Dialect` is **required**. Passing an empty or unrecognised value causes a panic at startup. Use one of the two provided constants: `crud.DialectPostgres` or `crud.DialectSQLite`.
+`Dialect` is **required**. Passing an empty or unrecognised value causes a panic at startup. Use one of the two provided constants: `gocrud.DialectPostgres` or `gocrud.DialectSQLite`.
 
 ## Configuration Options
 
@@ -30,8 +30,8 @@ type Options struct {
 * **TableNamePrefix (string)**: Allows you to define a prefix for all database table names managed by this instance. This is useful for organizing tables in shared databases or separating environments (e.g., dev_, prod_). If left empty, the library uses the default table name derived from the struct.
 * **TagName (string)**: Specifies the name of the struct tag used for validation and mapping rules. Default: `crud`. If you set this to `mytag`, the library will look for tags like `mytag:"unique"` instead of the default `crud:"unique"`.
 * **Dialect (string)** *(required)*: Selects the SQL dialect used to generate queries. Passing an empty or unrecognised value causes a panic at startup. Two constants are provided:
-    * `crud.DialectPostgres` — PostgreSQL.
-    * `crud.DialectSQLite` — SQLite. Use this when connecting via `modernc.org/sqlite`. Column types are mapped to SQLite affinities (`INTEGER`, `TEXT`, `REAL`) and `?` placeholders are used instead of `$1`, `$2`, …
+    * `gocrud.DialectPostgres` — PostgreSQL.
+    * `gocrud.DialectSQLite` — SQLite. Use this when connecting via `modernc.org/sqlite`. Column types are mapped to SQLite affinities (`INTEGER`, `TEXT`, `REAL`) and `?` placeholders are used instead of `$1`, `$2`, …
 * **Flags (uint64)**: Enables specific behaviors via bitwise flags. Currently, one flag is supported: **GetCountOnUniq (const GetCountOnUniq = 1)**: When this flag is set, the library performs an additional COUNT(*) query on unique fields before attempting an insert or update. This ensures that the unique value does not already exist in the database, providing an extra layer of validation beyond standard database constraints.
 
 ## Example Usage
@@ -46,11 +46,11 @@ import (
 
 db, err := sql.Open("postgres", "host=localhost user=myuser password=mypass dbname=mydb sslmode=disable")
 
-crudInstance := crud.New(db, crud.Options{
-    Dialect:         crud.DialectPostgres,
+crudInstance := gocrud.New(db, gocrud.Options{
+    Dialect:         gocrud.DialectPostgres,
     TableNamePrefix: "app_",
     TagName:         "crud",
-    Flags:           crud.GetCountOnUniq,
+    Flags:           gocrud.GetCountOnUniq,
 })
 ```
 
@@ -64,8 +64,8 @@ import (
 
 db, err := sql.Open("sqlite", "./myapp.db")
 
-crudInstance := crud.New(db, crud.Options{
-    Dialect: crud.DialectSQLite,
+crudInstance := gocrud.New(db, gocrud.Options{
+    Dialect: gocrud.DialectSQLite,
 })
 ```
 

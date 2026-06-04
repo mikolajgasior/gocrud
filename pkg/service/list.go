@@ -28,7 +28,7 @@ func (c *CRUD) List(ctx context.Context, path string, limit, offset int, order, 
 		getOrder = append(getOrder, order, orderDirection)
 	}
 
-	objs, err := c.crud.Get(ctx, constructor, crud.GetOptions{
+	objs, err := c.crud.Get(ctx, constructor, gocrud.GetOptions{
 		Limit:                    limit,
 		Offset:                   offset,
 		Order:                    getOrder,
@@ -38,9 +38,9 @@ func (c *CRUD) List(ctx context.Context, path string, limit, offset int, order, 
 	})
 
 	if err != nil {
-		var crudErr *crud.CRUDError
+		var crudErr *gocrud.CRUDError
 		if errors.As(err, &crudErr) {
-			var validationErr *crud.ValidationError
+			var validationErr *gocrud.ValidationError
 			if errors.As(crudErr.Err, &validationErr) {
 				slog.Error("error with validation", logAttrService, logger.AttrError(validationErr))
 				return nil, &FilterValidationError{

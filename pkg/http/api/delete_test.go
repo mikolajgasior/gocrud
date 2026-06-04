@@ -16,7 +16,7 @@ func TestServe_Delete(t *testing.T) {
 
 	// Insert an object first
 	objSaved := test.TestStructWithData()
-	_ = testCRUD.Save(context.Background(), objSaved, crud.SaveOptions{})
+	_ = testCRUD.Save(context.Background(), objSaved, gocrud.SaveOptions{})
 
 	// Delete it
 	req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/teststruct/%d", objSaved.ID), nil)

@@ -14,7 +14,7 @@ func TestRead_WhenObjectExists(t *testing.T) {
 
 	// Insert an object first
 	objSaved := test.TestStructWithData()
-	_ = testCRUD.Save(context.Background(), objSaved, crud.SaveOptions{})
+	_ = testCRUD.Save(context.Background(), objSaved, gocrud.SaveOptions{})
 
 	// Get the object
 	objRead, err := testService.Read(context.Background(), "teststruct", objSaved.ID)

@@ -19,12 +19,12 @@ func (c *CRUD) Read(ctx context.Context, path string, id uint64) (interface{}, e
 	}
 
 	obj := constructor()
-	err := c.crud.Load(ctx, obj, fmt.Sprintf("%d", id), crud.LoadOptions{})
+	err := c.crud.Load(ctx, obj, fmt.Sprintf("%d", id), gocrud.LoadOptions{})
 	if err != nil {
 		return nil, err
 	}
 
-	objID := crud.ObjIDValue(obj)
+	objID := gocrud.ObjIDValue(obj)
 	if objID == 0 {
 		slog.Error("error not found", logAttrService, slog.Uint64("id", objID))
 		return nil, NotFoundError

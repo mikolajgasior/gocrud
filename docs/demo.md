@@ -57,8 +57,8 @@ func main() {
 	var dbConn interface{} // Replace with *sql.DB in real usage
 
 	// 2. Initialize the CRUD Controller
-	crudInstance := crud.New(dbConn, crud.Options{
-		Dialect: crud.DialectPostgres,
+	crudInstance := gocrud.New(dbConn, gocrud.Options{
+		Dialect: gocrud.DialectPostgres,
 	})
 
 	// 3. Create the Database Table
@@ -86,8 +86,8 @@ A few important conventions:
 Import the gocrud package and create a controller instance tied to your database connection. As shown in the main function above:
 
 ```go
-crudInstance := crud.New(dbConn, crud.Options{
-    Dialect: crud.DialectPostgres,
+crudInstance := gocrud.New(dbConn, gocrud.Options{
+    Dialect: gocrud.DialectPostgres,
 })
 ```
 
@@ -113,7 +113,7 @@ Now let's put the controller to work. We'll create several users, read one back,
 Each operation is demonstrated separately below. All helper functions are called from runOperations() which is invoked from main().
 
 ```go
-func runOperations(ctx context.Context, c *crud.Controller) {
+func runOperations(ctx context.Context, c *gocrud.Controller) {
 	createUsers(ctx, c)
 	loadUser(ctx, c)
 	updateUser(ctx, c)
@@ -127,7 +127,7 @@ func runOperations(ctx context.Context, c *crud.Controller) {
 Use the `Save` method to insert new records. The `ID` is auto-generated and populated on the struct after saving.
 
 ```go
-func createUsers(ctx context.Context, c *crud.Controller) {
+func createUsers(ctx context.Context, c *gocrud.Controller) {
 	now := time.Now().Unix()
 	userID := uint64(1337)
 
@@ -144,7 +144,7 @@ func createUsers(ctx context.Context, c *crud.Controller) {
 			Phone:      "1234567890",
 		}
 
-		err := c.crud.Save(ctx, userInstance, crud.SaveOptions{
+		err := c.crud.Save(ctx, userInstance, gocrud.SaveOptions{
 			ModifiedAt: now,
 			ModifiedBy: userID,
 		})
@@ -163,9 +163,9 @@ func createUsers(ctx context.Context, c *crud.Controller) {
 Use the `Load` method to fetch a single record by its primary key into an empty struct.
 
 ```go
-func loadUser(ctx context.Context, c *crud.Controller) {
+func loadUser(ctx context.Context, c *gocrud.Controller) {
 	userFromDB := &User{}
-	err := c.crud.Load(ctx, userFromDB, 2, crud.LoadOptions{})
+	err := c.crud.Load(ctx, userFromDB, 2, gocrud.LoadOptions{})
 	if err != nil {
 		slog.Error("failed to load user", slog.Any("error", err))
 		os.Exit(1)
@@ -179,13 +179,13 @@ func loadUser(ctx context.Context, c *crud.Controller) {
 Call `Save` on an existing (loaded) struct with modified fields. This updates the record in place.
 
 ```go
-func updateUser(ctx context.Context, c *crud.Controller) {
+func updateUser(ctx context.Context, c *gocrud.Controller) {
 	now := time.Now().Unix()
 	userID := uint64(1337)
 
 	// First load the user
 	userFromDB := &User{}
-	err := c.crud.Load(ctx, userFromDB, 2, crud.LoadOptions{})
+	err := c.crud.Load(ctx, userFromDB, 2, gocrud.LoadOptions{})
 	if err != nil {
 		slog.Error("failed to load user", slog.Any("error", err))
 		os.Exit(1)
@@ -195,7 +195,7 @@ func updateUser(ctx context.Context, c *crud.Controller) {
 	userFromDB.LastName = "Updated"
 
 	// Save the changes
-	err = c.crud.Save(ctx, userFromDB, crud.SaveOptions{
+	err = c.crud.Save(ctx, userFromDB, gocrud.SaveOptions{
 		ModifiedAt: now,
 		ModifiedBy: userID,
 	})
@@ -225,8 +225,8 @@ Use the `Get` method to retrieve multiple records with pagination, sorting, and 
 **Note**: To use filters, import: `sqlfilters "codeberg.org/mikolajgasior/gocrud/pkg/filters"`
 
 ```go
-func listUsers(ctx context.Context, c *crud.Controller) {
-	fetchedUsers, err := c.crud.Get(ctx, func() { &User{} }, crud.GetOptions{
+func listUsers(ctx context.Context, c *gocrud.Controller) {
+	fetchedUsers, err := c.crud.Get(ctx, func() { &User{} }, gocrud.GetOptions{
 		Limit:  10,
 		Offset: 0,
 		Order:  []string{"Username"},
@@ -266,15 +266,15 @@ func listUsers(ctx context.Context, c *crud.Controller) {
 Load a user and then call `Delete` to remove it from the database.
 
 ```go
-func deleteUser(ctx context.Context, c *crud.Controller) {
+func deleteUser(ctx context.Context, c *gocrud.Controller) {
 	userToDelete := &User{}
-	err := c.crud.Load(ctx, userToDelete, 2, crud.LoadOptions{})
+	err := c.crud.Load(ctx, userToDelete, 2, gocrud.LoadOptions{})
 	if err != nil {
 		slog.Error("failed to load user for deletion", slog.Any("error", err))
 		os.Exit(1)
 	}
 
-	err = c.crud.Delete(ctx, userToDelete, crud.DeleteOptions{})
+	err = c.crud.Delete(ctx, userToDelete, gocrud.DeleteOptions{})
 	if err != nil {
 		slog.Error("failed to delete user", slog.Any("error", err))
 		os.Exit(1)

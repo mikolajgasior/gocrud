@@ -22,7 +22,7 @@ func TestServe_List(t *testing.T) {
 		ts.Age = 10 + i
 		ts.Price = 444
 		ts.PrimaryEmail = "another@example.com"
-		_ = testCRUD.Save(context.Background(), ts, crud.SaveOptions{})
+		_ = testCRUD.Save(context.Background(), ts, gocrud.SaveOptions{})
 	}
 
 	// Insert data that should be selected by filters
@@ -30,7 +30,7 @@ func TestServe_List(t *testing.T) {
 		ts := test.TestStructWithData()
 		ts.ID = 0
 		ts.Age = 30 + i
-		_ = testCRUD.Save(context.Background(), ts, crud.SaveOptions{})
+		_ = testCRUD.Save(context.Background(), ts, gocrud.SaveOptions{})
 	}
 
 	urlPath := "/teststruct/?limit=10&offset=20&order=Age&order_direction=asc&filter_val_Price=444&filter_op_Price=eq&filter_val_PrimaryEmail=primary@example.com&filter_op_PrimaryEmail=eq"
