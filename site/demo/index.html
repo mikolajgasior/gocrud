@@ -715,7 +715,7 @@ import (
     // &quot;database/sql&quot;
     // _ &quot;your-db-driver&quot;
 
-    structcrud &quot;codeberg.org/mikolajgasior/gocrud&quot;
+    &quot;codeberg.org/mikolajgasior/gocrud&quot;
     // Import the filters package for advanced querying
     sqlfilters &quot;codeberg.org/mikolajgasior/gocrud/pkg/filters&quot;
 )
@@ -752,7 +752,9 @@ func main() {
     var dbConn interface{} // Replace with *sql.DB in real usage
 
     // 2. Initialize the CRUD Controller
-    crudInstance := structcrud.New(dbConn, structcrud.Options{})
+    crudInstance := gocrud.New(dbConn, gocrud.Options{
+        Dialect: gocrud.DialectPostgres,
+    })
 
     // 3. Create the Database Table
     err := crudInstance.CreateTable(ctx, &amp;User{})
@@ -774,7 +776,9 @@ func main() {
 </ul>
 <h2 id="2-initialize-the-crud-controller">2. Initialize the CRUD Controller</h2>
 <p>Import the gocrud package and create a controller instance tied to your database connection. As shown in the main function above:</p>
-<pre><code class="language-go">crudInstance := structcrud.New(dbConn, structcrud.Options{})
+<pre><code class="language-go">crudInstance := gocrud.New(dbConn, gocrud.Options{
+    Dialect: gocrud.DialectPostgres,
+})
 </code></pre>
 <p>Replace <code>dbConn</code> with your active database connection (for example, a <code>*sql.DB</code>or compatible interface expected by your setup).</p>
 <h2 id="3-create-the-database-table">3. Create the Database Table</h2>
@@ -789,7 +793,7 @@ if err != nil {
 <h2 id="4-perform-crud-operations">4. Perform CRUD Operations</h2>
 <p>Now let's put the controller to work. We'll create several users, read one back, update it, list users with advanced filtering, and finally delete one.
 Each operation is demonstrated separately below. All helper functions are called from runOperations() which is invoked from main().</p>
-<pre><code class="language-go">func runOperations(ctx context.Context, c *structcrud.Controller) {
+<pre><code class="language-go">func runOperations(ctx context.Context, c *gocrud.Controller) {
     createUsers(ctx, c)
     loadUser(ctx, c)
     updateUser(ctx, c)
@@ -799,7 +803,7 @@ Each operation is demonstrated separately below. All helper functions are called
 </code></pre>
 <h3 id="create-insert-new-records">Create — Insert New Records</h3>
 <p>Use the <code>Save</code> method to insert new records. The <code>ID</code> is auto-generated and populated on the struct after saving.</p>
-<pre><code class="language-go">func createUsers(ctx context.Context, c *structcrud.Controller) {
+<pre><code class="language-go">func createUsers(ctx context.Context, c *gocrud.Controller) {
     now := time.Now().Unix()
     userID := uint64(1337)
 
@@ -816,7 +820,7 @@ Each operation is demonstrated separately below. All helper functions are called
             Phone:      &quot;1234567890&quot;,
         }
 
-        err := c.crud.Save(ctx, userInstance, structcrud.SaveOptions{
+        err := c.crud.Save(ctx, userInstance, gocrud.SaveOptions{
             ModifiedAt: now,
             ModifiedBy: userID,
         })
@@ -831,9 +835,9 @@ Each operation is demonstrated separately below. All helper functions are called
 </code></pre>
 <h3 id="read-load-a-single-record-by-id">Read — Load a Single Record by ID</h3>
 <p>Use the <code>Load</code> method to fetch a single record by its primary key into an empty struct.</p>
-<pre><code class="language-go">func loadUser(ctx context.Context, c *structcrud.Controller) {
+<pre><code class="language-go">func loadUser(ctx context.Context, c *gocrud.Controller) {
     userFromDB := &amp;User{}
-    err := c.crud.Load(ctx, userFromDB, 2, structcrud.LoadOptions{})
+    err := c.crud.Load(ctx, userFromDB, 2, gocrud.LoadOptions{})
     if err != nil {
         slog.Error(&quot;failed to load user&quot;, slog.Any(&quot;error&quot;, err))
         os.Exit(1)
@@ -843,13 +847,13 @@ Each operation is demonstrated separately below. All helper functions are called
 </code></pre>
 <h3 id="update-modify-existing-records">Update — Modify Existing Records</h3>
 <p>Call <code>Save</code> on an existing (loaded) struct with modified fields. This updates the record in place.</p>
-<pre><code class="language-go">func updateUser(ctx context.Context, c *structcrud.Controller) {
+<pre><code class="language-go">func updateUser(ctx context.Context, c *gocrud.Controller) {
     now := time.Now().Unix()
     userID := uint64(1337)
 
     // First load the user
     userFromDB := &amp;User{}
-    err := c.crud.Load(ctx, userFromDB, 2, structcrud.LoadOptions{})
+    err := c.crud.Load(ctx, userFromDB, 2, gocrud.LoadOptions{})
     if err != nil {
         slog.Error(&quot;failed to load user&quot;, slog.Any(&quot;error&quot;, err))
         os.Exit(1)
@@ -859,7 +863,7 @@ Each operation is demonstrated separately below. All helper functions are called
     userFromDB.LastName = &quot;Updated&quot;
 
     // Save the changes
-    err = c.crud.Save(ctx, userFromDB, structcrud.SaveOptions{
+    err = c.crud.Save(ctx, userFromDB, gocrud.SaveOptions{
         ModifiedAt: now,
         ModifiedBy: userID,
     })
@@ -908,8 +912,8 @@ Each operation is demonstrated separately below. All helper functions are called
 </tbody>
 </table>
 <p><strong>Note</strong>: To use filters, import: <code>sqlfilters "codeberg.org/mikolajgasior/gocrud/pkg/filters"</code></p>
-<pre><code class="language-go">func listUsers(ctx context.Context, c *structcrud.Controller) {
-    fetchedUsers, err := c.crud.Get(ctx, func() { &amp;User{} }, structcrud.GetOptions{
+<pre><code class="language-go">func listUsers(ctx context.Context, c *gocrud.Controller) {
+    fetchedUsers, err := c.crud.Get(ctx, func() { &amp;User{} }, gocrud.GetOptions{
         Limit:  10,
         Offset: 0,
         Order:  []string{&quot;Username&quot;},
@@ -945,15 +949,15 @@ Each operation is demonstrated separately below. All helper functions are called
 </code></pre>
 <h3 id="delete-remove-records">Delete — Remove Records</h3>
 <p>Load a user and then call <code>Delete</code> to remove it from the database.</p>
-<pre><code class="language-go">func deleteUser(ctx context.Context, c *structcrud.Controller) {
+<pre><code class="language-go">func deleteUser(ctx context.Context, c *gocrud.Controller) {
     userToDelete := &amp;User{}
-    err := c.crud.Load(ctx, userToDelete, 2, structcrud.LoadOptions{})
+    err := c.crud.Load(ctx, userToDelete, 2, gocrud.LoadOptions{})
     if err != nil {
         slog.Error(&quot;failed to load user for deletion&quot;, slog.Any(&quot;error&quot;, err))
         os.Exit(1)
     }
 
-    err = c.crud.Delete(ctx, userToDelete, structcrud.DeleteOptions{})
+    err = c.crud.Delete(ctx, userToDelete, gocrud.DeleteOptions{})
     if err != nil {
         slog.Error(&quot;failed to delete user&quot;, slog.Any(&quot;error&quot;, err))
         os.Exit(1)

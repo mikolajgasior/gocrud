@@ -750,7 +750,7 @@
 <p>The <code>pkg/service</code> package provides a higher-level wrapper around the core CRUD object. Where the core layer works directly with struct instances, the service layer is driven by a <strong>path registry</strong> — a map of string keys to constructor functions — and accepts filter values as plain strings, making it a natural fit for wiring up to HTTP handlers.</p>
 <h2 id="initialization">Initialization</h2>
 <pre><code class="language-go">import (
-    structcrud &quot;codeberg.org/mikolajgasior/gocrud&quot;
+    &quot;codeberg.org/mikolajgasior/gocrud&quot;
     svccrud    &quot;codeberg.org/mikolajgasior/gocrud/pkg/service&quot;
 )
 
@@ -760,14 +760,14 @@ svc := svccrud.New(
         &quot;products&quot;: func() interface{} { return &amp;Product{} },
     },
     dbConn,
-    structcrud.DialectPostgres, // or structcrud.DialectSQLite
+    gocrud.DialectPostgres, // or gocrud.DialectSQLite
 )
 </code></pre>
 <p><code>New</code> takes three arguments:</p>
 <ul>
 <li><strong>paths</strong> <code>map[string]func() interface{}</code> — a registry mapping path keys to constructor functions. Each function must return a pointer to a new zero-value struct.</li>
 <li><strong>dbConn</strong> <code>*sql.DB</code> — an open database connection.</li>
-<li><strong>dialect</strong> <code>string</code> — the SQL dialect; must be <code>structcrud.DialectPostgres</code> or <code>structcrud.DialectSQLite</code>. Passing an empty or unrecognised value causes a panic at startup.</li>
+<li><strong>dialect</strong> <code>string</code> — the SQL dialect; must be <code>gocrud.DialectPostgres</code> or <code>gocrud.DialectSQLite</code>. Passing an empty or unrecognised value causes a panic at startup.</li>
 </ul>
 <h3 id="creating-tables">Creating tables</h3>
 <pre><code class="language-go">err := svc.CreateTables(ctx)
@@ -959,7 +959,7 @@ id   := svc.ID(obj)        // returns obj.ID as uint64
 <pre><code class="language-go">svc := svccrud.New(map[string]func() interface{}{
     &quot;warehouse/products&quot;:  func() interface{} { return &amp;Product{} },
     &quot;warehouse/suppliers&quot;: func() interface{} { return &amp;Supplier{} },
-}, dbConn, structcrud.DialectPostgres)
+}, dbConn, gocrud.DialectPostgres)
 
 // In an HTTP handler:
 objs, err := svc.List(ctx, &quot;warehouse/products&quot;, 20, 0, &quot;Name&quot;, &quot;asc&quot;,

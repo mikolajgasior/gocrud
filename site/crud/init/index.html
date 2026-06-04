@@ -632,11 +632,11 @@
 <p>To begin using the CRUD library, you must initialize a new instance by passing your database connection and optional configuration settings. This creates the controller object that manages all subsequent database operations.</p>
 <h2 id="basic-initialization">Basic Initialization</h2>
 <p>Create a new CRUD instance using the <code>New</code> function:</p>
-<pre><code class="language-go">crudInstance := structcrud.New(dbConn, structcrud.Options{
-    Dialect: structcrud.DialectPostgres,
+<pre><code class="language-go">crudInstance := gocrud.New(dbConn, gocrud.Options{
+    Dialect: gocrud.DialectPostgres,
 })
 </code></pre>
-<p><code>Dialect</code> is <strong>required</strong>. Passing an empty or unrecognised value causes a panic at startup. Use one of the two provided constants: <code>structcrud.DialectPostgres</code> or <code>structcrud.DialectSQLite</code>.</p>
+<p><code>Dialect</code> is <strong>required</strong>. Passing an empty or unrecognised value causes a panic at startup. Use one of the two provided constants: <code>gocrud.DialectPostgres</code> or <code>gocrud.DialectSQLite</code>.</p>
 <h2 id="configuration-options">Configuration Options</h2>
 <p>The <code>Options</code> struct allows you to customize the behavior of the CRUD instance during initialization:</p>
 <pre><code class="language-go">type Options struct {
@@ -650,8 +650,8 @@
 <li><strong>TableNamePrefix (string)</strong>: Allows you to define a prefix for all database table names managed by this instance. This is useful for organizing tables in shared databases or separating environments (e.g., dev_, prod_). If left empty, the library uses the default table name derived from the struct.</li>
 <li><strong>TagName (string)</strong>: Specifies the name of the struct tag used for validation and mapping rules. Default: <code>crud</code>. If you set this to <code>mytag</code>, the library will look for tags like <code>mytag:"unique"</code> instead of the default <code>crud:"unique"</code>.</li>
 <li><strong>Dialect (string)</strong> <em>(required)</em>: Selects the SQL dialect used to generate queries. Passing an empty or unrecognised value causes a panic at startup. Two constants are provided:<ul>
-<li><code>structcrud.DialectPostgres</code> — PostgreSQL.</li>
-<li><code>structcrud.DialectSQLite</code> — SQLite. Use this when connecting via <code>modernc.org/sqlite</code>. Column types are mapped to SQLite affinities (<code>INTEGER</code>, <code>TEXT</code>, <code>REAL</code>) and <code>?</code> placeholders are used instead of <code>$1</code>, <code>$2</code>, …</li>
+<li><code>gocrud.DialectPostgres</code> — PostgreSQL.</li>
+<li><code>gocrud.DialectSQLite</code> — SQLite. Use this when connecting via <code>modernc.org/sqlite</code>. Column types are mapped to SQLite affinities (<code>INTEGER</code>, <code>TEXT</code>, <code>REAL</code>) and <code>?</code> placeholders are used instead of <code>$1</code>, <code>$2</code>, …</li>
 </ul>
 </li>
 <li><strong>Flags (uint64)</strong>: Enables specific behaviors via bitwise flags. Currently, one flag is supported: <strong>GetCountOnUniq (const GetCountOnUniq = 1)</strong>: When this flag is set, the library performs an additional COUNT(*) query on unique fields before attempting an insert or update. This ensures that the unique value does not already exist in the database, providing an extra layer of validation beyond standard database constraints.</li>
@@ -659,29 +659,29 @@
 <h2 id="example-usage">Example Usage</h2>
 <h3 id="postgresql">PostgreSQL</h3>
 <pre><code class="language-go">import (
-    structcrud &quot;codeberg.org/mikolajgasior/gocrud&quot;
+    &quot;codeberg.org/mikolajgasior/gocrud&quot;
     _ &quot;github.com/lib/pq&quot;
 )
 
 db, err := sql.Open(&quot;postgres&quot;, &quot;host=localhost user=myuser password=mypass dbname=mydb sslmode=disable&quot;)
 
-crudInstance := structcrud.New(db, structcrud.Options{
-    Dialect:         structcrud.DialectPostgres,
+crudInstance := gocrud.New(db, gocrud.Options{
+    Dialect:         gocrud.DialectPostgres,
     TableNamePrefix: &quot;app_&quot;,
     TagName:         &quot;crud&quot;,
-    Flags:           structcrud.GetCountOnUniq,
+    Flags:           gocrud.GetCountOnUniq,
 })
 </code></pre>
 <h3 id="sqlite">SQLite</h3>
 <pre><code class="language-go">import (
-    structcrud &quot;codeberg.org/mikolajgasior/gocrud&quot;
+    &quot;codeberg.org/mikolajgasior/gocrud&quot;
     _ &quot;modernc.org/sqlite&quot;
 )
 
 db, err := sql.Open(&quot;sqlite&quot;, &quot;./myapp.db&quot;)
 
-crudInstance := structcrud.New(db, structcrud.Options{
-    Dialect: structcrud.DialectSQLite,
+crudInstance := gocrud.New(db, gocrud.Options{
+    Dialect: gocrud.DialectSQLite,
 })
 </code></pre>
 <p>Pass <code>:memory:</code> as the path to <code>sql.Open</code> for an in-memory SQLite database (useful for tests).</p>
