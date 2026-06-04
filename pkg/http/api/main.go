@@ -22,8 +22,8 @@ var (
 	filterOpRegexp  = regexp.MustCompile("^filter_op_[a-zA-Z0-9_]+$")
 )
 
-// PathOptions controls which operations and filters are available for a single path.
-// The zero value enables everything — only set fields you want to restrict.
+// PathOptions controls which operations and filters are available for a single
+// path. The zero value enables everything — only set fields you want to restrict.
 type PathOptions struct {
 	DisableCreate  bool
 	DisableUpdate  bool
@@ -32,6 +32,15 @@ type PathOptions struct {
 	DisableList    bool
 	DisableFilters bool     // when true, all filter query parameters are ignored
 	AllowedFilters []string // when non-empty, only the listed fields may be used as filters
+
+	// Per-operation constructor overrides. When nil the service's registered
+	// constructor for the path is used. Set to use a different struct type for
+	// a specific operation — for example a create-only struct with fewer fields
+	// that implements a custom insertQueryBuilder.
+	CreateConstructor func() interface{}
+	UpdateConstructor func() interface{}
+	ReadConstructor   func() interface{}
+	ListConstructor   func() interface{}
 }
 
 type Options struct {

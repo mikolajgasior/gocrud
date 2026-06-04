@@ -63,10 +63,21 @@ Populates `obj` from `url.Values` (e.g. an HTTP form submission) before saving. 
 ### Read
 
 ```go
-obj, err := svc.Read(ctx, "users", id)
+obj, err := svc.Read(ctx, "users", id, nil)
 ```
 
 Loads a single record by `id`. Returns `NotFoundError` if no record with that ID exists.
+
+The last argument is an optional constructor (`func() interface{}`). When `nil` the path's registered constructor is used. Pass a non-nil constructor to load the record into a different struct type — for example a read-specific projection with fewer fields, which will generate a narrower `SELECT`.
+
+```go
+type UserSummary struct {
+    ID    uint64
+    Email string
+}
+
+obj, err := svc.Read(ctx, "users", id, func() interface{} { return &UserSummary{} })
+```
 
 ---
 
@@ -91,6 +102,7 @@ objs, err := svc.List(
     map[string]string{"Status": "1"},
     map[string]string{"Status": "eq"},
     nil, // optional row transform func
+    nil, // optional constructor override
 )
 ```
 
@@ -108,6 +120,7 @@ Returns a paginated, filtered, ordered list of objects for the given path. All f
 | `filterVals` | `map[string]string` | Field name → value |
 | `filterOps` | `map[string]string` | Field name → operator string (see below) |
 | `rowFunc` | `func(interface{}) interface{}` | Optional per-row transform; `nil` returns raw structs |
+| `constructor` | `func() interface{}` | Optional struct constructor; `nil` uses the path's registered constructor. Pass a non-nil value to scan rows into a different struct type (e.g. a list projection with fewer fields). |
 
 **Filter operators:**
 
@@ -172,6 +185,7 @@ svc := svccrud.New(map[string]func() interface{}{
 objs, err := svc.List(ctx, "warehouse/products", 20, 0, "Name", "asc",
     map[string]string{"CategoryID": r.URL.Query().Get("category_id")},
     map[string]string{"CategoryID": "eq"},
-    nil,
+    nil, // rowFunc
+    nil, // constructor (use registered default)
 )
 ```

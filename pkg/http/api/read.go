@@ -20,7 +20,7 @@ func (h *Handler) handleAPIRead(ctx context.Context, w http.ResponseWriter, r *h
 		return
 	}
 
-	obj, err := h.svc.Read(ctx, path, idInt)
+	obj, err := h.svc.Read(ctx, path, idInt, h.options.Paths[path].ReadConstructor)
 	if err != nil {
 		if errors.Is(err, svccrud.NotFoundError) {
 			jsonresp.Write(w, http.StatusNotFound, &jsonresp.Response{

@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 
+	"codeberg.org/mikolajgasior/gocrud"
 	"codeberg.org/mikolajgasior/gocrud/pkg/http/jsonreq"
 	"codeberg.org/mikolajgasior/gocrud/pkg/http/jsonresp"
 	svccrud "codeberg.org/mikolajgasior/gocrud/pkg/service"
@@ -15,11 +16,12 @@ import (
 func (h *Handler) handleAPICreateUpdate(ctx context.Context, w http.ResponseWriter, r *http.Request, path, id string) {
 	var idInt uint64
 	var err error
-
 	var obj interface{}
 
+	pathOpts := h.options.Paths[path]
+
 	if id != "" {
-		idInt, err := strconv.ParseUint(id, 10, 64)
+		idInt, err = strconv.ParseUint(id, 10, 64)
 		if err != nil {
 			jsonresp.Write(w, http.StatusBadRequest, &jsonresp.Response{
 				Ok:   true,
@@ -28,19 +30,29 @@ func (h *Handler) handleAPICreateUpdate(ctx context.Context, w http.ResponseWrit
 			return
 		}
 
-		obj, err = h.svc.Read(ctx, path, idInt)
-		if err != nil {
-			if errors.Is(err, svccrud.NotFoundError) {
-				jsonresp.Write(w, http.StatusNotFound, &jsonresp.Response{
-					Ok:   true,
-					Code: CodeServiceError,
-				})
+		if pathOpts.UpdateConstructor != nil {
+			// Use the override constructor — skip reading the existing record.
+			// The URL id is authoritative; any id in the JSON body is overwritten below.
+			obj = pathOpts.UpdateConstructor()
+		} else {
+			obj, err = h.svc.Read(ctx, path, idInt, nil)
+			if err != nil {
+				if errors.Is(err, svccrud.NotFoundError) {
+					jsonresp.Write(w, http.StatusNotFound, &jsonresp.Response{
+						Ok:   true,
+						Code: CodeServiceError,
+					})
+					return
+				}
 				return
 			}
-			return
 		}
 	} else {
-		obj = h.svc.New(path)
+		if pathOpts.CreateConstructor != nil {
+			obj = pathOpts.CreateConstructor()
+		} else {
+			obj = h.svc.New(path)
+		}
 	}
 
 	err = jsonreq.Unmarshal(r, &obj)
@@ -50,6 +62,12 @@ func (h *Handler) handleAPICreateUpdate(ctx context.Context, w http.ResponseWrit
 			Code: jsonresp.CodeUnmarshalRequest,
 		})
 		return
+	}
+
+	// When an update constructor is used the URL id must win over any id in the
+	// JSON body, so set it after unmarshalling.
+	if id != "" && pathOpts.UpdateConstructor != nil {
+		gocrud.ObjSetIDValue(obj, idInt)
 	}
 
 	now := time.Now().UTC().Unix()

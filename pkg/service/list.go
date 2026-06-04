@@ -9,13 +9,19 @@ import (
 	"codeberg.org/mikolajgasior/gocrud/pkg/logger"
 )
 
-func (c *CRUD) List(ctx context.Context, path string, limit, offset int, order, orderDirection string, filterVals, filterOps map[string]string, rowFunc func(interface{}) interface{}) ([]interface{}, error) {
+// List returns a paginated, filtered list of records. When constructor is nil
+// the path's registered constructor is used; pass a non-nil value to scan rows
+// into a different struct type (e.g. a list-specific projection).
+func (c *CRUD) List(ctx context.Context, path string, limit, offset int, order, orderDirection string, filterVals, filterOps map[string]string, rowFunc func(interface{}) interface{}, constructor func() interface{}) ([]interface{}, error) {
 	logAttrService := logger.AttrService(c, "List")
 
-	constructor, ok := c.paths[path]
-	if !ok {
-		slog.Error("path not found", logAttrService)
-		return nil, InvalidPathError
+	if constructor == nil {
+		var ok bool
+		constructor, ok = c.paths[path]
+		if !ok {
+			slog.Error("path not found", logAttrService)
+			return nil, InvalidPathError
+		}
 	}
 
 	filters, err := buildFilters(filterVals, filterOps, logAttrService)

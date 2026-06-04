@@ -64,7 +64,7 @@ func (h *Handler) handleList(ctx context.Context, path string, userID, userName 
 
 	objs, err := h.svc.List(ctx, path, limit, offset, order, orderDirection, filterVals, filterOps, func(obj interface{}) interface{} {
 		return structToMap(obj)
-	})
+	}, nil)
 	if err != nil {
 		var validErr *svccrud.FilterValidationError
 		if errors.As(err, &validErr) {

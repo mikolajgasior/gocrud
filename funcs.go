@@ -34,6 +34,10 @@ func ObjIDInterface(obj interface{}) interface{} {
 	return reflect.ValueOf(obj).Elem().FieldByName(IDField).Addr().Interface()
 }
 
+func ObjSetIDValue(obj interface{}, id uint64) {
+	reflect.ValueOf(obj).Elem().FieldByName(IDField).SetUint(id)
+}
+
 func ObjIDValue(obj interface{}) uint64 {
 	return reflect.ValueOf(obj).Elem().FieldByName(IDField).Uint()
 }

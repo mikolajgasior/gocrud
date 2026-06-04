@@ -40,15 +40,26 @@ type Options struct {
 
 ```go
 type PathOptions struct {
+    // Operation guards
     DisableCreate  bool
     DisableUpdate  bool
     DisableDelete  bool
     DisableRead    bool
     DisableList    bool
+
+    // Filter constraints
     DisableFilters bool
     AllowedFilters []string
+
+    // Per-operation constructor overrides
+    CreateConstructor func() interface{}
+    UpdateConstructor func() interface{}
+    ReadConstructor   func() interface{}
+    ListConstructor   func() interface{}
 }
 ```
+
+**Operation guards**
 
 | Field | Type | Description |
 |---|---|---|
@@ -57,19 +68,40 @@ type PathOptions struct {
 | `DisableDelete` | `bool` | Reject `DELETE /{path}/{id}` with `405` |
 | `DisableRead` | `bool` | Reject `GET /{path}/{id}` with `405` |
 | `DisableList` | `bool` | Reject `GET /{path}/` with `405` |
+
+**Filter constraints**
+
+| Field | Type | Description |
+|---|---|---|
 | `DisableFilters` | `bool` | Ignore all `filter_val_*` / `filter_op_*` query parameters |
 | `AllowedFilters` | `[]string` | Whitelist of field names that may be used as filters. Empty slice means all fields are allowed (unless `DisableFilters` is set). |
 
-**Example** — read-only path with restricted filtering:
+**Constructor overrides**
+
+By default each operation uses the constructor registered for the path in the service. Setting a constructor here overrides that for the specific operation, allowing a different struct type to be used — for example a create-only struct with fewer fields that implements a custom `InsertQuery()` method.
+
+| Field | Type | Description |
+|---|---|---|
+| `CreateConstructor` | `func() interface{}` | Constructor used when creating a new record (`PUT /{path}/`) |
+| `UpdateConstructor` | `func() interface{}` | Constructor used when updating a record (`PUT /{path}/{id}`). The existing record is **not** pre-loaded; the URL id is stamped onto the object after JSON unmarshalling. |
+| `ReadConstructor` | `func() interface{}` | Constructor used when reading a single record (`GET /{path}/{id}`). Only the fields present on the override struct are SELECTed. |
+| `ListConstructor` | `func() interface{}` | Constructor used when listing records (`GET /{path}/`). Only the fields present on the override struct are SELECTed. |
+
+**Example** — read-only path, restricted filtering, and a minimal create struct:
 
 ```go
+type UserCreate struct {
+    ID    uint64
+    Email string `crud:"req email"`
+    Role  string `crud:"req len:3,30"`
+}
+
 handler := api.New(svc, api.Options{
     Paths: map[string]api.PathOptions{
         "users": {
-            DisableCreate:  true,
-            DisableUpdate:  true,
-            DisableDelete:  true,
-            AllowedFilters: []string{"Role", "IsActive"},
+            DisableDelete:     true,
+            AllowedFilters:    []string{"Role", "IsActive"},
+            CreateConstructor: func() interface{} { return &UserCreate{} },
         },
         "audit_logs": {
             DisableCreate:  true,

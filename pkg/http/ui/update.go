@@ -27,7 +27,7 @@ func (h *Handler) handleUpdate(ctx context.Context, path string, id string, user
 		return
 	}
 
-	obj, err := h.svc.Read(ctx, path, idInt)
+	obj, err := h.svc.Read(ctx, path, idInt, nil)
 	if err != nil {
 		if errors.Is(err, svccrud.NotFoundError) {
 			redirect(w, h.pathPrefix+"/"+path+"/"+pathPartList+"?error=not_found")

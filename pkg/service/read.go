@@ -9,13 +9,19 @@ import (
 	"codeberg.org/mikolajgasior/gocrud/pkg/logger"
 )
 
-func (c *CRUD) Read(ctx context.Context, path string, id uint64) (interface{}, error) {
+// Read loads a single record by id. When constructor is nil the path's
+// registered constructor is used; pass a non-nil value to load into a
+// different struct type (e.g. a read-specific projection).
+func (c *CRUD) Read(ctx context.Context, path string, id uint64, constructor func() interface{}) (interface{}, error) {
 	logAttrService := logger.AttrService(c, "Read")
 
-	constructor, ok := c.paths[path]
-	if !ok {
-		slog.Error("path not found", logAttrService)
-		return nil, InvalidPathError
+	if constructor == nil {
+		var ok bool
+		constructor, ok = c.paths[path]
+		if !ok {
+			slog.Error("path not found", logAttrService)
+			return nil, InvalidPathError
+		}
 	}
 
 	obj := constructor()
@@ -26,7 +32,7 @@ func (c *CRUD) Read(ctx context.Context, path string, id uint64) (interface{}, e
 
 	objID := gocrud.ObjIDValue(obj)
 	if objID == 0 {
-		slog.Error("error not found", logAttrService, slog.Uint64("id", objID))
+		slog.Error("error not found", logAttrService, slog.Uint64("id", id))
 		return nil, NotFoundError
 	}
 

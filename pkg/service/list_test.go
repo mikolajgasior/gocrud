@@ -40,7 +40,7 @@ func TestList_WithFilters(t *testing.T) {
 	}, map[string]string{
 		"Price":        "eq",
 		"PrimaryEmail": "eq",
-	}, nil)
+	}, nil, nil)
 	if err != nil {
 		t.Fatalf("List failed to return list of objects: %s", err.Error())
 	}
@@ -64,7 +64,7 @@ func TestList_WithoutFilters(t *testing.T) {
 	}
 
 	// Get the data
-	testStructs, err := testService.List(context.Background(), "teststruct", 13, 14, "Age", "asc", nil, nil, nil)
+	testStructs, err := testService.List(context.Background(), "teststruct", 13, 14, "Age", "asc", nil, nil, nil, nil)
 	if err != nil {
 		t.Fatalf("Get failed to return list of objects: %s", err.Error())
 	}
@@ -124,7 +124,7 @@ func TestList_WithRowObjTransformFunc(t *testing.T) {
 		out += "</tr>"
 
 		return out
-	})
+	}, nil)
 	if err != nil {
 		t.Fatalf("List failed to return list of objects modified with transform func: %s", err.Error())
 	}
