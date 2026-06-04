@@ -11,15 +11,17 @@ import (
 )
 
 func (h *Handler) Serve(w http.ResponseWriter, r *http.Request) {
+	h.options.CORS.WriteHeaders(w)
+
 	logAttrHandler := logger.AttrHandler(h)
 	logAttrPath := logger.AttrPath(r.URL.Path)
 
 	id := ""
 	foundPath := ""
-	for path := range h.paths {
+	for _, path := range h.svc.Paths() {
 		if strings.HasPrefix(r.URL.Path, "/"+path+"/") {
 			foundPath = path
-			continue
+			break
 		}
 	}
 

@@ -478,6 +478,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Initialization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#options" class="md-nav__link">
+    <span class="md-ellipsis">
+      Options
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -634,6 +649,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Initialization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#options" class="md-nav__link">
+    <span class="md-ellipsis">
+      Options
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -762,15 +792,14 @@
 <h2 id="initialization">Initialization</h2>
 <pre><code class="language-go">import (
     &quot;codeberg.org/mikolajgasior/gocrud/pkg/http/api&quot;
-    &quot;codeberg.org/mikolajgasior/gocrud/pkg/http/cors&quot;
     svccrud &quot;codeberg.org/mikolajgasior/gocrud/pkg/service&quot;
 )
 
 svc := svccrud.New(paths, dbConn, gocrud.DialectPostgres)
 
-handler := api.New(svc, &amp;cors.CORS{}, paths)
+handler := api.New(svc, api.Options{})
 </code></pre>
-<p><code>New</code> takes three arguments:</p>
+<p><code>New</code> takes two arguments:</p>
 <table>
 <thead>
 <tr>
@@ -786,14 +815,30 @@ handler := api.New(svc, &amp;cors.CORS{}, paths)
 <td>An initialised service instance</td>
 </tr>
 <tr>
-<td><code>cors</code></td>
-<td><code>*cors.CORS</code></td>
-<td>CORS configuration (use <code>&amp;cors.CORS{}</code> to disable CORS headers)</td>
+<td><code>options</code></td>
+<td><code>api.Options</code></td>
+<td>Configuration for the handler (zero value is valid)</td>
 </tr>
+</tbody>
+</table>
+<h3 id="options">Options</h3>
+<pre><code class="language-go">type Options struct {
+    CORS cors.CORS
+}
+</code></pre>
+<table>
+<thead>
 <tr>
-<td><code>paths</code></td>
-<td><code>map[string]func() interface{}</code></td>
-<td>The same path registry passed to the service</td>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CORS</code></td>
+<td><code>cors.CORS</code></td>
+<td>CORS headers written on every response. Zero value emits no CORS headers.</td>
 </tr>
 </tbody>
 </table>
@@ -1013,17 +1058,22 @@ http.ListenAndServe(&quot;:8080&quot;, mux)
 </tbody>
 </table>
 <h2 id="cors">CORS</h2>
-<p>Pass a configured <code>*cors.CORS</code> to <code>api.New</code> to emit CORS headers on every response:</p>
-<pre><code class="language-go">import &quot;codeberg.org/mikolajgasior/gocrud/pkg/http/cors&quot;
+<p>Populate <code>Options.CORS</code> to emit CORS headers on every response:</p>
+<pre><code class="language-go">import (
+    &quot;codeberg.org/mikolajgasior/gocrud/pkg/http/api&quot;
+    &quot;codeberg.org/mikolajgasior/gocrud/pkg/http/cors&quot;
+)
 
-handler := api.New(svc, &amp;cors.CORS{
-    AllowOrigin:  &quot;https://app.example.com&quot;,
-    AllowHeaders: &quot;Content-Type, Authorization&quot;,
-    AllowMethods: &quot;GET, PUT, DELETE&quot;,
-    MaxAge:       3600,
-}, paths)
+handler := api.New(svc, api.Options{
+    CORS: cors.CORS{
+        AllowOrigin:  &quot;https://app.example.com&quot;,
+        AllowHeaders: &quot;Content-Type, Authorization&quot;,
+        AllowMethods: &quot;GET, PUT, DELETE&quot;,
+        MaxAge:       3600,
+    },
+})
 </code></pre>
-<p>Pass <code>&amp;cors.CORS{}</code> (zero value) to skip all CORS headers.</p>
+<p>Leave <code>CORS</code> as its zero value (<code>cors.CORS{}</code>) to emit no CORS headers.</p>
 <h2 id="complete-example">Complete example</h2>
 <pre><code class="language-go">package main
 
@@ -1032,7 +1082,6 @@ import (
 
     &quot;codeberg.org/mikolajgasior/gocrud&quot;
     &quot;codeberg.org/mikolajgasior/gocrud/pkg/http/api&quot;
-    &quot;codeberg.org/mikolajgasior/gocrud/pkg/http/cors&quot;
     svccrud &quot;codeberg.org/mikolajgasior/gocrud/pkg/service&quot;
     _ &quot;github.com/lib/pq&quot;
 )
@@ -1051,7 +1100,7 @@ func main() {
     }
 
     svc := svccrud.New(paths, db, gocrud.DialectPostgres)
-    handler := api.New(svc, &amp;cors.CORS{}, paths)
+    handler := api.New(svc, api.Options{})
 
     mux := http.NewServeMux()
     subMux := http.NewServeMux()

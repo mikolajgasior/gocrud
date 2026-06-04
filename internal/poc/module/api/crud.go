@@ -10,7 +10,6 @@ import (
 	"codeberg.org/mikolajgasior/gocrud/internal/poc/layout"
 	"codeberg.org/mikolajgasior/gocrud/internal/poc/module"
 	handcrudapi "codeberg.org/mikolajgasior/gocrud/pkg/http/api"
-	"codeberg.org/mikolajgasior/gocrud/pkg/http/cors"
 	"codeberg.org/mikolajgasior/gocrud/pkg/logger"
 	svccrud "codeberg.org/mikolajgasior/gocrud/pkg/service"
 )
@@ -25,7 +24,7 @@ func (a *API) Init(ctx context.Context, input module.InitInput) error {
 	logAttrModule := logger.AttrModule(a)
 
 	a.svc = svccrud.New(a.Paths, input.DBConn, input.Dialect)
-	handlerInstance := handcrudapi.New(a.svc, &cors.CORS{}, a.Paths)
+	handlerInstance := handcrudapi.New(a.svc, handcrudapi.Options{})
 	a.handler = handlerInstance.Serve
 
 	pathKeys := make([]string, 0, len(a.Paths))

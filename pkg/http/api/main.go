@@ -21,17 +21,18 @@ var (
 	filterOpRegexp  = regexp.MustCompile("^filter_op_[a-zA-Z0-9_]+$")
 )
 
-type Handler struct {
-	cors  *cors.CORS
-	paths map[string]func() interface{}
-	svc   *svccrud.CRUD
+type Options struct {
+	CORS cors.CORS
 }
 
-func New(svc *svccrud.CRUD, cors *cors.CORS, paths map[string]func() interface{}) *Handler {
-	handler := &Handler{
-		cors:  cors,
-		paths: paths,
-		svc:   svc,
+type Handler struct {
+	options Options
+	svc     *svccrud.CRUD
+}
+
+func New(svc *svccrud.CRUD, options Options) *Handler {
+	return &Handler{
+		options: options,
+		svc:     svc,
 	}
-	return handler
 }

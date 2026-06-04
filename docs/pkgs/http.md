@@ -7,22 +7,32 @@ The `pkg/http/api` package mounts a ready-made JSON REST API on top of a [Servic
 ```go
 import (
     "codeberg.org/mikolajgasior/gocrud/pkg/http/api"
-    "codeberg.org/mikolajgasior/gocrud/pkg/http/cors"
     svccrud "codeberg.org/mikolajgasior/gocrud/pkg/service"
 )
 
 svc := svccrud.New(paths, dbConn, gocrud.DialectPostgres)
 
-handler := api.New(svc, &cors.CORS{}, paths)
+handler := api.New(svc, api.Options{})
 ```
 
-`New` takes three arguments:
+`New` takes two arguments:
 
 | Argument | Type | Description |
 |---|---|---|
 | `svc` | `*service.CRUD` | An initialised service instance |
-| `cors` | `*cors.CORS` | CORS configuration (use `&cors.CORS{}` to disable CORS headers) |
-| `paths` | `map[string]func() interface{}` | The same path registry passed to the service |
+| `options` | `api.Options` | Configuration for the handler (zero value is valid) |
+
+### Options
+
+```go
+type Options struct {
+    CORS cors.CORS
+}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `CORS` | `cors.CORS` | CORS headers written on every response. Zero value emits no CORS headers. |
 
 ## Mounting
 
@@ -193,20 +203,25 @@ Every response is a JSON object with the following shape:
 
 ## CORS
 
-Pass a configured `*cors.CORS` to `api.New` to emit CORS headers on every response:
+Populate `Options.CORS` to emit CORS headers on every response:
 
 ```go
-import "codeberg.org/mikolajgasior/gocrud/pkg/http/cors"
+import (
+    "codeberg.org/mikolajgasior/gocrud/pkg/http/api"
+    "codeberg.org/mikolajgasior/gocrud/pkg/http/cors"
+)
 
-handler := api.New(svc, &cors.CORS{
-    AllowOrigin:  "https://app.example.com",
-    AllowHeaders: "Content-Type, Authorization",
-    AllowMethods: "GET, PUT, DELETE",
-    MaxAge:       3600,
-}, paths)
+handler := api.New(svc, api.Options{
+    CORS: cors.CORS{
+        AllowOrigin:  "https://app.example.com",
+        AllowHeaders: "Content-Type, Authorization",
+        AllowMethods: "GET, PUT, DELETE",
+        MaxAge:       3600,
+    },
+})
 ```
 
-Pass `&cors.CORS{}` (zero value) to skip all CORS headers.
+Leave `CORS` as its zero value (`cors.CORS{}`) to emit no CORS headers.
 
 ## Complete example
 
@@ -218,7 +233,6 @@ import (
 
     "codeberg.org/mikolajgasior/gocrud"
     "codeberg.org/mikolajgasior/gocrud/pkg/http/api"
-    "codeberg.org/mikolajgasior/gocrud/pkg/http/cors"
     svccrud "codeberg.org/mikolajgasior/gocrud/pkg/service"
     _ "github.com/lib/pq"
 )
@@ -237,7 +251,7 @@ func main() {
     }
 
     svc := svccrud.New(paths, db, gocrud.DialectPostgres)
-    handler := api.New(svc, &cors.CORS{}, paths)
+    handler := api.New(svc, api.Options{})
 
     mux := http.NewServeMux()
     subMux := http.NewServeMux()

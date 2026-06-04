@@ -54,6 +54,15 @@ func (c *CRUD) ID(obj interface{}) uint64 {
 	return gocrud.ObjIDValue(obj)
 }
 
+// Paths returns the registered path keys.
+func (c *CRUD) Paths() []string {
+	keys := make([]string, 0, len(c.paths))
+	for k := range c.paths {
+		keys = append(keys, k)
+	}
+	return keys
+}
+
 // buildFilters converts the string-keyed filter maps coming from HTTP layers
 // into a sqlfilters.Filters value ready for the CRUD layer.
 func buildFilters(filterVals, filterOps map[string]string, logAttr slog.Attr) (*sqlfilters.Filters, error) {
