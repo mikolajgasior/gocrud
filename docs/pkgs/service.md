@@ -6,7 +6,7 @@ The `pkg/service` package provides a higher-level wrapper around the core CRUD o
 
 ```go
 import (
-    structcrud "codeberg.org/mikolajgasior/gocrud"
+    "codeberg.org/mikolajgasior/gocrud"
     svccrud    "codeberg.org/mikolajgasior/gocrud/pkg/service"
 )
 
@@ -16,7 +16,7 @@ svc := svccrud.New(
         "products": func() interface{} { return &Product{} },
     },
     dbConn,
-    structcrud.DialectPostgres, // or structcrud.DialectSQLite
+    crud.DialectPostgres, // or crud.DialectSQLite
 )
 ```
 
@@ -24,7 +24,7 @@ svc := svccrud.New(
 
 * **paths** `map[string]func() interface{}` — a registry mapping path keys to constructor functions. Each function must return a pointer to a new zero-value struct.
 * **dbConn** `*sql.DB` — an open database connection.
-* **dialect** `string` — the SQL dialect; must be `structcrud.DialectPostgres` or `structcrud.DialectSQLite`. Passing an empty or unrecognised value causes a panic at startup.
+* **dialect** `string` — the SQL dialect; must be `crud.DialectPostgres` or `crud.DialectSQLite`. Passing an empty or unrecognised value causes a panic at startup.
 
 ### Creating tables
 
@@ -166,7 +166,7 @@ The `cmd/poc` application wires the service into HTTP modules:
 svc := svccrud.New(map[string]func() interface{}{
     "warehouse/products":  func() interface{} { return &Product{} },
     "warehouse/suppliers": func() interface{} { return &Supplier{} },
-}, dbConn, structcrud.DialectPostgres)
+}, dbConn, crud.DialectPostgres)
 
 // In an HTTP handler:
 objs, err := svc.List(ctx, "warehouse/products", 20, 0, "Name", "asc",

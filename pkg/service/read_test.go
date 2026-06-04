@@ -5,7 +5,7 @@ import (
 	"errors"
 	"testing"
 
-	structcrud "codeberg.org/mikolajgasior/gocrud"
+	"codeberg.org/mikolajgasior/gocrud"
 	"codeberg.org/mikolajgasior/gocrud/pkg/test"
 )
 
@@ -14,7 +14,7 @@ func TestRead_WhenObjectExists(t *testing.T) {
 
 	// Insert an object first
 	objSaved := test.TestStructWithData()
-	_ = testCRUD.Save(context.Background(), objSaved, structcrud.SaveOptions{})
+	_ = testCRUD.Save(context.Background(), objSaved, crud.SaveOptions{})
 
 	// Get the object
 	objRead, err := testService.Read(context.Background(), "teststruct", objSaved.ID)

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 
-	structcrud "codeberg.org/mikolajgasior/gocrud"
+	"codeberg.org/mikolajgasior/gocrud"
 	"codeberg.org/mikolajgasior/gocrud/pkg/logger"
 )
 
@@ -19,12 +19,12 @@ func (c *CRUD) Read(ctx context.Context, path string, id uint64) (interface{}, e
 	}
 
 	obj := constructor()
-	err := c.crud.Load(ctx, obj, fmt.Sprintf("%d", id), structcrud.LoadOptions{})
+	err := c.crud.Load(ctx, obj, fmt.Sprintf("%d", id), crud.LoadOptions{})
 	if err != nil {
 		return nil, err
 	}
 
-	objID := structcrud.ObjIDValue(obj)
+	objID := crud.ObjIDValue(obj)
 	if objID == 0 {
 		slog.Error("error not found", logAttrService, slog.Uint64("id", objID))
 		return nil, NotFoundError

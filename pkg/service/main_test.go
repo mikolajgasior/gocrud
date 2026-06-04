@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	structcrud "codeberg.org/mikolajgasior/gocrud"
+	"codeberg.org/mikolajgasior/gocrud"
 	"codeberg.org/mikolajgasior/gocrud/pkg/test"
 	"github.com/ory/dockertest/v3"
 )
@@ -19,7 +19,7 @@ var testDB *sql.DB
 var dockerPool *dockertest.Pool
 var dockerResource *dockertest.Resource
 
-var testCRUD *structcrud.CRUD
+var testCRUD *crud.CRUD
 var testService *CRUD
 
 func TestMain(m *testing.M) {
@@ -39,7 +39,7 @@ func TestMain(m *testing.M) {
 }
 
 func createCRUD() {
-	testCRUD = structcrud.New(testDB, structcrud.Options{Dialect: structcrud.DialectPostgres})
+	testCRUD = crud.New(testDB, crud.Options{Dialect: crud.DialectPostgres})
 }
 
 func createService() {
@@ -47,7 +47,7 @@ func createService() {
 		"teststruct": func() interface{} {
 			return &test.TestStruct{}
 		},
-	}, testDB, structcrud.DialectPostgres)
+	}, testDB, crud.DialectPostgres)
 }
 
 func recreateTestStructTable() {

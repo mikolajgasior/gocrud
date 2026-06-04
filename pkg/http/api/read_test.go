@@ -8,7 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	structcrud "codeberg.org/mikolajgasior/gocrud"
+	"codeberg.org/mikolajgasior/gocrud"
 	"codeberg.org/mikolajgasior/gocrud/pkg/http/jsonresp"
 	"codeberg.org/mikolajgasior/gocrud/pkg/test"
 )
@@ -18,7 +18,7 @@ func TestServe_Read(t *testing.T) {
 
 	// Insert an object first
 	objSaved := test.TestStructWithData()
-	_ = testCRUD.Save(context.Background(), objSaved, structcrud.SaveOptions{})
+	_ = testCRUD.Save(context.Background(), objSaved, crud.SaveOptions{})
 
 	// Get object
 	req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/teststruct/%d", objSaved.ID), nil)

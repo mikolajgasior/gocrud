@@ -6,7 +6,7 @@ import (
 	"errors"
 	"log/slog"
 
-	structcrud "codeberg.org/mikolajgasior/gocrud"
+	"codeberg.org/mikolajgasior/gocrud"
 	sqlfilters "codeberg.org/mikolajgasior/gocrud/pkg/filters"
 	"codeberg.org/mikolajgasior/gocrud/pkg/logger"
 	validator "github.com/mikolajgasior/struct-validator"
@@ -18,16 +18,14 @@ var (
 
 type CRUD struct {
 	paths map[string]func() interface{}
-	crud  *structcrud.CRUD
+	crud  *crud.CRUD
 }
 
 func New(paths map[string]func() interface{}, dbConn *sql.DB, dialect string) *CRUD {
-	crud := &CRUD{
+	return &CRUD{
 		paths: paths,
-		crud:  structcrud.New(dbConn, structcrud.Options{Dialect: dialect}),
+		crud:  crud.New(dbConn, crud.Options{Dialect: dialect}),
 	}
-
-	return crud
 }
 
 func (c *CRUD) CreateTables(ctx context.Context) error {
@@ -53,7 +51,7 @@ func (c *CRUD) New(path string) interface{} {
 }
 
 func (c *CRUD) ID(obj interface{}) uint64 {
-	return structcrud.ObjIDValue(obj)
+	return crud.ObjIDValue(obj)
 }
 
 // buildFilters converts the string-keyed filter maps coming from HTTP layers

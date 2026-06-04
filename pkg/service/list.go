@@ -5,7 +5,7 @@ import (
 	"errors"
 	"log/slog"
 
-	structcrud "codeberg.org/mikolajgasior/gocrud"
+	"codeberg.org/mikolajgasior/gocrud"
 	"codeberg.org/mikolajgasior/gocrud/pkg/logger"
 )
 
@@ -28,7 +28,7 @@ func (c *CRUD) List(ctx context.Context, path string, limit, offset int, order, 
 		getOrder = append(getOrder, order, orderDirection)
 	}
 
-	objs, err := c.crud.Get(ctx, constructor, structcrud.GetOptions{
+	objs, err := c.crud.Get(ctx, constructor, crud.GetOptions{
 		Limit:                    limit,
 		Offset:                   offset,
 		Order:                    getOrder,
@@ -38,9 +38,9 @@ func (c *CRUD) List(ctx context.Context, path string, limit, offset int, order, 
 	})
 
 	if err != nil {
-		var crudErr *structcrud.CRUDError
+		var crudErr *crud.CRUDError
 		if errors.As(err, &crudErr) {
-			var validationErr *structcrud.ValidationError
+			var validationErr *crud.ValidationError
 			if errors.As(crudErr.Err, &validationErr) {
 				slog.Error("error with validation", logAttrService, logger.AttrError(validationErr))
 				return nil, &FilterValidationError{

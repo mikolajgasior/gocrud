@@ -7,12 +7,12 @@ To begin using the CRUD library, you must initialize a new instance by passing y
 Create a new CRUD instance using the `New` function:
 
 ```go
-crudInstance := structcrud.New(dbConn, structcrud.Options{
-    Dialect: structcrud.DialectPostgres,
+crudInstance := crud.New(dbConn, crud.Options{
+    Dialect: crud.DialectPostgres,
 })
 ```
 
-`Dialect` is **required**. Passing an empty or unrecognised value causes a panic at startup. Use one of the two provided constants: `structcrud.DialectPostgres` or `structcrud.DialectSQLite`.
+`Dialect` is **required**. Passing an empty or unrecognised value causes a panic at startup. Use one of the two provided constants: `crud.DialectPostgres` or `crud.DialectSQLite`.
 
 ## Configuration Options
 
@@ -30,8 +30,8 @@ type Options struct {
 * **TableNamePrefix (string)**: Allows you to define a prefix for all database table names managed by this instance. This is useful for organizing tables in shared databases or separating environments (e.g., dev_, prod_). If left empty, the library uses the default table name derived from the struct.
 * **TagName (string)**: Specifies the name of the struct tag used for validation and mapping rules. Default: `crud`. If you set this to `mytag`, the library will look for tags like `mytag:"unique"` instead of the default `crud:"unique"`.
 * **Dialect (string)** *(required)*: Selects the SQL dialect used to generate queries. Passing an empty or unrecognised value causes a panic at startup. Two constants are provided:
-    * `structcrud.DialectPostgres` — PostgreSQL.
-    * `structcrud.DialectSQLite` — SQLite. Use this when connecting via `modernc.org/sqlite`. Column types are mapped to SQLite affinities (`INTEGER`, `TEXT`, `REAL`) and `?` placeholders are used instead of `$1`, `$2`, …
+    * `crud.DialectPostgres` — PostgreSQL.
+    * `crud.DialectSQLite` — SQLite. Use this when connecting via `modernc.org/sqlite`. Column types are mapped to SQLite affinities (`INTEGER`, `TEXT`, `REAL`) and `?` placeholders are used instead of `$1`, `$2`, …
 * **Flags (uint64)**: Enables specific behaviors via bitwise flags. Currently, one flag is supported: **GetCountOnUniq (const GetCountOnUniq = 1)**: When this flag is set, the library performs an additional COUNT(*) query on unique fields before attempting an insert or update. This ensures that the unique value does not already exist in the database, providing an extra layer of validation beyond standard database constraints.
 
 ## Example Usage
@@ -40,17 +40,17 @@ type Options struct {
 
 ```go
 import (
-    structcrud "codeberg.org/mikolajgasior/gocrud"
+    "codeberg.org/mikolajgasior/gocrud"
     _ "github.com/lib/pq"
 )
 
 db, err := sql.Open("postgres", "host=localhost user=myuser password=mypass dbname=mydb sslmode=disable")
 
-crudInstance := structcrud.New(db, structcrud.Options{
-    Dialect:         structcrud.DialectPostgres,
+crudInstance := crud.New(db, crud.Options{
+    Dialect:         crud.DialectPostgres,
     TableNamePrefix: "app_",
     TagName:         "crud",
-    Flags:           structcrud.GetCountOnUniq,
+    Flags:           crud.GetCountOnUniq,
 })
 ```
 
@@ -58,14 +58,14 @@ crudInstance := structcrud.New(db, structcrud.Options{
 
 ```go
 import (
-    structcrud "codeberg.org/mikolajgasior/gocrud"
+    "codeberg.org/mikolajgasior/gocrud"
     _ "modernc.org/sqlite"
 )
 
 db, err := sql.Open("sqlite", "./myapp.db")
 
-crudInstance := structcrud.New(db, structcrud.Options{
-    Dialect: structcrud.DialectSQLite,
+crudInstance := crud.New(db, crud.Options{
+    Dialect: crud.DialectSQLite,
 })
 ```
 

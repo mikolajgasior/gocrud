@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	structcrud "codeberg.org/mikolajgasior/gocrud"
+	"codeberg.org/mikolajgasior/gocrud"
 	"codeberg.org/mikolajgasior/gocrud/pkg/test"
 )
 
@@ -16,7 +16,7 @@ func TestServe_Delete(t *testing.T) {
 
 	// Insert an object first
 	objSaved := test.TestStructWithData()
-	_ = testCRUD.Save(context.Background(), objSaved, structcrud.SaveOptions{})
+	_ = testCRUD.Save(context.Background(), objSaved, crud.SaveOptions{})
 
 	// Delete it
 	req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("/teststruct/%d", objSaved.ID), nil)
