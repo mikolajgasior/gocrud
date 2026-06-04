@@ -8,13 +8,11 @@
       
       
       
-        <link rel="canonical" href="https://codeberg.org/mikolajgasior/gocrud/pkgs/service/">
+        <link rel="canonical" href="https://codeberg.org/mikolajgasior/gocrud/pkgs/http/">
       
       
-        <link rel="prev" href="../../crud/ops/">
+        <link rel="prev" href="../service/">
       
-      
-        <link rel="next" href="../http/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -22,7 +20,7 @@
     
     
       
-        <title>Service - gocrud</title>
+        <title>HTTP handlers - gocrud</title>
       
     
     
@@ -72,7 +70,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#service" class="md-skip">
+        <a href="#http-api" class="md-skip">
           Skip to content
         </a>
       
@@ -108,7 +106,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Service
+              HTTP handlers
             
           </span>
         </div>
@@ -398,6 +396,29 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../service/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Service
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -415,7 +436,7 @@
   
   
   <span class="md-ellipsis">
-    Service
+    HTTP handlers
     
   </span>
   
@@ -428,7 +449,7 @@
   
   
   <span class="md-ellipsis">
-    Service
+    HTTP handlers
     
   </span>
   
@@ -457,13 +478,76 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Initialization">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mounting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mounting
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#url-scheme" class="md-nav__link">
+    <span class="md-ellipsis">
+      URL scheme
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      Endpoints
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Endpoints">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#creating-tables" class="md-nav__link">
+  <a href="#list-get-path" class="md-nav__link">
     <span class="md-ellipsis">
-      Creating tables
+      List — GET /{path}/
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#read-get-pathid" class="md-nav__link">
+    <span class="md-ellipsis">
+      Read — GET /{path}/{id}
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-put-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create — PUT /{path}/
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-put-pathid" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update — PUT /{path}/{id}
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-delete-pathid" class="md-nav__link">
+    <span class="md-ellipsis">
+      Delete — DELETE /{path}/{id}
     </span>
   </a>
   
@@ -475,96 +559,27 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#methods" class="md-nav__link">
+  <a href="#response-format" class="md-nav__link">
     <span class="md-ellipsis">
-      Methods
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Methods">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#save" class="md-nav__link">
-    <span class="md-ellipsis">
-      Save
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#savefromform" class="md-nav__link">
-    <span class="md-ellipsis">
-      SaveFromForm
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#read" class="md-nav__link">
-    <span class="md-ellipsis">
-      Read
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#delete" class="md-nav__link">
-    <span class="md-ellipsis">
-      Delete
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#list" class="md-nav__link">
-    <span class="md-ellipsis">
-      List
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#num" class="md-nav__link">
-    <span class="md-ellipsis">
-      Num
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#helper-methods" class="md-nav__link">
-    <span class="md-ellipsis">
-      Helper methods
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#error-types" class="md-nav__link">
-    <span class="md-ellipsis">
-      Error types
+      Response format
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#example" class="md-nav__link">
+  <a href="#cors" class="md-nav__link">
     <span class="md-ellipsis">
-      Example
+      CORS
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complete-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Complete example
     </span>
   </a>
   
@@ -574,29 +589,6 @@
   
 </nav>
       
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../http/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    HTTP handlers
-    
-  </span>
-  
-
-      </a>
     </li>
   
 
@@ -642,13 +634,76 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Initialization">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mounting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mounting
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#url-scheme" class="md-nav__link">
+    <span class="md-ellipsis">
+      URL scheme
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#endpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      Endpoints
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Endpoints">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#creating-tables" class="md-nav__link">
+  <a href="#list-get-path" class="md-nav__link">
     <span class="md-ellipsis">
-      Creating tables
+      List — GET /{path}/
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#read-get-pathid" class="md-nav__link">
+    <span class="md-ellipsis">
+      Read — GET /{path}/{id}
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-put-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create — PUT /{path}/
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-put-pathid" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update — PUT /{path}/{id}
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-delete-pathid" class="md-nav__link">
+    <span class="md-ellipsis">
+      Delete — DELETE /{path}/{id}
     </span>
   </a>
   
@@ -660,96 +715,27 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#methods" class="md-nav__link">
+  <a href="#response-format" class="md-nav__link">
     <span class="md-ellipsis">
-      Methods
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Methods">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#save" class="md-nav__link">
-    <span class="md-ellipsis">
-      Save
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#savefromform" class="md-nav__link">
-    <span class="md-ellipsis">
-      SaveFromForm
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#read" class="md-nav__link">
-    <span class="md-ellipsis">
-      Read
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#delete" class="md-nav__link">
-    <span class="md-ellipsis">
-      Delete
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#list" class="md-nav__link">
-    <span class="md-ellipsis">
-      List
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#num" class="md-nav__link">
-    <span class="md-ellipsis">
-      Num
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#helper-methods" class="md-nav__link">
-    <span class="md-ellipsis">
-      Helper methods
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#error-types" class="md-nav__link">
-    <span class="md-ellipsis">
-      Error types
+      Response format
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#example" class="md-nav__link">
+  <a href="#cors" class="md-nav__link">
     <span class="md-ellipsis">
-      Example
+      CORS
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complete-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Complete example
     </span>
   </a>
   
@@ -771,228 +757,341 @@
 
 
 
-<h1 id="service">Service</h1>
-<p>The <code>pkg/service</code> package provides a higher-level wrapper around the core CRUD object. Where the core layer works directly with struct instances, the service layer is driven by a <strong>path registry</strong> — a map of string keys to constructor functions — and accepts filter values as plain strings, making it a natural fit for wiring up to HTTP handlers.</p>
+<h1 id="http-api">HTTP API</h1>
+<p>The <code>pkg/http/api</code> package mounts a ready-made JSON REST API on top of a <a href="../service/">Service</a> instance. A single handler covers list, read, create/update, and delete for every path registered in the service.</p>
 <h2 id="initialization">Initialization</h2>
 <pre><code class="language-go">import (
-    &quot;codeberg.org/mikolajgasior/gocrud&quot;
-    svccrud    &quot;codeberg.org/mikolajgasior/gocrud/pkg/service&quot;
+    &quot;codeberg.org/mikolajgasior/gocrud/pkg/http/api&quot;
+    &quot;codeberg.org/mikolajgasior/gocrud/pkg/http/cors&quot;
+    svccrud &quot;codeberg.org/mikolajgasior/gocrud/pkg/service&quot;
 )
 
-svc := svccrud.New(
-    map[string]func() interface{}{
-        &quot;users&quot;:    func() interface{} { return &amp;User{} },
-        &quot;products&quot;: func() interface{} { return &amp;Product{} },
-    },
-    dbConn,
-    gocrud.DialectPostgres, // or gocrud.DialectSQLite
-)
+svc := svccrud.New(paths, dbConn, gocrud.DialectPostgres)
+
+handler := api.New(svc, &amp;cors.CORS{}, paths)
 </code></pre>
 <p><code>New</code> takes three arguments:</p>
-<ul>
-<li><strong>paths</strong> <code>map[string]func() interface{}</code> — a registry mapping path keys to constructor functions. Each function must return a pointer to a new zero-value struct.</li>
-<li><strong>dbConn</strong> <code>*sql.DB</code> — an open database connection.</li>
-<li><strong>dialect</strong> <code>string</code> — the SQL dialect; must be <code>gocrud.DialectPostgres</code> or <code>gocrud.DialectSQLite</code>. Passing an empty or unrecognised value causes a panic at startup.</li>
-</ul>
-<h3 id="creating-tables">Creating tables</h3>
-<pre><code class="language-go">err := svc.CreateTables(ctx)
-</code></pre>
-<p>Iterates over all registered paths and calls <code>CREATE TABLE IF NOT EXISTS</code> for each struct. Useful during application startup when <code>CREATE_TABLES=true</code> is set.</p>
-<h2 id="methods">Methods</h2>
-<h3 id="save">Save</h3>
-<pre><code class="language-go">err := svc.Save(ctx, obj, now, userID)
-</code></pre>
-<p>Saves <code>obj</code> to the database. If <code>obj.ID == 0</code> an <code>INSERT</code> is performed; otherwise an upsert. <code>now</code> (Unix timestamp) and <code>userID</code> are written to the audit fields (<code>CreatedAt</code>, <code>CreatedBy</code>, <code>ModifiedAt</code>, <code>ModifiedBy</code>) when those fields are present on the struct.</p>
-<p><strong>Returns</strong> <code>*ModelValidationError</code> when struct validation fails, otherwise a generic error.</p>
-<hr />
-<h3 id="savefromform">SaveFromForm</h3>
-<pre><code class="language-go">err := svc.SaveFromForm(ctx, obj, urlValues, &quot;prefix_&quot;, now, userID)
-</code></pre>
-<p>Populates <code>obj</code> from <code>url.Values</code> (e.g. an HTTP form submission) before saving. Each form key has <code>namePrefix</code> stripped from the front, and the remaining string is matched against struct field names. Type conversion from string to the field's native type is applied automatically.</p>
-<p><strong>Returns</strong> <code>*ModelValidationError</code> if any value cannot be converted to the target field type, or if struct validation fails after population.</p>
-<hr />
-<h3 id="read">Read</h3>
-<pre><code class="language-go">obj, err := svc.Read(ctx, &quot;users&quot;, id)
-</code></pre>
-<p>Loads a single record by <code>id</code>. Returns <code>NotFoundError</code> if no record with that ID exists.</p>
-<hr />
-<h3 id="delete">Delete</h3>
-<pre><code class="language-go">err := svc.Delete(ctx, &quot;users&quot;, id)
-</code></pre>
-<p>Reads the record by <code>id</code> first (returning <code>NotFoundError</code> if absent), then deletes it. Cascade rules defined on the struct are applied automatically.</p>
-<hr />
-<h3 id="list">List</h3>
-<pre><code class="language-go">objs, err := svc.List(
-    ctx,
-    &quot;users&quot;,
-    limit, offset,
-    &quot;Age&quot;, &quot;asc&quot;,
-    map[string]string{&quot;Status&quot;: &quot;1&quot;},
-    map[string]string{&quot;Status&quot;: &quot;eq&quot;},
-    nil, // optional row transform func
-)
-</code></pre>
-<p>Returns a paginated, filtered, ordered list of objects for the given path. All filter values are passed as strings and converted to the correct field types automatically.</p>
-<p><strong>Parameters:</strong></p>
 <table>
 <thead>
 <tr>
-<th>Parameter</th>
+<th>Argument</th>
 <th>Type</th>
 <th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>path</code></td>
-<td><code>string</code></td>
-<td>Registry key</td>
+<td><code>svc</code></td>
+<td><code>*service.CRUD</code></td>
+<td>An initialised service instance</td>
 </tr>
 <tr>
-<td><code>limit</code></td>
-<td><code>int</code></td>
-<td>SQL <code>LIMIT</code></td>
+<td><code>cors</code></td>
+<td><code>*cors.CORS</code></td>
+<td>CORS configuration (use <code>&amp;cors.CORS{}</code> to disable CORS headers)</td>
 </tr>
 <tr>
-<td><code>offset</code></td>
-<td><code>int</code></td>
-<td>SQL <code>OFFSET</code></td>
-</tr>
-<tr>
-<td><code>order</code></td>
-<td><code>string</code></td>
-<td>Field name to sort by (empty = no ordering)</td>
-</tr>
-<tr>
-<td><code>orderDirection</code></td>
-<td><code>string</code></td>
-<td><code>"asc"</code> or <code>"desc"</code></td>
-</tr>
-<tr>
-<td><code>filterVals</code></td>
-<td><code>map[string]string</code></td>
-<td>Field name → value</td>
-</tr>
-<tr>
-<td><code>filterOps</code></td>
-<td><code>map[string]string</code></td>
-<td>Field name → operator string (see below)</td>
-</tr>
-<tr>
-<td><code>rowFunc</code></td>
-<td><code>func(interface{}) interface{}</code></td>
-<td>Optional per-row transform; <code>nil</code> returns raw structs</td>
+<td><code>paths</code></td>
+<td><code>map[string]func() interface{}</code></td>
+<td>The same path registry passed to the service</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Filter operators:</strong></p>
+<h2 id="mounting">Mounting</h2>
+<p><code>handler.Serve</code> is a standard <code>http.HandlerFunc</code>. Mount it under a prefix using <code>http.StripPrefix</code> so the handler only sees the path-relative URL:</p>
+<pre><code class="language-go">mux := http.NewServeMux()
+
+subMux := http.NewServeMux()
+subMux.HandleFunc(&quot;/&quot;, handler.Serve)
+mux.Handle(&quot;/api/&quot;, http.StripPrefix(&quot;/api&quot;, subMux))
+
+http.ListenAndServe(&quot;:8080&quot;, mux)
+</code></pre>
+<p>After stripping the mount prefix the handler expects URLs of the form <code>/{path}/{id}</code> where <code>path</code> is a key from the registry and <code>id</code> is an optional numeric record ID.</p>
+<h2 id="url-scheme">URL scheme</h2>
+<pre><code>/{path}/           — list / create
+/{path}/{id}       — read / update / delete
+</code></pre>
+<p><code>path</code> must exactly match a key in the paths registry (e.g. <code>users</code>, <code>warehouse/products</code>).
+<code>id</code> must be a positive integer or absent.</p>
+<h2 id="endpoints">Endpoints</h2>
+<h3 id="list-get-path">List — <code>GET /{path}/</code></h3>
+<p>Returns a paginated, filtered list of records.</p>
+<p><strong>Query parameters:</strong></p>
 <table>
 <thead>
 <tr>
-<th>String</th>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>limit</code></td>
+<td>int</td>
+<td><code>10</code></td>
+<td>Maximum number of records to return</td>
+</tr>
+<tr>
+<td><code>offset</code></td>
+<td>int</td>
+<td><code>0</code></td>
+<td>Number of records to skip</td>
+</tr>
+<tr>
+<td><code>order</code></td>
+<td>string</td>
+<td>—</td>
+<td>Field name to sort by</td>
+</tr>
+<tr>
+<td><code>order_direction</code></td>
+<td>string</td>
+<td>—</td>
+<td><code>asc</code> or <code>desc</code></td>
+</tr>
+<tr>
+<td><code>filter_val_{Field}</code></td>
+<td>string</td>
+<td>—</td>
+<td>Filter value for the named field</td>
+</tr>
+<tr>
+<td><code>filter_op_{Field}</code></td>
+<td>string</td>
+<td><code>eq</code></td>
+<td>Filter operator for the named field (see <a href="../service/#list">operators</a>)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example request:</strong></p>
+<pre><code>GET /users/?limit=20&amp;offset=0&amp;order=LastName&amp;order_direction=asc&amp;filter_val_Role=admin&amp;filter_op_Role=eq
+</code></pre>
+<p><strong>Response <code>200 OK</code>:</strong></p>
+<pre><code class="language-json">{
+  &quot;ok&quot;: true,
+  &quot;code&quot;: &quot;SUCCESS&quot;,
+  &quot;data&quot;: [ { &quot;id&quot;: 1, &quot;username&quot;: &quot;alice&quot;, ... }, ... ]
+}
+</code></pre>
+<hr />
+<h3 id="read-get-pathid">Read — <code>GET /{path}/{id}</code></h3>
+<p>Returns a single record by ID.</p>
+<p><strong>Response <code>200 OK</code>:</strong></p>
+<pre><code class="language-json">{
+  &quot;ok&quot;: true,
+  &quot;code&quot;: &quot;SUCCESS&quot;,
+  &quot;data&quot;: { &quot;id&quot;: 42, &quot;username&quot;: &quot;alice&quot;, ... }
+}
+</code></pre>
+<p><strong>Response <code>404 Not Found</code>:</strong></p>
+<pre><code class="language-json">{ &quot;ok&quot;: true, &quot;code&quot;: &quot;NOT_FOUND&quot; }
+</code></pre>
+<hr />
+<h3 id="create-put-path">Create — <code>PUT /{path}/</code></h3>
+<p>Creates a new record. The request body must be a JSON object whose keys match the struct's <code>json</code> tags.</p>
+<p><strong>Request body:</strong></p>
+<pre><code class="language-json">{ &quot;username&quot;: &quot;alice&quot;, &quot;email&quot;: &quot;alice@example.com&quot;, &quot;role&quot;: &quot;admin&quot; }
+</code></pre>
+<p><strong>Response <code>201 Created</code>:</strong></p>
+<pre><code class="language-json">{
+  &quot;ok&quot;: true,
+  &quot;code&quot;: &quot;CREATED&quot;,
+  &quot;data&quot;: { &quot;id&quot;: 42 }
+}
+</code></pre>
+<p><strong>Response <code>400 Bad Request</code></strong> (validation failure):</p>
+<pre><code class="language-json">{
+  &quot;ok&quot;: true,
+  &quot;code&quot;: &quot;VALIDATION_FAILED&quot;,
+  &quot;message&quot;: &quot;validation failed with violations: ...&quot;
+}
+</code></pre>
+<hr />
+<h3 id="update-put-pathid">Update — <code>PUT /{path}/{id}</code></h3>
+<p>Updates an existing record. The request body replaces the record's fields. The record must exist; if not, <code>404</code> is returned.</p>
+<p><strong>Response <code>200 OK</code>:</strong></p>
+<pre><code class="language-json">{ &quot;ok&quot;: true, &quot;code&quot;: &quot;SUCCESS&quot;, &quot;data&quot;: { &quot;id&quot;: 42 } }
+</code></pre>
+<hr />
+<h3 id="delete-delete-pathid">Delete — <code>DELETE /{path}/{id}</code></h3>
+<p>Deletes a record by ID. Cascade rules defined on the struct are applied automatically.</p>
+<p><strong>Response <code>200 OK</code>:</strong></p>
+<pre><code class="language-json">{ &quot;ok&quot;: true, &quot;code&quot;: &quot;SUCCESS&quot; }
+</code></pre>
+<p><strong>Response <code>404 Not Found</code>:</strong></p>
+<pre><code class="language-json">{ &quot;ok&quot;: true, &quot;code&quot;: &quot;NOT_FOUND&quot; }
+</code></pre>
+<hr />
+<h2 id="response-format">Response format</h2>
+<p>Every response is a JSON object with the following shape:</p>
+<pre><code class="language-json">{
+  &quot;ok&quot;:      true,
+  &quot;code&quot;:    &quot;SUCCESS&quot;,
+  &quot;message&quot;: &quot;optional human-readable detail&quot;,
+  &quot;data&quot;:    null
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ok</code></td>
+<td>bool</td>
+<td>Always <code>true</code> — use <code>code</code> to distinguish outcomes</td>
+</tr>
+<tr>
+<td><code>code</code></td>
+<td>string</td>
+<td>Machine-readable result code (see below)</td>
+</tr>
+<tr>
+<td><code>message</code></td>
+<td>string?</td>
+<td>Present only on errors; contains a human-readable detail</td>
+</tr>
+<tr>
+<td><code>data</code></td>
+<td>any?</td>
+<td>Present on successful read / list / create / update</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Response codes:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>HTTP status</th>
 <th>Meaning</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>eq</code></td>
-<td><code>=</code> (default when omitted)</td>
+<td><code>SUCCESS</code></td>
+<td>200</td>
+<td>Operation completed successfully</td>
 </tr>
 <tr>
-<td><code>ne</code></td>
-<td><code>!=</code></td>
+<td><code>CREATED</code></td>
+<td>201</td>
+<td>Record created</td>
 </tr>
 <tr>
-<td><code>lt</code></td>
-<td><code>&lt;</code></td>
+<td><code>NOT_FOUND</code></td>
+<td>404</td>
+<td>No record with the given ID</td>
 </tr>
 <tr>
-<td><code>le</code></td>
-<td><code>&lt;=</code></td>
+<td><code>VALIDATION_FAILED</code></td>
+<td>400</td>
+<td>Request body failed struct validation</td>
 </tr>
 <tr>
-<td><code>gt</code></td>
-<td><code>&gt;</code></td>
+<td><code>BAD_REQUEST</code></td>
+<td>400</td>
+<td>Malformed URL or unparseable request body</td>
 </tr>
 <tr>
-<td><code>ge</code></td>
-<td><code>&gt;=</code></td>
+<td><code>URL_PATH_ID</code></td>
+<td>400</td>
+<td>ID segment in the URL is not a valid number</td>
 </tr>
 <tr>
-<td><code>like</code></td>
-<td><code>LIKE</code></td>
-</tr>
-<tr>
-<td><code>match</code></td>
-<td><code>~</code> (regex, PostgreSQL only)</td>
-</tr>
-<tr>
-<td><code>bit</code></td>
-<td>bitwise AND <code>&gt; 0</code></td>
+<td><code>SERVICE_ERROR</code></td>
+<td>500</td>
+<td>Internal error from the service layer</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Returns</strong> <code>*FilterValidationError</code> on an unknown operator or a filter field that fails struct validation.</p>
-<hr />
-<h3 id="num">Num</h3>
-<pre><code class="language-go">count, err := svc.Num(ctx, &quot;users&quot;,
-    map[string]string{&quot;Status&quot;: &quot;1&quot;},
-    map[string]string{&quot;Status&quot;: &quot;eq&quot;},
+<h2 id="cors">CORS</h2>
+<p>Pass a configured <code>*cors.CORS</code> to <code>api.New</code> to emit CORS headers on every response:</p>
+<pre><code class="language-go">import &quot;codeberg.org/mikolajgasior/gocrud/pkg/http/cors&quot;
+
+handler := api.New(svc, &amp;cors.CORS{
+    AllowOrigin:  &quot;https://app.example.com&quot;,
+    AllowHeaders: &quot;Content-Type, Authorization&quot;,
+    AllowMethods: &quot;GET, PUT, DELETE&quot;,
+    MaxAge:       3600,
+}, paths)
+</code></pre>
+<p>Pass <code>&amp;cors.CORS{}</code> (zero value) to skip all CORS headers.</p>
+<h2 id="complete-example">Complete example</h2>
+<pre><code class="language-go">package main
+
+import (
+    &quot;net/http&quot;
+
+    &quot;codeberg.org/mikolajgasior/gocrud&quot;
+    &quot;codeberg.org/mikolajgasior/gocrud/pkg/http/api&quot;
+    &quot;codeberg.org/mikolajgasior/gocrud/pkg/http/cors&quot;
+    svccrud &quot;codeberg.org/mikolajgasior/gocrud/pkg/service&quot;
+    _ &quot;github.com/lib/pq&quot;
 )
+
+type User struct {
+    ID    uint64 `json:&quot;id&quot;`
+    Name  string `json:&quot;name&quot;  crud:&quot;req len:2,100&quot;`
+    Email string `json:&quot;email&quot; crud:&quot;req email&quot;`
+}
+
+func main() {
+    db, _ := sql.Open(&quot;postgres&quot;, &quot;host=localhost user=app password=secret dbname=app sslmode=disable&quot;)
+
+    paths := map[string]func() interface{}{
+        &quot;users&quot;: func() interface{} { return &amp;User{} },
+    }
+
+    svc := svccrud.New(paths, db, gocrud.DialectPostgres)
+    handler := api.New(svc, &amp;cors.CORS{}, paths)
+
+    mux := http.NewServeMux()
+    subMux := http.NewServeMux()
+    subMux.HandleFunc(&quot;/&quot;, handler.Serve)
+    mux.Handle(&quot;/api/&quot;, http.StripPrefix(&quot;/api&quot;, subMux))
+
+    http.ListenAndServe(&quot;:8080&quot;, mux)
+}
 </code></pre>
-<p>Returns the count of records matching the given filters. Accepts the same <code>filterVals</code>/<code>filterOps</code> maps as <code>List</code>. Useful for pagination — combine with <code>List</code>'s <code>limit</code>/<code>offset</code> to get a total alongside a page of results.</p>
-<hr />
-<h3 id="helper-methods">Helper methods</h3>
-<pre><code class="language-go">obj  := svc.New(&quot;users&quot;)   // returns a new zero-value *User, or nil if path unknown
-id   := svc.ID(obj)        // returns obj.ID as uint64
-</code></pre>
-<h2 id="error-types">Error types</h2>
+<p>With this setup:</p>
 <table>
 <thead>
 <tr>
-<th>Type</th>
-<th>Sentinel / constructor</th>
-<th>When returned</th>
+<th>Request</th>
+<th>Action</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>*ModelValidationError</code></td>
-<td>—</td>
-<td><code>Save</code> / <code>SaveFromForm</code>: struct field validation failed</td>
+<td><code>GET /api/users/</code></td>
+<td>List users</td>
 </tr>
 <tr>
-<td><code>*FilterValidationError</code></td>
-<td>—</td>
-<td><code>List</code> / <code>Num</code>: unknown filter operator or filter validation failed</td>
+<td><code>GET /api/users/1</code></td>
+<td>Read user 1</td>
 </tr>
 <tr>
-<td><code>NotFoundError</code></td>
-<td><code>errors.Is(err, NotFoundError)</code></td>
-<td><code>Read</code> / <code>Delete</code>: no record with the given ID</td>
+<td><code>PUT /api/users/</code></td>
+<td>Create user</td>
 </tr>
 <tr>
-<td><code>InvalidPathError</code></td>
-<td><code>errors.Is(err, InvalidPathError)</code></td>
-<td>Any method: path key not in the registry</td>
+<td><code>PUT /api/users/1</code></td>
+<td>Update user 1</td>
+</tr>
+<tr>
+<td><code>DELETE /api/users/1</code></td>
+<td>Delete user 1</td>
 </tr>
 </tbody>
 </table>
-<p>Both <code>ModelValidationError</code> and <code>FilterValidationError</code> carry a <code>Violations map[string]uint64</code> field containing the per-field failure codes from the <a href="https://github.com/mikolajgasior/struct-validator">struct-validator</a> library.</p>
-<h2 id="example">Example</h2>
-<p>The <code>cmd/poc</code> application wires the service into HTTP modules:</p>
-<pre><code class="language-go">svc := svccrud.New(map[string]func() interface{}{
-    &quot;warehouse/products&quot;:  func() interface{} { return &amp;Product{} },
-    &quot;warehouse/suppliers&quot;: func() interface{} { return &amp;Supplier{} },
-}, dbConn, gocrud.DialectPostgres)
-
-// In an HTTP handler:
-objs, err := svc.List(ctx, &quot;warehouse/products&quot;, 20, 0, &quot;Name&quot;, &quot;asc&quot;,
-    map[string]string{&quot;CategoryID&quot;: r.URL.Query().Get(&quot;category_id&quot;)},
-    map[string]string{&quot;CategoryID&quot;: &quot;eq&quot;},
-    nil,
-)
-</code></pre>
 
 
 
