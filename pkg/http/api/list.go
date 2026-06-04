@@ -12,14 +12,7 @@ import (
 )
 
 func (h *Handler) handleAPIList(ctx context.Context, w http.ResponseWriter, r *http.Request, path string) {
-	// TODO: not all fields should be filterable
-
 	params := r.URL.Query()
-
-	names := make([]string, 0, len(params))
-	for name := range params {
-		names = append(names, name)
-	}
 
 	limit, _ := strconv.Atoi(params.Get("limit"))
 	offset, _ := strconv.Atoi(params.Get("offset"))
@@ -33,14 +26,36 @@ func (h *Handler) handleAPIList(ctx context.Context, w http.ResponseWriter, r *h
 	order := params.Get("order")
 	orderDirection := params.Get("order_direction")
 
-	filterVals := make(map[string]string, len(params))
-	filterOps := make(map[string]string, len(params))
-	for _, name := range names {
-		if filterValRegexp.MatchString(name) {
-			filterVals[strings.Replace(name, filterValPrefix, "", 1)] = params.Get(name)
+	pathOpts := h.options.Paths[path]
+
+	var filterVals, filterOps map[string]string
+
+	if !pathOpts.DisableFilters {
+		filterVals = make(map[string]string)
+		filterOps = make(map[string]string)
+
+		// Build allowed-filter lookup once (nil map means all fields are allowed).
+		var allowed map[string]bool
+		if len(pathOpts.AllowedFilters) > 0 {
+			allowed = make(map[string]bool, len(pathOpts.AllowedFilters))
+			for _, f := range pathOpts.AllowedFilters {
+				allowed[f] = true
+			}
 		}
-		if filterOpRegexp.MatchString(name) {
-			filterOps[strings.Replace(name, filterOpPrefix, "", 1)] = params.Get(name)
+
+		for name := range params {
+			if filterValRegexp.MatchString(name) {
+				field := strings.TrimPrefix(name, filterValPrefix)
+				if allowed == nil || allowed[field] {
+					filterVals[field] = params.Get(name)
+				}
+			}
+			if filterOpRegexp.MatchString(name) {
+				field := strings.TrimPrefix(name, filterOpPrefix)
+				if allowed == nil || allowed[field] {
+					filterOps[field] = params.Get(name)
+				}
+			}
 		}
 	}
 

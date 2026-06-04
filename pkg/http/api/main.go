@@ -9,6 +9,7 @@ import (
 
 const (
 	CodeServiceError = "SERVICE_ERROR"
+	CodeNotAllowed   = "NOT_ALLOWED"
 )
 
 const (
@@ -21,8 +22,21 @@ var (
 	filterOpRegexp  = regexp.MustCompile("^filter_op_[a-zA-Z0-9_]+$")
 )
 
+// PathOptions controls which operations and filters are available for a single path.
+// The zero value enables everything — only set fields you want to restrict.
+type PathOptions struct {
+	DisableCreate  bool
+	DisableUpdate  bool
+	DisableDelete  bool
+	DisableRead    bool
+	DisableList    bool
+	DisableFilters bool     // when true, all filter query parameters are ignored
+	AllowedFilters []string // when non-empty, only the listed fields may be used as filters
+}
+
 type Options struct {
-	CORS cors.CORS
+	CORS  cors.CORS
+	Paths map[string]PathOptions
 }
 
 type Handler struct {

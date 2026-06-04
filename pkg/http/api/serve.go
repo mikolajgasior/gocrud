@@ -16,7 +16,6 @@ func (h *Handler) Serve(w http.ResponseWriter, r *http.Request) {
 	logAttrHandler := logger.AttrHandler(h)
 	logAttrPath := logger.AttrPath(r.URL.Path)
 
-	id := ""
 	foundPath := ""
 	for _, path := range h.svc.Paths() {
 		if strings.HasPrefix(r.URL.Path, "/"+path+"/") {
@@ -41,25 +40,63 @@ func (h *Handler) Serve(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	pathOpts := h.options.Paths[foundPath]
+
 	// create and update
 	if r.Method == http.MethodPut {
+		if id == "" && pathOpts.DisableCreate {
+			jsonresp.Write(w, http.StatusMethodNotAllowed, &jsonresp.Response{
+				Ok:   true,
+				Code: CodeNotAllowed,
+			})
+			return
+		}
+		if id != "" && pathOpts.DisableUpdate {
+			jsonresp.Write(w, http.StatusMethodNotAllowed, &jsonresp.Response{
+				Ok:   true,
+				Code: CodeNotAllowed,
+			})
+			return
+		}
 		h.handleAPICreateUpdate(r.Context(), w, r, foundPath, id)
 		return
 	}
 
 	// delete
 	if r.Method == http.MethodDelete && id != "" {
+		if pathOpts.DisableDelete {
+			jsonresp.Write(w, http.StatusMethodNotAllowed, &jsonresp.Response{
+				Ok:   true,
+				Code: CodeNotAllowed,
+			})
+			return
+		}
 		h.handleAPIDelete(r.Context(), w, foundPath, id)
 		return
 	}
 
 	// read
 	if r.Method == http.MethodGet && id != "" {
+		if pathOpts.DisableRead {
+			jsonresp.Write(w, http.StatusMethodNotAllowed, &jsonresp.Response{
+				Ok:   true,
+				Code: CodeNotAllowed,
+			})
+			return
+		}
 		h.handleAPIRead(r.Context(), w, r, foundPath, id)
 		return
 	}
 
+	// list
 	if r.Method == http.MethodGet && id == "" {
+		if pathOpts.DisableList {
+			jsonresp.Write(w, http.StatusMethodNotAllowed, &jsonresp.Response{
+				Ok:   true,
+				Code: CodeNotAllowed,
+			})
+			return
+		}
 		h.handleAPIList(r.Context(), w, r, foundPath)
 		return
 	}
@@ -68,5 +105,4 @@ func (h *Handler) Serve(w http.ResponseWriter, r *http.Request) {
 		Ok:   true,
 		Code: jsonresp.CodeBadRequest,
 	})
-	return
 }

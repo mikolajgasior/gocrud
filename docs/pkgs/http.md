@@ -26,13 +26,60 @@ handler := api.New(svc, api.Options{})
 
 ```go
 type Options struct {
-    CORS cors.CORS
+    CORS  cors.CORS
+    Paths map[string]PathOptions
 }
 ```
 
 | Field | Type | Description |
 |---|---|---|
 | `CORS` | `cors.CORS` | CORS headers written on every response. Zero value emits no CORS headers. |
+| `Paths` | `map[string]PathOptions` | Per-path configuration. Paths absent from the map use the zero value (all operations enabled, all filters allowed). |
+
+### PathOptions
+
+```go
+type PathOptions struct {
+    DisableCreate  bool
+    DisableUpdate  bool
+    DisableDelete  bool
+    DisableRead    bool
+    DisableList    bool
+    DisableFilters bool
+    AllowedFilters []string
+}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `DisableCreate` | `bool` | Reject `PUT /{path}/` (create) with `405` |
+| `DisableUpdate` | `bool` | Reject `PUT /{path}/{id}` (update) with `405` |
+| `DisableDelete` | `bool` | Reject `DELETE /{path}/{id}` with `405` |
+| `DisableRead` | `bool` | Reject `GET /{path}/{id}` with `405` |
+| `DisableList` | `bool` | Reject `GET /{path}/` with `405` |
+| `DisableFilters` | `bool` | Ignore all `filter_val_*` / `filter_op_*` query parameters |
+| `AllowedFilters` | `[]string` | Whitelist of field names that may be used as filters. Empty slice means all fields are allowed (unless `DisableFilters` is set). |
+
+**Example** — read-only path with restricted filtering:
+
+```go
+handler := api.New(svc, api.Options{
+    Paths: map[string]api.PathOptions{
+        "users": {
+            DisableCreate:  true,
+            DisableUpdate:  true,
+            DisableDelete:  true,
+            AllowedFilters: []string{"Role", "IsActive"},
+        },
+        "audit_logs": {
+            DisableCreate:  true,
+            DisableUpdate:  true,
+            DisableDelete:  true,
+            DisableFilters: true,
+        },
+    },
+})
+```
 
 ## Mounting
 
@@ -199,6 +246,7 @@ Every response is a JSON object with the following shape:
 | `VALIDATION_FAILED` | 400 | Request body failed struct validation |
 | `BAD_REQUEST` | 400 | Malformed URL or unparseable request body |
 | `URL_PATH_ID` | 400 | ID segment in the URL is not a valid number |
+| `NOT_ALLOWED` | 405 | Operation is disabled for this path via `PathOptions` |
 | `SERVICE_ERROR` | 500 | Internal error from the service layer |
 
 ## CORS
