@@ -6,46 +6,25 @@ import (
 	"log/slog"
 
 	structcrud "codeberg.org/mikolajgasior/gocrud"
-	sqlfilters "codeberg.org/mikolajgasior/gocrud/pkg/filters"
 	"codeberg.org/mikolajgasior/gocrud/pkg/logger"
-	validator "github.com/mikolajgasior/struct-validator"
 )
 
 func (c *CRUD) Num(ctx context.Context, path string, filterVals, filterOps map[string]string) (uint64, error) {
 	logAttrService := logger.AttrService(c, "Num")
 
-	filterViolations := map[string]uint64{}
-	filters := sqlfilters.Filters{}
-	for name, value := range filterVals {
-		op := sqlfilters.OpEqual
-		filterOp, ok := filterOps[name]
-		if ok {
-			var err error
-			op, err = Op(filterOp)
-			if err != nil {
-				slog.Error("invalid filter op", logAttrService, slog.String("op", filterOp))
-				filterViolations[name] = validator.FailType
-			}
-		}
-
-		filters[name] = sqlfilters.OpVal{
-			Op:  op,
-			Val: value,
-		}
+	constructor, ok := c.paths[path]
+	if !ok {
+		slog.Error("path not found", logAttrService)
+		return 0, InvalidPathError
 	}
 
-	if len(filterViolations) > 0 {
-		slog.Error("invalid filter ops", logAttrService)
-		return 0, &FilterValidationError{
-			Err:        errors.New("invalid filter ops"),
-			Violations: filterViolations,
-		}
+	filters, err := buildFilters(filterVals, filterOps, logAttrService)
+	if err != nil {
+		return 0, err
 	}
 
-	obj := c.paths[path]()
-
-	numObjs, err := c.crud.GetCount(ctx, obj, structcrud.GetCountOptions{
-		Filters:                  &filters,
+	numObjs, err := c.crud.GetCount(ctx, constructor(), structcrud.GetCountOptions{
+		Filters:                  filters,
 		ConvertFiltersFromString: true,
 	})
 

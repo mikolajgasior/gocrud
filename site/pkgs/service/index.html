@@ -8,13 +8,11 @@
       
       
       
-        <link rel="canonical" href="https://codeberg.org/mikolajgasior/gocrud/crud/init/">
+        <link rel="canonical" href="https://codeberg.org/mikolajgasior/gocrud/pkgs/service/">
       
       
-        <link rel="prev" href="../../struct/">
+        <link rel="prev" href="../../crud/ops/">
       
-      
-        <link rel="next" href="../ops/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -22,7 +20,7 @@
     
     
       
-        <title>Initialization - gocrud</title>
+        <title>Service - gocrud</title>
       
     
     
@@ -72,7 +70,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#initialization" class="md-skip">
+        <a href="#service" class="md-skip">
           Skip to content
         </a>
       
@@ -108,7 +106,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Initialization
+              Service
             
           </span>
         </div>
@@ -267,20 +265,18 @@
       
   
   
-    
   
   
-  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
         
           
           <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
@@ -296,7 +292,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             CRUD object
@@ -307,32 +303,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    Initialization
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../crud/init/" class="md-nav__link">
         
   
   
@@ -343,86 +317,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#basic-initialization" class="md-nav__link">
-    <span class="md-ellipsis">
-      Basic Initialization
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#configuration-options" class="md-nav__link">
-    <span class="md-ellipsis">
-      Configuration Options
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#example-usage" class="md-nav__link">
-    <span class="md-ellipsis">
-      Example Usage
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Example Usage">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#postgresql" class="md-nav__link">
-    <span class="md-ellipsis">
-      PostgreSQL
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sqlite" class="md-nav__link">
-    <span class="md-ellipsis">
-      SQLite
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dialect-differences" class="md-nav__link">
-    <span class="md-ellipsis">
-      Dialect differences
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -435,7 +329,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ops/" class="md-nav__link">
+      <a href="../../crud/ops/" class="md-nav__link">
         
   
   
@@ -462,18 +356,20 @@
       
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
           <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
@@ -489,7 +385,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             Additional packages
@@ -500,10 +396,32 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../pkgs/service/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Service
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -514,6 +432,146 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#initialization" class="md-nav__link">
+    <span class="md-ellipsis">
+      Initialization
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Initialization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating tables
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Methods
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#save" class="md-nav__link">
+    <span class="md-ellipsis">
+      Save
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#savefromform" class="md-nav__link">
+    <span class="md-ellipsis">
+      SaveFromForm
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#read" class="md-nav__link">
+    <span class="md-ellipsis">
+      Read
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete" class="md-nav__link">
+    <span class="md-ellipsis">
+      Delete
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#list" class="md-nav__link">
+    <span class="md-ellipsis">
+      List
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#num" class="md-nav__link">
+    <span class="md-ellipsis">
+      Num
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#helper-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Helper methods
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Error types
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -553,55 +611,19 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#basic-initialization" class="md-nav__link">
+  <a href="#initialization" class="md-nav__link">
     <span class="md-ellipsis">
-      Basic Initialization
+      Initialization
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#configuration-options" class="md-nav__link">
-    <span class="md-ellipsis">
-      Configuration Options
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#example-usage" class="md-nav__link">
-    <span class="md-ellipsis">
-      Example Usage
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Example Usage">
+    <nav class="md-nav" aria-label="Initialization">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#postgresql" class="md-nav__link">
+  <a href="#creating-tables" class="md-nav__link">
     <span class="md-ellipsis">
-      PostgreSQL
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sqlite" class="md-nav__link">
-    <span class="md-ellipsis">
-      SQLite
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dialect-differences" class="md-nav__link">
-    <span class="md-ellipsis">
-      Dialect differences
+      Creating tables
     </span>
   </a>
   
@@ -609,6 +631,102 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Methods
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#save" class="md-nav__link">
+    <span class="md-ellipsis">
+      Save
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#savefromform" class="md-nav__link">
+    <span class="md-ellipsis">
+      SaveFromForm
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#read" class="md-nav__link">
+    <span class="md-ellipsis">
+      Read
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete" class="md-nav__link">
+    <span class="md-ellipsis">
+      Delete
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#list" class="md-nav__link">
+    <span class="md-ellipsis">
+      List
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#num" class="md-nav__link">
+    <span class="md-ellipsis">
+      Num
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#helper-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Helper methods
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Error types
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example
+    </span>
+  </a>
   
 </li>
       
@@ -628,110 +746,228 @@
 
 
 
-<h1 id="initialization">Initialization</h1>
-<p>To begin using the CRUD library, you must initialize a new instance by passing your database connection and optional configuration settings. This creates the controller object that manages all subsequent database operations.</p>
-<h2 id="basic-initialization">Basic Initialization</h2>
-<p>Create a new CRUD instance using the <code>New</code> function:</p>
-<pre><code class="language-go">crudInstance := structcrud.New(dbConn, structcrud.Options{
-    Dialect: structcrud.DialectPostgres,
-})
+<h1 id="service">Service</h1>
+<p>The <code>pkg/service</code> package provides a higher-level wrapper around the core CRUD object. Where the core layer works directly with struct instances, the service layer is driven by a <strong>path registry</strong> — a map of string keys to constructor functions — and accepts filter values as plain strings, making it a natural fit for wiring up to HTTP handlers.</p>
+<h2 id="initialization">Initialization</h2>
+<pre><code class="language-go">import (
+    structcrud &quot;codeberg.org/mikolajgasior/gocrud&quot;
+    svccrud    &quot;codeberg.org/mikolajgasior/gocrud/pkg/service&quot;
+)
+
+svc := svccrud.New(
+    map[string]func() interface{}{
+        &quot;users&quot;:    func() interface{} { return &amp;User{} },
+        &quot;products&quot;: func() interface{} { return &amp;Product{} },
+    },
+    dbConn,
+    structcrud.DialectPostgres, // or structcrud.DialectSQLite
+)
 </code></pre>
-<p><code>Dialect</code> is <strong>required</strong>. Passing an empty or unrecognised value causes a panic at startup. Use one of the two provided constants: <code>structcrud.DialectPostgres</code> or <code>structcrud.DialectSQLite</code>.</p>
-<h2 id="configuration-options">Configuration Options</h2>
-<p>The <code>Options</code> struct allows you to customize the behavior of the CRUD instance during initialization:</p>
-<pre><code class="language-go">type Options struct {
-    TableNamePrefix string
-    TagName         string
-    Dialect         string
-    Flags           uint64
-}
-</code></pre>
+<p><code>New</code> takes three arguments:</p>
 <ul>
-<li><strong>TableNamePrefix (string)</strong>: Allows you to define a prefix for all database table names managed by this instance. This is useful for organizing tables in shared databases or separating environments (e.g., dev_, prod_). If left empty, the library uses the default table name derived from the struct.</li>
-<li><strong>TagName (string)</strong>: Specifies the name of the struct tag used for validation and mapping rules. Default: <code>crud</code>. If you set this to <code>mytag</code>, the library will look for tags like <code>mytag:"unique"</code> instead of the default <code>crud:"unique"</code>.</li>
-<li><strong>Dialect (string)</strong> <em>(required)</em>: Selects the SQL dialect used to generate queries. Passing an empty or unrecognised value causes a panic at startup. Two constants are provided:<ul>
-<li><code>structcrud.DialectPostgres</code> — PostgreSQL.</li>
-<li><code>structcrud.DialectSQLite</code> — SQLite. Use this when connecting via <code>modernc.org/sqlite</code>. Column types are mapped to SQLite affinities (<code>INTEGER</code>, <code>TEXT</code>, <code>REAL</code>) and <code>?</code> placeholders are used instead of <code>$1</code>, <code>$2</code>, …</li>
+<li><strong>paths</strong> <code>map[string]func() interface{}</code> — a registry mapping path keys to constructor functions. Each function must return a pointer to a new zero-value struct.</li>
+<li><strong>dbConn</strong> <code>*sql.DB</code> — an open database connection.</li>
+<li><strong>dialect</strong> <code>string</code> — the SQL dialect; must be <code>structcrud.DialectPostgres</code> or <code>structcrud.DialectSQLite</code>. Passing an empty or unrecognised value causes a panic at startup.</li>
 </ul>
-</li>
-<li><strong>Flags (uint64)</strong>: Enables specific behaviors via bitwise flags. Currently, one flag is supported: <strong>GetCountOnUniq (const GetCountOnUniq = 1)</strong>: When this flag is set, the library performs an additional COUNT(*) query on unique fields before attempting an insert or update. This ensures that the unique value does not already exist in the database, providing an extra layer of validation beyond standard database constraints.</li>
-</ul>
-<h2 id="example-usage">Example Usage</h2>
-<h3 id="postgresql">PostgreSQL</h3>
-<pre><code class="language-go">import (
-    structcrud &quot;codeberg.org/mikolajgasior/gocrud&quot;
-    _ &quot;github.com/lib/pq&quot;
-)
-
-db, err := sql.Open(&quot;postgres&quot;, &quot;host=localhost user=myuser password=mypass dbname=mydb sslmode=disable&quot;)
-
-crudInstance := structcrud.New(db, structcrud.Options{
-    Dialect:         structcrud.DialectPostgres,
-    TableNamePrefix: &quot;app_&quot;,
-    TagName:         &quot;crud&quot;,
-    Flags:           structcrud.GetCountOnUniq,
-})
+<h3 id="creating-tables">Creating tables</h3>
+<pre><code class="language-go">err := svc.CreateTables(ctx)
 </code></pre>
-<h3 id="sqlite">SQLite</h3>
-<pre><code class="language-go">import (
-    structcrud &quot;codeberg.org/mikolajgasior/gocrud&quot;
-    _ &quot;modernc.org/sqlite&quot;
-)
-
-db, err := sql.Open(&quot;sqlite&quot;, &quot;./myapp.db&quot;)
-
-crudInstance := structcrud.New(db, structcrud.Options{
-    Dialect: structcrud.DialectSQLite,
-})
+<p>Iterates over all registered paths and calls <code>CREATE TABLE IF NOT EXISTS</code> for each struct. Useful during application startup when <code>CREATE_TABLES=true</code> is set.</p>
+<h2 id="methods">Methods</h2>
+<h3 id="save">Save</h3>
+<pre><code class="language-go">err := svc.Save(ctx, obj, now, userID)
 </code></pre>
-<p>Pass <code>:memory:</code> as the path to <code>sql.Open</code> for an in-memory SQLite database (useful for tests).</p>
-<h3 id="dialect-differences">Dialect differences</h3>
+<p>Saves <code>obj</code> to the database. If <code>obj.ID == 0</code> an <code>INSERT</code> is performed; otherwise an upsert. <code>now</code> (Unix timestamp) and <code>userID</code> are written to the audit fields (<code>CreatedAt</code>, <code>CreatedBy</code>, <code>ModifiedAt</code>, <code>ModifiedBy</code>) when those fields are present on the struct.</p>
+<p><strong>Returns</strong> <code>*ModelValidationError</code> when struct validation fails, otherwise a generic error.</p>
+<hr />
+<h3 id="savefromform">SaveFromForm</h3>
+<pre><code class="language-go">err := svc.SaveFromForm(ctx, obj, urlValues, &quot;prefix_&quot;, now, userID)
+</code></pre>
+<p>Populates <code>obj</code> from <code>url.Values</code> (e.g. an HTTP form submission) before saving. Each form key has <code>namePrefix</code> stripped from the front, and the remaining string is matched against struct field names. Type conversion from string to the field's native type is applied automatically.</p>
+<p><strong>Returns</strong> <code>*ModelValidationError</code> if any value cannot be converted to the target field type, or if struct validation fails after population.</p>
+<hr />
+<h3 id="read">Read</h3>
+<pre><code class="language-go">obj, err := svc.Read(ctx, &quot;users&quot;, id)
+</code></pre>
+<p>Loads a single record by <code>id</code>. Returns <code>NotFoundError</code> if no record with that ID exists.</p>
+<hr />
+<h3 id="delete">Delete</h3>
+<pre><code class="language-go">err := svc.Delete(ctx, &quot;users&quot;, id)
+</code></pre>
+<p>Reads the record by <code>id</code> first (returning <code>NotFoundError</code> if absent), then deletes it. Cascade rules defined on the struct are applied automatically.</p>
+<hr />
+<h3 id="list">List</h3>
+<pre><code class="language-go">objs, err := svc.List(
+    ctx,
+    &quot;users&quot;,
+    limit, offset,
+    &quot;Age&quot;, &quot;asc&quot;,
+    map[string]string{&quot;Status&quot;: &quot;1&quot;},
+    map[string]string{&quot;Status&quot;: &quot;eq&quot;},
+    nil, // optional row transform func
+)
+</code></pre>
+<p>Returns a paginated, filtered, ordered list of objects for the given path. All filter values are passed as strings and converted to the correct field types automatically.</p>
+<p><strong>Parameters:</strong></p>
 <table>
 <thead>
 <tr>
-<th>Feature</th>
-<th>PostgreSQL</th>
-<th>SQLite</th>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Placeholders</td>
-<td><code>$1</code>, <code>$2</code>, …</td>
-<td><code>?</code></td>
+<td><code>path</code></td>
+<td><code>string</code></td>
+<td>Registry key</td>
 </tr>
 <tr>
-<td>Auto-increment</td>
-<td><code>SERIAL PRIMARY KEY</code></td>
-<td><code>INTEGER PRIMARY KEY</code></td>
+<td><code>limit</code></td>
+<td><code>int</code></td>
+<td>SQL <code>LIMIT</code></td>
 </tr>
 <tr>
-<td>String columns</td>
-<td><code>VARCHAR(255)</code></td>
-<td><code>TEXT</code></td>
+<td><code>offset</code></td>
+<td><code>int</code></td>
+<td>SQL <code>OFFSET</code></td>
 </tr>
 <tr>
-<td>Integer columns</td>
-<td><code>BIGINT</code>, <code>INTEGER</code>, …</td>
-<td><code>INTEGER</code></td>
+<td><code>order</code></td>
+<td><code>string</code></td>
+<td>Field name to sort by (empty = no ordering)</td>
 </tr>
 <tr>
-<td>Boolean columns</td>
-<td><code>BOOLEAN</code></td>
-<td><code>INTEGER</code> (0/1)</td>
+<td><code>orderDirection</code></td>
+<td><code>string</code></td>
+<td><code>"asc"</code> or <code>"desc"</code></td>
 </tr>
 <tr>
-<td>Float columns</td>
-<td>driver default</td>
-<td><code>REAL</code></td>
+<td><code>filterVals</code></td>
+<td><code>map[string]string</code></td>
+<td>Field name → value</td>
 </tr>
 <tr>
-<td>Regex filter (<code>OpMatch</code>)</td>
-<td>supported (<code>~</code>)</td>
-<td>not supported</td>
+<td><code>filterOps</code></td>
+<td><code>map[string]string</code></td>
+<td>Field name → operator string (see below)</td>
+</tr>
+<tr>
+<td><code>rowFunc</code></td>
+<td><code>func(interface{}) interface{}</code></td>
+<td>Optional per-row transform; <code>nil</code> returns raw structs</td>
 </tr>
 </tbody>
 </table>
+<p><strong>Filter operators:</strong></p>
+<table>
+<thead>
+<tr>
+<th>String</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>eq</code></td>
+<td><code>=</code> (default when omitted)</td>
+</tr>
+<tr>
+<td><code>ne</code></td>
+<td><code>!=</code></td>
+</tr>
+<tr>
+<td><code>lt</code></td>
+<td><code>&lt;</code></td>
+</tr>
+<tr>
+<td><code>le</code></td>
+<td><code>&lt;=</code></td>
+</tr>
+<tr>
+<td><code>gt</code></td>
+<td><code>&gt;</code></td>
+</tr>
+<tr>
+<td><code>ge</code></td>
+<td><code>&gt;=</code></td>
+</tr>
+<tr>
+<td><code>like</code></td>
+<td><code>LIKE</code></td>
+</tr>
+<tr>
+<td><code>match</code></td>
+<td><code>~</code> (regex, PostgreSQL only)</td>
+</tr>
+<tr>
+<td><code>bit</code></td>
+<td>bitwise AND <code>&gt; 0</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Returns</strong> <code>*FilterValidationError</code> on an unknown operator or a filter field that fails struct validation.</p>
+<hr />
+<h3 id="num">Num</h3>
+<pre><code class="language-go">count, err := svc.Num(ctx, &quot;users&quot;,
+    map[string]string{&quot;Status&quot;: &quot;1&quot;},
+    map[string]string{&quot;Status&quot;: &quot;eq&quot;},
+)
+</code></pre>
+<p>Returns the count of records matching the given filters. Accepts the same <code>filterVals</code>/<code>filterOps</code> maps as <code>List</code>. Useful for pagination — combine with <code>List</code>'s <code>limit</code>/<code>offset</code> to get a total alongside a page of results.</p>
+<hr />
+<h3 id="helper-methods">Helper methods</h3>
+<pre><code class="language-go">obj  := svc.New(&quot;users&quot;)   // returns a new zero-value *User, or nil if path unknown
+id   := svc.ID(obj)        // returns obj.ID as uint64
+</code></pre>
+<h2 id="error-types">Error types</h2>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Sentinel / constructor</th>
+<th>When returned</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>*ModelValidationError</code></td>
+<td>—</td>
+<td><code>Save</code> / <code>SaveFromForm</code>: struct field validation failed</td>
+</tr>
+<tr>
+<td><code>*FilterValidationError</code></td>
+<td>—</td>
+<td><code>List</code> / <code>Num</code>: unknown filter operator or filter validation failed</td>
+</tr>
+<tr>
+<td><code>NotFoundError</code></td>
+<td><code>errors.Is(err, NotFoundError)</code></td>
+<td><code>Read</code> / <code>Delete</code>: no record with the given ID</td>
+</tr>
+<tr>
+<td><code>InvalidPathError</code></td>
+<td><code>errors.Is(err, InvalidPathError)</code></td>
+<td>Any method: path key not in the registry</td>
+</tr>
+</tbody>
+</table>
+<p>Both <code>ModelValidationError</code> and <code>FilterValidationError</code> carry a <code>Violations map[string]uint64</code> field containing the per-field failure codes from the <a href="https://github.com/mikolajgasior/struct-validator">struct-validator</a> library.</p>
+<h2 id="example">Example</h2>
+<p>The <code>cmd/poc</code> application wires the service into HTTP modules:</p>
+<pre><code class="language-go">svc := svccrud.New(map[string]func() interface{}{
+    &quot;warehouse/products&quot;:  func() interface{} { return &amp;Product{} },
+    &quot;warehouse/suppliers&quot;: func() interface{} { return &amp;Supplier{} },
+}, dbConn, structcrud.DialectPostgres)
+
+// In an HTTP handler:
+objs, err := svc.List(ctx, &quot;warehouse/products&quot;, 20, 0, &quot;Name&quot;, &quot;asc&quot;,
+    map[string]string{&quot;CategoryID&quot;: r.URL.Query().Get(&quot;category_id&quot;)},
+    map[string]string{&quot;CategoryID&quot;: &quot;eq&quot;},
+    nil,
+)
+</code></pre>
 
 
 

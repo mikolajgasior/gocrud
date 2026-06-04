@@ -9,6 +9,7 @@ import (
 	structcrud "codeberg.org/mikolajgasior/gocrud"
 	sqlfilters "codeberg.org/mikolajgasior/gocrud/pkg/filters"
 	"codeberg.org/mikolajgasior/gocrud/pkg/logger"
+	validator "github.com/mikolajgasior/struct-validator"
 )
 
 var (
@@ -20,10 +21,10 @@ type CRUD struct {
 	crud  *structcrud.CRUD
 }
 
-func New(paths map[string]func() interface{}, dbConn *sql.DB) *CRUD {
+func New(paths map[string]func() interface{}, dbConn *sql.DB, dialect string) *CRUD {
 	crud := &CRUD{
 		paths: paths,
-		crud:  structcrud.New(dbConn, structcrud.Options{}),
+		crud:  structcrud.New(dbConn, structcrud.Options{Dialect: dialect}),
 	}
 
 	return crud
@@ -53,6 +54,36 @@ func (c *CRUD) New(path string) interface{} {
 
 func (c *CRUD) ID(obj interface{}) uint64 {
 	return structcrud.ObjIDValue(obj)
+}
+
+// buildFilters converts the string-keyed filter maps coming from HTTP layers
+// into a sqlfilters.Filters value ready for the CRUD layer.
+func buildFilters(filterVals, filterOps map[string]string, logAttr slog.Attr) (*sqlfilters.Filters, error) {
+	filters := sqlfilters.Filters{}
+	violations := map[string]uint64{}
+
+	for name, value := range filterVals {
+		op := sqlfilters.OpEqual
+		if filterOp, ok := filterOps[name]; ok {
+			var err error
+			op, err = Op(filterOp)
+			if err != nil {
+				slog.Error("invalid filter op", logAttr, slog.String("op", filterOp))
+				violations[name] = validator.FailType
+			}
+		}
+		filters[name] = sqlfilters.OpVal{Op: op, Val: value}
+	}
+
+	if len(violations) > 0 {
+		slog.Error("invalid filter ops", logAttr)
+		return nil, &FilterValidationError{
+			Err:        errors.New("invalid filter ops"),
+			Violations: violations,
+		}
+	}
+
+	return &filters, nil
 }
 
 func Op(op string) (int, error) {

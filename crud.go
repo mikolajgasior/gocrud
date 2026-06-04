@@ -18,6 +18,10 @@ type CRUD struct {
 }
 
 func New(db *sql.DB, options Options) *CRUD {
+	if options.Dialect != DialectPostgres && options.Dialect != DialectSQLite {
+		panic("gocrud: Options.Dialect must be set to DialectPostgres or DialectSQLite")
+	}
+
 	crud := &CRUD{
 		db:       db,
 		builders: make(map[string]*sqlbuilder.Builder),

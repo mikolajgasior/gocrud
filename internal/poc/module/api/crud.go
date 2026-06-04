@@ -24,7 +24,7 @@ type API struct {
 func (a *API) Init(ctx context.Context, input module.InitInput) error {
 	logAttrModule := logger.AttrModule(a)
 
-	a.svc = svccrud.New(a.Paths, input.DBConn)
+	a.svc = svccrud.New(a.Paths, input.DBConn, input.Dialect)
 	handlerInstance := handcrudapi.New(a.svc, &cors.CORS{}, a.Paths)
 	a.handler = handlerInstance.Serve
 

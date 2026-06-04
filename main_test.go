@@ -49,7 +49,7 @@ func TestMain(m *testing.M) {
 }
 
 func createCRUD() {
-	testCRUD = New(testDB, Options{})
+	testCRUD = New(testDB, Options{Dialect: DialectPostgres})
 }
 
 func createCRUDSQLite() {

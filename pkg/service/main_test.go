@@ -39,7 +39,7 @@ func TestMain(m *testing.M) {
 }
 
 func createCRUD() {
-	testCRUD = structcrud.New(testDB, structcrud.Options{})
+	testCRUD = structcrud.New(testDB, structcrud.Options{Dialect: structcrud.DialectPostgres})
 }
 
 func createService() {
@@ -47,7 +47,7 @@ func createService() {
 		"teststruct": func() interface{} {
 			return &test.TestStruct{}
 		},
-	}, testDB)
+	}, testDB, structcrud.DialectPostgres)
 }
 
 func recreateTestStructTable() {

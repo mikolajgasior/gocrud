@@ -17,6 +17,9 @@ func (c *CRUD) SaveFromForm(ctx context.Context, obj interface{}, values url.Val
 
 	fieldViolations := map[string]uint64{}
 	for key, value := range values {
+		if len(value) == 0 {
+			continue
+		}
 		name := strings.Replace(key, namePrefix, "", 1)
 
 		ok, _ := sqlbuilder.SetStructFieldValueFromString(obj, name, value[0])

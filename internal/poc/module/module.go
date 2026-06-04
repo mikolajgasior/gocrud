@@ -44,4 +44,5 @@ type Module interface {
 type InitInput struct {
 	DBConn       *sql.DB
 	CreateTables bool
+	Dialect      string
 }

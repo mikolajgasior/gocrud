@@ -57,6 +57,7 @@ func (a *App) Run(ctx context.Context) {
 		err := mod.Init(ctx, module.InitInput{
 			DBConn:       dbConn,
 			CreateTables: createTables,
+			Dialect:      "postgres",
 		})
 		if err != nil {
 			var errModInit *module.InitError

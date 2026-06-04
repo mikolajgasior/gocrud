@@ -33,7 +33,7 @@ func (u *UI) Init(ctx context.Context, input module.InitInput) error {
 		return module.LayoutIsNilError
 	}
 
-	svc := svccrud.New(u.Paths, input.DBConn)
+	svc := svccrud.New(u.Paths, input.DBConn, input.Dialect)
 	crudUIHandler := handcrudui.New(handcrudui.HandlerInput{
 		Svc:        svc,
 		CORS:       &cors.CORS{},

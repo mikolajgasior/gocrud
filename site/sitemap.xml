@@ -20,4 +20,8 @@
          <loc>https://codeberg.org/mikolajgasior/gocrud/crud/ops/</loc>
          <lastmod>2026-06-04</lastmod>
     </url>
+    <url>
+         <loc>https://codeberg.org/mikolajgasior/gocrud/pkgs/service/</loc>
+         <lastmod>2026-06-04</lastmod>
+    </url>
 </urlset>
