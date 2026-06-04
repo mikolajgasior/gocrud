@@ -72,6 +72,9 @@ func (h *Handler) handleAPICreateUpdate(ctx context.Context, w http.ResponseWrit
 
 	now := time.Now().UTC().Unix()
 	userID := uint64(0)
+	if h.options.UserIDFunc != nil {
+		userID = h.options.UserIDFunc(r)
+	}
 
 	err = h.svc.Save(ctx, obj, now, userID)
 	if err != nil {

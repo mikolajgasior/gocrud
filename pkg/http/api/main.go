@@ -1,6 +1,7 @@
 package api
 
 import (
+	"net/http"
 	"regexp"
 
 	"codeberg.org/mikolajgasior/gocrud/pkg/http/cors"
@@ -46,6 +47,10 @@ type PathOptions struct {
 type Options struct {
 	CORS  cors.CORS
 	Paths map[string]PathOptions
+	// UserIDFunc is called on every create and update request to obtain the
+	// current user's ID, which is passed to the service as ModifiedBy.
+	// When nil, ModifiedBy is always 0.
+	UserIDFunc func(r *http.Request) uint64
 }
 
 type Handler struct {
