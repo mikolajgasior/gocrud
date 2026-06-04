@@ -71,12 +71,14 @@ Loads a single record by `id`. Returns `NotFoundError` if no record with that ID
 The last argument is an optional constructor (`func() interface{}`). When `nil` the path's registered constructor is used. Pass a non-nil constructor to load the record into a different struct type — for example a read-specific projection with fewer fields, which will generate a narrower `SELECT`.
 
 ```go
-type UserSummary struct {
+// The "_" suffix is stripped when deriving the table name:
+//   strings.Split("User_Summary", "_")[0] = "User" → table "user"
+type User_Summary struct {
     ID    uint64
     Email string
 }
 
-obj, err := svc.Read(ctx, "users", id, func() interface{} { return &UserSummary{} })
+obj, err := svc.Read(ctx, "users", id, func() interface{} { return &User_Summary{} })
 ```
 
 ---

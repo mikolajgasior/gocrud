@@ -979,7 +979,9 @@ handler := api.New(svc, api.Options{})
 </tbody>
 </table>
 <p><strong>Example</strong> — read-only path, restricted filtering, and a minimal create struct:</p>
-<pre><code class="language-go">type UserCreate struct {
+<pre><code class="language-go">// The &quot;_&quot; suffix is stripped when deriving the table name:
+//   strings.Split(&quot;User_Create&quot;, &quot;_&quot;)[0] = &quot;User&quot; → table &quot;user&quot;
+type User_Create struct {
     ID    uint64
     Email string `crud:&quot;req email&quot;`
     Role  string `crud:&quot;req len:3,30&quot;`
@@ -990,7 +992,7 @@ handler := api.New(svc, api.Options{
         &quot;users&quot;: {
             DisableDelete:     true,
             AllowedFilters:    []string{&quot;Role&quot;, &quot;IsActive&quot;},
-            CreateConstructor: func() interface{} { return &amp;UserCreate{} },
+            CreateConstructor: func() interface{} { return &amp;User_Create{} },
         },
         &quot;audit_logs&quot;: {
             DisableCreate:  true,

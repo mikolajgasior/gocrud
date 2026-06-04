@@ -816,12 +816,14 @@ svc := svccrud.New(
 </code></pre>
 <p>Loads a single record by <code>id</code>. Returns <code>NotFoundError</code> if no record with that ID exists.</p>
 <p>The last argument is an optional constructor (<code>func() interface{}</code>). When <code>nil</code> the path's registered constructor is used. Pass a non-nil constructor to load the record into a different struct type — for example a read-specific projection with fewer fields, which will generate a narrower <code>SELECT</code>.</p>
-<pre><code class="language-go">type UserSummary struct {
+<pre><code class="language-go">// The &quot;_&quot; suffix is stripped when deriving the table name:
+//   strings.Split(&quot;User_Summary&quot;, &quot;_&quot;)[0] = &quot;User&quot; → table &quot;user&quot;
+type User_Summary struct {
     ID    uint64
     Email string
 }
 
-obj, err := svc.Read(ctx, &quot;users&quot;, id, func() interface{} { return &amp;UserSummary{} })
+obj, err := svc.Read(ctx, &quot;users&quot;, id, func() interface{} { return &amp;User_Summary{} })
 </code></pre>
 <hr />
 <h3 id="delete">Delete</h3>

@@ -90,7 +90,9 @@ By default each operation uses the constructor registered for the path in the se
 **Example** — read-only path, restricted filtering, and a minimal create struct:
 
 ```go
-type UserCreate struct {
+// The "_" suffix is stripped when deriving the table name:
+//   strings.Split("User_Create", "_")[0] = "User" → table "user"
+type User_Create struct {
     ID    uint64
     Email string `crud:"req email"`
     Role  string `crud:"req len:3,30"`
@@ -101,7 +103,7 @@ handler := api.New(svc, api.Options{
         "users": {
             DisableDelete:     true,
             AllowedFilters:    []string{"Role", "IsActive"},
-            CreateConstructor: func() interface{} { return &UserCreate{} },
+            CreateConstructor: func() interface{} { return &User_Create{} },
         },
         "audit_logs": {
             DisableCreate:  true,
