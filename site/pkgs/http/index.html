@@ -868,15 +868,25 @@ handler := api.New(svc, api.Options{})
 </table>
 <h3 id="pathoptions">PathOptions</h3>
 <pre><code class="language-go">type PathOptions struct {
+    // Operation guards
     DisableCreate  bool
     DisableUpdate  bool
     DisableDelete  bool
     DisableRead    bool
     DisableList    bool
+
+    // Filter constraints
     DisableFilters bool
     AllowedFilters []string
+
+    // Per-operation constructor overrides
+    CreateConstructor func() interface{}
+    UpdateConstructor func() interface{}
+    ReadConstructor   func() interface{}
+    ListConstructor   func() interface{}
 }
 </code></pre>
+<p><strong>Operation guards</strong></p>
 <table>
 <thead>
 <tr>
@@ -911,6 +921,18 @@ handler := api.New(svc, api.Options{})
 <td><code>bool</code></td>
 <td>Reject <code>GET /{path}/</code> with <code>405</code></td>
 </tr>
+</tbody>
+</table>
+<p><strong>Filter constraints</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
 <tr>
 <td><code>DisableFilters</code></td>
 <td><code>bool</code></td>
@@ -923,14 +945,52 @@ handler := api.New(svc, api.Options{})
 </tr>
 </tbody>
 </table>
-<p><strong>Example</strong> — read-only path with restricted filtering:</p>
-<pre><code class="language-go">handler := api.New(svc, api.Options{
+<p><strong>Constructor overrides</strong></p>
+<p>By default each operation uses the constructor registered for the path in the service. Setting a constructor here overrides that for the specific operation, allowing a different struct type to be used — for example a create-only struct with fewer fields that implements a custom <code>InsertQuery()</code> method.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CreateConstructor</code></td>
+<td><code>func() interface{}</code></td>
+<td>Constructor used when creating a new record (<code>PUT /{path}/</code>)</td>
+</tr>
+<tr>
+<td><code>UpdateConstructor</code></td>
+<td><code>func() interface{}</code></td>
+<td>Constructor used when updating a record (<code>PUT /{path}/{id}</code>). The existing record is <strong>not</strong> pre-loaded; the URL id is stamped onto the object after JSON unmarshalling.</td>
+</tr>
+<tr>
+<td><code>ReadConstructor</code></td>
+<td><code>func() interface{}</code></td>
+<td>Constructor used when reading a single record (<code>GET /{path}/{id}</code>). Only the fields present on the override struct are SELECTed.</td>
+</tr>
+<tr>
+<td><code>ListConstructor</code></td>
+<td><code>func() interface{}</code></td>
+<td>Constructor used when listing records (<code>GET /{path}/</code>). Only the fields present on the override struct are SELECTed.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example</strong> — read-only path, restricted filtering, and a minimal create struct:</p>
+<pre><code class="language-go">type UserCreate struct {
+    ID    uint64
+    Email string `crud:&quot;req email&quot;`
+    Role  string `crud:&quot;req len:3,30&quot;`
+}
+
+handler := api.New(svc, api.Options{
     Paths: map[string]api.PathOptions{
         &quot;users&quot;: {
-            DisableCreate:  true,
-            DisableUpdate:  true,
-            DisableDelete:  true,
-            AllowedFilters: []string{&quot;Role&quot;, &quot;IsActive&quot;},
+            DisableDelete:     true,
+            AllowedFilters:    []string{&quot;Role&quot;, &quot;IsActive&quot;},
+            CreateConstructor: func() interface{} { return &amp;UserCreate{} },
         },
         &quot;audit_logs&quot;: {
             DisableCreate:  true,

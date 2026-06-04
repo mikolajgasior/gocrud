@@ -812,9 +812,17 @@ svc := svccrud.New(
 <p><strong>Returns</strong> <code>*ModelValidationError</code> if any value cannot be converted to the target field type, or if struct validation fails after population.</p>
 <hr />
 <h3 id="read">Read</h3>
-<pre><code class="language-go">obj, err := svc.Read(ctx, &quot;users&quot;, id)
+<pre><code class="language-go">obj, err := svc.Read(ctx, &quot;users&quot;, id, nil)
 </code></pre>
 <p>Loads a single record by <code>id</code>. Returns <code>NotFoundError</code> if no record with that ID exists.</p>
+<p>The last argument is an optional constructor (<code>func() interface{}</code>). When <code>nil</code> the path's registered constructor is used. Pass a non-nil constructor to load the record into a different struct type — for example a read-specific projection with fewer fields, which will generate a narrower <code>SELECT</code>.</p>
+<pre><code class="language-go">type UserSummary struct {
+    ID    uint64
+    Email string
+}
+
+obj, err := svc.Read(ctx, &quot;users&quot;, id, func() interface{} { return &amp;UserSummary{} })
+</code></pre>
 <hr />
 <h3 id="delete">Delete</h3>
 <pre><code class="language-go">err := svc.Delete(ctx, &quot;users&quot;, id)
@@ -830,6 +838,7 @@ svc := svccrud.New(
     map[string]string{&quot;Status&quot;: &quot;1&quot;},
     map[string]string{&quot;Status&quot;: &quot;eq&quot;},
     nil, // optional row transform func
+    nil, // optional constructor override
 )
 </code></pre>
 <p>Returns a paginated, filtered, ordered list of objects for the given path. All filter values are passed as strings and converted to the correct field types automatically.</p>
@@ -882,6 +891,11 @@ svc := svccrud.New(
 <td><code>rowFunc</code></td>
 <td><code>func(interface{}) interface{}</code></td>
 <td>Optional per-row transform; <code>nil</code> returns raw structs</td>
+</tr>
+<tr>
+<td><code>constructor</code></td>
+<td><code>func() interface{}</code></td>
+<td>Optional struct constructor; <code>nil</code> uses the path's registered constructor. Pass a non-nil value to scan rows into a different struct type (e.g. a list projection with fewer fields).</td>
 </tr>
 </tbody>
 </table>
@@ -990,7 +1004,8 @@ id   := svc.ID(obj)        // returns obj.ID as uint64
 objs, err := svc.List(ctx, &quot;warehouse/products&quot;, 20, 0, &quot;Name&quot;, &quot;asc&quot;,
     map[string]string{&quot;CategoryID&quot;: r.URL.Query().Get(&quot;category_id&quot;)},
     map[string]string{&quot;CategoryID&quot;: &quot;eq&quot;},
-    nil,
+    nil, // rowFunc
+    nil, // constructor (use registered default)
 )
 </code></pre>
 
