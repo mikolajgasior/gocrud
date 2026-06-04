@@ -57,7 +57,9 @@ func main() {
 	var dbConn interface{} // Replace with *sql.DB in real usage
 
 	// 2. Initialize the CRUD Controller
-	crudInstance := structcrud.New(dbConn, structcrud.Options{})
+	crudInstance := structcrud.New(dbConn, structcrud.Options{
+		Dialect: structcrud.DialectPostgres,
+	})
 
 	// 3. Create the Database Table
 	err := crudInstance.CreateTable(ctx, &User{})
@@ -84,7 +86,9 @@ A few important conventions:
 Import the gocrud package and create a controller instance tied to your database connection. As shown in the main function above:
 
 ```go
-crudInstance := structcrud.New(dbConn, structcrud.Options{})
+crudInstance := structcrud.New(dbConn, structcrud.Options{
+    Dialect: structcrud.DialectPostgres,
+})
 ```
 
 Replace `dbConn` with your active database connection (for example, a `*sql.DB `or compatible interface expected by your setup).
