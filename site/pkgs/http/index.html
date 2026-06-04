@@ -490,6 +490,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#pathoptions" class="md-nav__link">
+    <span class="md-ellipsis">
+      PathOptions
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -661,6 +670,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#pathoptions" class="md-nav__link">
+    <span class="md-ellipsis">
+      PathOptions
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -823,7 +841,8 @@ handler := api.New(svc, api.Options{})
 </table>
 <h3 id="options">Options</h3>
 <pre><code class="language-go">type Options struct {
-    CORS cors.CORS
+    CORS  cors.CORS
+    Paths map[string]PathOptions
 }
 </code></pre>
 <table>
@@ -840,8 +859,88 @@ handler := api.New(svc, api.Options{})
 <td><code>cors.CORS</code></td>
 <td>CORS headers written on every response. Zero value emits no CORS headers.</td>
 </tr>
+<tr>
+<td><code>Paths</code></td>
+<td><code>map[string]PathOptions</code></td>
+<td>Per-path configuration. Paths absent from the map use the zero value (all operations enabled, all filters allowed).</td>
+</tr>
 </tbody>
 </table>
+<h3 id="pathoptions">PathOptions</h3>
+<pre><code class="language-go">type PathOptions struct {
+    DisableCreate  bool
+    DisableUpdate  bool
+    DisableDelete  bool
+    DisableRead    bool
+    DisableList    bool
+    DisableFilters bool
+    AllowedFilters []string
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DisableCreate</code></td>
+<td><code>bool</code></td>
+<td>Reject <code>PUT /{path}/</code> (create) with <code>405</code></td>
+</tr>
+<tr>
+<td><code>DisableUpdate</code></td>
+<td><code>bool</code></td>
+<td>Reject <code>PUT /{path}/{id}</code> (update) with <code>405</code></td>
+</tr>
+<tr>
+<td><code>DisableDelete</code></td>
+<td><code>bool</code></td>
+<td>Reject <code>DELETE /{path}/{id}</code> with <code>405</code></td>
+</tr>
+<tr>
+<td><code>DisableRead</code></td>
+<td><code>bool</code></td>
+<td>Reject <code>GET /{path}/{id}</code> with <code>405</code></td>
+</tr>
+<tr>
+<td><code>DisableList</code></td>
+<td><code>bool</code></td>
+<td>Reject <code>GET /{path}/</code> with <code>405</code></td>
+</tr>
+<tr>
+<td><code>DisableFilters</code></td>
+<td><code>bool</code></td>
+<td>Ignore all <code>filter_val_*</code> / <code>filter_op_*</code> query parameters</td>
+</tr>
+<tr>
+<td><code>AllowedFilters</code></td>
+<td><code>[]string</code></td>
+<td>Whitelist of field names that may be used as filters. Empty slice means all fields are allowed (unless <code>DisableFilters</code> is set).</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example</strong> — read-only path with restricted filtering:</p>
+<pre><code class="language-go">handler := api.New(svc, api.Options{
+    Paths: map[string]api.PathOptions{
+        &quot;users&quot;: {
+            DisableCreate:  true,
+            DisableUpdate:  true,
+            DisableDelete:  true,
+            AllowedFilters: []string{&quot;Role&quot;, &quot;IsActive&quot;},
+        },
+        &quot;audit_logs&quot;: {
+            DisableCreate:  true,
+            DisableUpdate:  true,
+            DisableDelete:  true,
+            DisableFilters: true,
+        },
+    },
+})
+</code></pre>
 <h2 id="mounting">Mounting</h2>
 <p><code>handler.Serve</code> is a standard <code>http.HandlerFunc</code>. Mount it under a prefix using <code>http.StripPrefix</code> so the handler only sees the path-relative URL:</p>
 <pre><code class="language-go">mux := http.NewServeMux()
@@ -1049,6 +1148,11 @@ http.ListenAndServe(&quot;:8080&quot;, mux)
 <td><code>URL_PATH_ID</code></td>
 <td>400</td>
 <td>ID segment in the URL is not a valid number</td>
+</tr>
+<tr>
+<td><code>NOT_ALLOWED</code></td>
+<td>405</td>
+<td>Operation is disabled for this path via <code>PathOptions</code></td>
 </tr>
 <tr>
 <td><code>SERVICE_ERROR</code></td>
