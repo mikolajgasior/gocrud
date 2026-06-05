@@ -38,6 +38,21 @@ func ObjSetIDValue(obj interface{}, id uint64) {
 	reflect.ValueOf(obj).Elem().FieldByName(IDField).SetUint(id)
 }
 
+// zeroPasswordFields clears the value of every password field on obj so that
+// bcrypt hashes are never returned from read operations.
+func zeroPasswordFields(obj interface{}, passwordFields []string) {
+	if len(passwordFields) == 0 {
+		return
+	}
+	v := reflect.ValueOf(obj).Elem()
+	for _, name := range passwordFields {
+		f := v.FieldByName(name)
+		if f.IsValid() && f.CanSet() {
+			f.SetString("")
+		}
+	}
+}
+
 func ObjIDValue(obj interface{}) uint64 {
 	return reflect.ValueOf(obj).Elem().FieldByName(IDField).Uint()
 }

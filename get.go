@@ -93,6 +93,8 @@ func (c *CRUD) Get(ctx context.Context, newObjFunc func() interface{}, options G
 			return nil, getDBFuncCRUDError("rows scan", err)
 		}
 
+		zeroPasswordFields(newObj, builder.PasswordFields())
+
 		// If options.RowObjTransformFunc is defined, then call it on the row.
 		if options.RowObjTransformFunc != nil {
 			returnValue = append(returnValue, options.RowObjTransformFunc(newObj))

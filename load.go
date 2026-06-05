@@ -44,6 +44,7 @@ func (c *CRUD) Load(ctx context.Context, obj interface{}, id string, options Loa
 		return getDBFuncCRUDError("query row", err)
 
 	default:
+		zeroPasswordFields(obj, builder.PasswordFields())
 		return nil
 	}
 }
