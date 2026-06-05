@@ -47,3 +47,13 @@ func (c *CRUD) SetFlag(flag uint64) {
 		c.flags |= flag
 	}
 }
+
+// PasswordFieldsFor returns the struct field names tagged as passwords for the
+// type of obj. Returns nil if obj has no password fields.
+func (c *CRUD) PasswordFieldsFor(obj interface{}) []string {
+	builder, err := c.builder(obj)
+	if err != nil {
+		return nil
+	}
+	return builder.PasswordFields()
+}

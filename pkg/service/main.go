@@ -54,6 +54,17 @@ func (c *CRUD) ID(obj interface{}) uint64 {
 	return gocrud.ObjIDValue(obj)
 }
 
+// PasswordFieldNames returns the struct field names tagged as passwords for
+// the constructor registered at path. Returns nil if the path is unknown or
+// the struct has no password fields.
+func (c *CRUD) PasswordFieldNames(path string) []string {
+	constructor, ok := c.paths[path]
+	if !ok {
+		return nil
+	}
+	return c.crud.PasswordFieldsFor(constructor())
+}
+
 // Paths returns the registered path keys.
 func (c *CRUD) Paths() []string {
 	keys := make([]string, 0, len(c.paths))

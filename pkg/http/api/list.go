@@ -79,6 +79,11 @@ func (h *Handler) handleAPIList(ctx context.Context, w http.ResponseWriter, r *h
 		return
 	}
 
+	pwFields := h.svc.PasswordFieldNames(path)
+	for i, obj := range objs {
+		objs[i] = responseData(obj, pwFields)
+	}
+
 	jsonresp.Write(w, http.StatusOK, &jsonresp.Response{
 		Ok:   true,
 		Code: jsonresp.CodeSuccess,

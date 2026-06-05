@@ -40,6 +40,6 @@ func (h *Handler) handleAPIRead(ctx context.Context, w http.ResponseWriter, r *h
 	jsonresp.Write(w, http.StatusOK, &jsonresp.Response{
 		Ok:   true,
 		Code: jsonresp.CodeSuccess,
-		Data: obj,
+		Data: responseData(obj, h.svc.PasswordFieldNames(path)),
 	})
 }
