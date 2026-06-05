@@ -5,8 +5,8 @@ import (
 	"embed"
 	"errors"
 	"fmt"
+	htmltemplate "html/template"
 	"log/slog"
-	"text/template"
 
 	"codeberg.org/mikolajgasior/gocrud/pkg/logger"
 )
@@ -34,22 +34,22 @@ func (l *Layout) Render(uri string, userID, userName string, content string) ([]
 
 	tplObj := struct {
 		URI                           string
-		StyleCSS                      string
-		ScriptJS                      string
+		StyleCSS                      htmltemplate.CSS
+		ScriptJS                      htmltemplate.JS
 		Username                      string
 		UserID                        string
-		Content                       string
+		Content                       htmltemplate.HTML
 		PageAuthorizedAndUnauthorized int
 		PageAuthorizedOnly            int
 		PageUnauthorizedOnly          int
 		XPageGroups                   []*XPageGroup
 	}{
 		URI:                           uri,
-		StyleCSS:                      string(styleCSS),
-		ScriptJS:                      string(scriptJS),
+		StyleCSS:                      htmltemplate.CSS(styleCSS),
+		ScriptJS:                      htmltemplate.JS(scriptJS),
 		Username:                      userName,
 		UserID:                        userID,
-		Content:                       content,
+		Content:                       htmltemplate.HTML(content),
 		PageAuthorizedAndUnauthorized: AuthorizedAndUnauthorized,
 		PageAuthorizedOnly:            AuthorizedOnly,
 		PageUnauthorizedOnly:          UnauthorizedOnly,
@@ -57,7 +57,7 @@ func (l *Layout) Render(uri string, userID, userName string, content string) ([]
 	}
 
 	buf := &bytes.Buffer{}
-	t := template.Must(template.New("layout").Parse(string(pageHTMLTemplate)))
+	t := htmltemplate.Must(htmltemplate.New("layout").Parse(string(pageHTMLTemplate)))
 	err := t.Execute(buf, &tplObj)
 	if err != nil {
 		slog.Error("error executing template for home page", logger.AttrError(err))

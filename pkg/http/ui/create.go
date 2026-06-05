@@ -6,7 +6,6 @@ import (
 	"embed"
 	htmltemplate "html/template"
 	"net/http"
-	texttemplate "text/template"
 
 	"codeberg.org/mikolajgasior/gocrud/pkg/logger"
 	uiform "codeberg.org/mikolajgasior/gocrud/pkg/ui/form"
@@ -70,7 +69,7 @@ func (h *Handler) handleCreate(ctx context.Context, path string, userID, userNam
 	}
 
 	buf := &bytes.Buffer{}
-	t := texttemplate.Must(texttemplate.New("create").Parse(string(objectTemplate)))
+	t := htmltemplate.Must(htmltemplate.New("create").Parse(string(objectTemplate)))
 	err = t.Execute(buf, &tplObj)
 	if err != nil {
 		errCode := logger.LogError("error executing template for object create", logAttrHandler, logAttrPath, logger.AttrError(err))

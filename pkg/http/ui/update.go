@@ -8,7 +8,6 @@ import (
 	htmltemplate "html/template"
 	"net/http"
 	"strconv"
-	texttemplate "text/template"
 
 	"codeberg.org/mikolajgasior/gocrud/pkg/logger"
 	svccrud "codeberg.org/mikolajgasior/gocrud/pkg/service"
@@ -91,7 +90,7 @@ func (h *Handler) handleUpdate(ctx context.Context, path string, id string, user
 	}
 
 	buf := &bytes.Buffer{}
-	t := texttemplate.Must(texttemplate.New("update").Parse(string(objectTemplate)))
+	t := htmltemplate.Must(htmltemplate.New("update").Parse(string(objectTemplate)))
 	err = t.Execute(buf, &tplObj)
 	if err != nil {
 		errCode := logger.LogError("error executing template for object update", logAttrHandler, logAttrPath, logger.AttrError(err))
