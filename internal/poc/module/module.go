@@ -6,17 +6,14 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
-
-	"codeberg.org/mikolajgasior/gocrud/internal/poc/layout"
 )
 
 const (
 	LogCannotCreateDBTable = "failed to create table"
-	LogLayoutIsNil         = "layout is nil"
 )
 
 var (
-	LayoutIsNilError = errors.New(LogLayoutIsNil)
+	LayoutIsNilError = errors.New("layout is nil")
 )
 
 type InitError struct {
@@ -38,7 +35,6 @@ func (e *CreateTableError) Error() string {
 type Module interface {
 	Init(context.Context, InitInput) error
 	AddHandler(*http.ServeMux)
-	Sitemap() *layout.Sitemap
 }
 
 type InitInput struct {
