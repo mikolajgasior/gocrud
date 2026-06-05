@@ -141,6 +141,20 @@ After stripping the mount prefix the handler expects URLs of the form `/{path}/{
 `path` must exactly match a key in the paths registry (e.g. `users`, `warehouse/products`).
 `id` must be a positive integer or absent.
 
+## Password fields
+
+Fields tagged `crud:"pass"` are **never included in responses** from the Read and List endpoints. The handler strips them before serialising the object to JSON, regardless of whether the struct field has a `json` tag or not. This applies to both the default struct and any override struct supplied via `ReadConstructor` / `ListConstructor`.
+
+```go
+type User struct {
+    ID       uint64
+    Email    string `crud:"req email"`
+    Password string `crud:"pass"` // omitted from GET /users/ and GET /users/{id}
+}
+```
+
+The CRUD layer also zeroes password fields immediately after scanning a row from the database (in both `Load` and `Get`), so hashes never reach caller code even outside the HTTP layer.
+
 ## Endpoints
 
 ### List — `GET /{path}/`

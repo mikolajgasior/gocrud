@@ -729,6 +729,7 @@
 <p><strong>Behavior</strong></p>
 <ul>
 <li><strong>Data Retrieval</strong>: Fetches the row corresponding to the provided id and maps the database columns to the fields of the obj struct.</li>
+<li><strong>Password Field Zeroing</strong>: Any field tagged <code>crud:"pass"</code> is reset to <code>""</code> after the row is scanned. The bcrypt hash is never left in memory after a successful load.</li>
 <li><strong>Not Found Handling</strong>: If no record exists with the given id, the method returns no error (typically), but the obj instance is zeroed out. This means all fields in the struct are reset to their default zero values (e.g., 0, "", nil, false), ensuring the caller receives a clean, empty object rather than partial or stale data.</li>
 </ul>
 <p><strong>Parameters</strong></p>
@@ -758,6 +759,7 @@
 <li><strong>Result Set</strong>: Returns a slice of <code>interface{}</code> containing the populated objects (or transformed results).</li>
 <li><strong>Filtering &amp; Sorting</strong>: Supports standard SQL-like filtering (<code>WHERE</code>), ordering (<code>ORDER BY</code>), and pagination (<code>LIMIT/OFFSET</code>).</li>
 <li><strong>Transformation</strong>: Allows custom processing of each row before it is added to the result slice via <code>RowObjTransformFunc</code>.</li>
+<li><strong>Password Field Zeroing</strong>: Any field tagged <code>crud:"pass"</code> is reset to <code>""</code> on every scanned row, before the transform function or the result slice is populated. Bcrypt hashes are never left in memory after a read.</li>
 </ul>
 <p><strong>Parameters</strong></p>
 <ul>

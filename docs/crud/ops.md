@@ -75,6 +75,7 @@ func (c *CRUD) Load(ctx context.Context, obj interface{}, id string, options Loa
 **Behavior**
 
 * **Data Retrieval**: Fetches the row corresponding to the provided id and maps the database columns to the fields of the obj struct.
+* **Password Field Zeroing**: Any field tagged `crud:"pass"` is reset to `""` after the row is scanned. The bcrypt hash is never left in memory after a successful load.
 * **Not Found Handling**: If no record exists with the given id, the method returns no error (typically), but the obj instance is zeroed out. This means all fields in the struct are reset to their default zero values (e.g., 0, "", nil, false), ensuring the caller receives a clean, empty object rather than partial or stale data.
 
 **Parameters**
@@ -112,6 +113,7 @@ func (c *CRUD) Get(
 * **Result Set**: Returns a slice of `interface{}` containing the populated objects (or transformed results).
 * **Filtering & Sorting**: Supports standard SQL-like filtering (`WHERE`), ordering (`ORDER BY`), and pagination (`LIMIT/OFFSET`).
 * **Transformation**: Allows custom processing of each row before it is added to the result slice via `RowObjTransformFunc`.
+* **Password Field Zeroing**: Any field tagged `crud:"pass"` is reset to `""` on every scanned row, before the transform function or the result slice is populated. Bcrypt hashes are never left in memory after a read.
 
 **Parameters**
 

@@ -523,6 +523,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#password-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      Password fields
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#endpoints" class="md-nav__link">
     <span class="md-ellipsis">
       Endpoints
@@ -697,6 +706,15 @@
   <a href="#url-scheme" class="md-nav__link">
     <span class="md-ellipsis">
       URL scheme
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#password-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      Password fields
     </span>
   </a>
   
@@ -1020,6 +1038,15 @@ http.ListenAndServe(&quot;:8080&quot;, mux)
 </code></pre>
 <p><code>path</code> must exactly match a key in the paths registry (e.g. <code>users</code>, <code>warehouse/products</code>).
 <code>id</code> must be a positive integer or absent.</p>
+<h2 id="password-fields">Password fields</h2>
+<p>Fields tagged <code>crud:"pass"</code> are <strong>never included in responses</strong> from the Read and List endpoints. The handler strips them before serialising the object to JSON, regardless of whether the struct field has a <code>json</code> tag or not. This applies to both the default struct and any override struct supplied via <code>ReadConstructor</code> / <code>ListConstructor</code>.</p>
+<pre><code class="language-go">type User struct {
+    ID       uint64
+    Email    string `crud:&quot;req email&quot;`
+    Password string `crud:&quot;pass&quot;` // omitted from GET /users/ and GET /users/{id}
+}
+</code></pre>
+<p>The CRUD layer also zeroes password fields immediately after scanning a row from the database (in both <code>Load</code> and <code>Get</code>), so hashes never reach caller code even outside the HTTP layer.</p>
 <h2 id="endpoints">Endpoints</h2>
 <h3 id="list-get-path">List — <code>GET /{path}/</code></h3>
 <p>Returns a paginated, filtered list of records.</p>

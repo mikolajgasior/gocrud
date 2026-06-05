@@ -49,6 +49,7 @@ You can combine multiple rules within a single crud tag string.
 * `val:min,max`: Validates numeric range.
 * `email`: Validates that the string is a properly formatted email address.
 * `crud_regexp`:"pattern": Validates the field against a regular expression.
+* `pass`: Marks a `string` field as a password. On **Save** the plain-text value is automatically bcrypt-hashed before it is written to the database. On **Load** and **Get** the field is zeroed after the row is scanned so that bcrypt hashes never appear in memory after a read. The HTTP API (`pkg/http/api`) goes further and omits the field entirely from JSON responses.
 
 At least one of `min`, `max` must be specified.
 
