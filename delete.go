@@ -35,11 +35,5 @@ func (c *CRUD) Delete(ctx context.Context, obj interface{}, options DeleteOption
 	}
 	ZeroObjFields(obj)
 
-	// Loop through fields and cascade-delete.
-	err = c.runOnDelete(ctx, obj, []uint64{id}, 0)
-	if err != nil {
-		return getCascadingDeleteCRUDError(err)
-	}
-
 	return nil
 }

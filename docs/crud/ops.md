@@ -208,61 +208,6 @@ The `crud` tag is applied to child slice fields and supports the following keys:
 |`del_upd_field`	|(Only when `on_del:upd`) The field in the child struct to update|
 |`del_upd_val`	|(Only when `on_del:upd`) The value to set on `del_upd_field`|
 
-**Delete Cascade (`on_del:del`)**
-
-When `on_del` is set to `del`, deleting the parent object will also remove all associated child records from the database. The `del_field` specifies which column in the child table holds the reference to the parent's ID.
-
-**Update Cascade (`on_del:upd`)**
-
-When `on_del` is set to `upd`, deleting the parent object will not remove the child records. Instead, a specified field in each child record is updated to a given value. This is useful for preserving child records while severing the relationship (e.g., setting a foreign key to zero rather than deleting the row).
-
-Alongside `del_field`, two additional keys are required:
-
-* `del_upd_field` — the field in the child struct to modify.
-* `del_upd_val` — the value to assign to that field.
-
-**Example**
-
-```go
-type TestCompany struct {
-    ID            uint64
-    Name          string
-    TestEmployees []TestEmployee `crud:"on_del:del del_field:TestCompanyID"`
-}
-
-type TestEmployee struct {
-    ID              uint64
-    Name            string
-    TestCompanyID   uint64
-    TestCreditCards []TestCreditCard `crud:"on_del:del del_field:TestEmployeeID"`
-    TestComments    []TestComment    `crud:"on_del:upd del_field:TestEmployeeID del_upd_field:TestEmployeeID del_upd_val:0"`
-}
-
-type TestComment struct {
-    ID             uint64
-    Comment        string
-    TestEmployeeID uint64
-}
-
-type TestCreditCard struct {
-    ID             uint64
-    Number         string
-    TestEmployeeID uint64
-}
-```
-
-**What happens on deletion:**
-
-* Deleting a `TestCompany` → All `TestEmployee` records where `TestCompanyID` matches the company's `ID` are deleted. This cascades further: deleting those employees will also delete their `TestCreditCard` records and update their `TestComment` records.
-* Deleting a `TestEmployee` → Two things happen:
-  * All `TestCreditCard` records where `TestEmployeeID` matches are deleted.
-  * All `TestComment` records where `TestEmployeeID` matches have their `TestEmployeeID` field updated to `0`, preserving the comments but unlinking them from the removed employee.
-
-
-**Cascading Chains**
-
-Cascade operations chain automatically. In the example above, deleting a `TestCompany` triggers deletion of its `TestEmployee` records, which in turn triggers deletion of their `TestCreditCard` records and the update of their `TestComment` records. Be mindful of deep cascade chains to avoid unintended data loss.
-
 ## DeleteMultiple
 
 The `DeleteMultiple` method removes multiple records from the database table that match specific filter criteria, similar to how `Get` retrieves them. It also supports controlled cascade deletion.
@@ -290,7 +235,6 @@ func (c *CRUD) DeleteMultiple(ctx context.Context, obj interface{}, options Dele
 ```go
 type DeleteMultipleOptions struct {
     Filters            *sqlfilters.Filters // Conditions to select rows for deletion
-    CascadeDeleteDepth int8                // Maximum depth for cascade operations (-1 for unlimited, 0 for none)
 }
 ```
 

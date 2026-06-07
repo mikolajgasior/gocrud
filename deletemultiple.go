@@ -7,8 +7,7 @@ import (
 )
 
 type DeleteMultipleOptions struct {
-	Filters            *sqlfilters.Filters
-	CascadeDeleteDepth int8
+	Filters *sqlfilters.Filters
 }
 
 // DeleteMultiple removes objects from the database based on specified filters
@@ -53,14 +52,6 @@ func (c *CRUD) DeleteMultiple(ctx context.Context, obj interface{}, options Dele
 		}
 
 		returnedIDs = append(returnedIDs, returnedID)
-	}
-
-	if options.CascadeDeleteDepth < 3 {
-		// Loop through the fields to cascade-delete.
-		errCascadeDelete := c.runOnDelete(ctx, obj, returnedIDs, options.CascadeDeleteDepth)
-		if errCascadeDelete != nil {
-			return getCascadingDeleteCRUDError(errCascadeDelete)
-		}
 	}
 
 	return nil

@@ -65,14 +65,3 @@ func recreateTestStructTableSQLite() {
 	_ = testCRUDSQLite.DropTable(context.Background(), &test.TestStruct{})
 	_ = testCRUDSQLite.CreateTable(context.Background(), &test.TestStruct{})
 }
-
-func recreateTestCascadeTablesSQLite() {
-	_ = testCRUDSQLite.DropTable(context.Background(), &TestCompany{})
-	_ = testCRUDSQLite.DropTable(context.Background(), &TestEmployee{})
-	_ = testCRUDSQLite.DropTable(context.Background(), &TestCreditCard{})
-	_ = testCRUDSQLite.DropTable(context.Background(), &TestComment{})
-	_ = testCRUDSQLite.CreateTable(context.Background(), &TestCompany{})
-	_ = testCRUDSQLite.CreateTable(context.Background(), &TestEmployee{})
-	_ = testCRUDSQLite.CreateTable(context.Background(), &TestCreditCard{})
-	_ = testCRUDSQLite.CreateTable(context.Background(), &TestComment{})
-}
