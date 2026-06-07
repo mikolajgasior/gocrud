@@ -18,6 +18,15 @@ const (
 	filterOpPrefix  = "filter_op_"
 )
 
+const (
+	DisableCreate = 1 << iota
+	DisableUpdate
+	DisableDelete
+	DisableRead
+	DisableList
+	DisableFilters
+)
+
 var (
 	filterValRegexp = regexp.MustCompile("^filter_val_[a-zA-Z0-9_]+$")
 	filterOpRegexp  = regexp.MustCompile("^filter_op_[a-zA-Z0-9_]+$")
@@ -26,12 +35,7 @@ var (
 // PathOptions controls which operations and filters are available for a single
 // path. The zero value enables everything — only set fields you want to restrict.
 type PathOptions struct {
-	DisableCreate  bool
-	DisableUpdate  bool
-	DisableDelete  bool
-	DisableRead    bool
-	DisableList    bool
-	DisableFilters bool     // when true, all filter query parameters are ignored
+	Flags          int64
 	AllowedFilters []string // when non-empty, only the listed fields may be used as filters
 
 	// Per-operation constructor overrides. When nil the service's registered

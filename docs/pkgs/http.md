@@ -26,8 +26,9 @@ handler := api.New(svc, api.Options{})
 
 ```go
 type Options struct {
-    CORS  cors.CORS
-    Paths map[string]PathOptions
+    CORS       cors.CORS
+    Paths      map[string]PathOptions
+    UserIDFunc func(r *http.Request) uint64
 }
 ```
 
@@ -35,23 +36,15 @@ type Options struct {
 |---|---|---|
 | `CORS` | `cors.CORS` | CORS headers written on every response. Zero value emits no CORS headers. |
 | `Paths` | `map[string]PathOptions` | Per-path configuration. Paths absent from the map use the zero value (all operations enabled, all filters allowed). |
+| `UserIDFunc` | `func(*http.Request) uint64` | Called on every create and update request to obtain the current user's ID, passed to the service as `ModifiedBy`. When `nil`, `ModifiedBy` is always `0`. |
 
 ### PathOptions
 
 ```go
 type PathOptions struct {
-    // Operation guards
-    DisableCreate  bool
-    DisableUpdate  bool
-    DisableDelete  bool
-    DisableRead    bool
-    DisableList    bool
-
-    // Filter constraints
-    DisableFilters bool
+    Flags          int64
     AllowedFilters []string
 
-    // Per-operation constructor overrides
     CreateConstructor func() interface{}
     UpdateConstructor func() interface{}
     ReadConstructor   func() interface{}
@@ -59,22 +52,26 @@ type PathOptions struct {
 }
 ```
 
-**Operation guards**
+**Flags**
 
-| Field | Type | Description |
-|---|---|---|
-| `DisableCreate` | `bool` | Reject `PUT /{path}/` (create) with `405` |
-| `DisableUpdate` | `bool` | Reject `PUT /{path}/{id}` (update) with `405` |
-| `DisableDelete` | `bool` | Reject `DELETE /{path}/{id}` with `405` |
-| `DisableRead` | `bool` | Reject `GET /{path}/{id}` with `405` |
-| `DisableList` | `bool` | Reject `GET /{path}/` with `405` |
+`Flags` is a bitmask that controls which operations and features are disabled for a path. Combine multiple flags with `|`. The zero value enables everything.
+
+The following flag constants are defined in the `api` package:
+
+| Constant | Disables |
+|---|---|
+| `DisableCreate` | `PUT /{path}/` (create) — responds `405` |
+| `DisableUpdate` | `PUT /{path}/{id}` (update) — responds `405` |
+| `DisableDelete` | `DELETE /{path}/{id}` — responds `405` |
+| `DisableRead` | `GET /{path}/{id}` — responds `405` |
+| `DisableList` | `GET /{path}/` — responds `405` |
+| `DisableFilters` | All `filter_val_*` / `filter_op_*` query parameters are ignored |
 
 **Filter constraints**
 
 | Field | Type | Description |
 |---|---|---|
-| `DisableFilters` | `bool` | Ignore all `filter_val_*` / `filter_op_*` query parameters |
-| `AllowedFilters` | `[]string` | Whitelist of field names that may be used as filters. Empty slice means all fields are allowed (unless `DisableFilters` is set). |
+| `AllowedFilters` | `[]string` | Whitelist of field names that may be used as filters. Empty slice means all fields are allowed (unless `DisableFilters` is set via `Flags`). |
 
 **Constructor overrides**
 
@@ -101,15 +98,12 @@ type User_Create struct {
 handler := api.New(svc, api.Options{
     Paths: map[string]api.PathOptions{
         "users": {
-            DisableDelete:     true,
+            Flags:             api.DisableDelete,
             AllowedFilters:    []string{"Role", "IsActive"},
             CreateConstructor: func() interface{} { return &User_Create{} },
         },
         "audit_logs": {
-            DisableCreate:  true,
-            DisableUpdate:  true,
-            DisableDelete:  true,
-            DisableFilters: true,
+            Flags: api.DisableCreate | api.DisableUpdate | api.DisableDelete | api.DisableFilters,
         },
     },
 })

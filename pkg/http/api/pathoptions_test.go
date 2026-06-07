@@ -26,7 +26,7 @@ func handlerWith(opts PathOptions) *Handler {
 // ---------- Disabled operations ----------
 
 func TestServe_DisableCreate(t *testing.T) {
-	h := handlerWith(PathOptions{DisableCreate: true})
+	h := handlerWith(PathOptions{Flags: DisableCreate})
 
 	req := httptest.NewRequest(http.MethodPut, "/teststruct/", nil)
 	w := httptest.NewRecorder()
@@ -39,7 +39,7 @@ func TestServe_DisableCreate(t *testing.T) {
 }
 
 func TestServe_DisableUpdate(t *testing.T) {
-	h := handlerWith(PathOptions{DisableUpdate: true})
+	h := handlerWith(PathOptions{Flags: DisableUpdate})
 
 	req := httptest.NewRequest(http.MethodPut, "/teststruct/1", nil)
 	w := httptest.NewRecorder()
@@ -52,7 +52,7 @@ func TestServe_DisableUpdate(t *testing.T) {
 }
 
 func TestServe_DisableDelete(t *testing.T) {
-	h := handlerWith(PathOptions{DisableDelete: true})
+	h := handlerWith(PathOptions{Flags: DisableDelete})
 
 	req := httptest.NewRequest(http.MethodDelete, "/teststruct/1", nil)
 	w := httptest.NewRecorder()
@@ -65,7 +65,7 @@ func TestServe_DisableDelete(t *testing.T) {
 }
 
 func TestServe_DisableRead(t *testing.T) {
-	h := handlerWith(PathOptions{DisableRead: true})
+	h := handlerWith(PathOptions{Flags: DisableRead})
 
 	req := httptest.NewRequest(http.MethodGet, "/teststruct/1", nil)
 	w := httptest.NewRecorder()
@@ -78,7 +78,7 @@ func TestServe_DisableRead(t *testing.T) {
 }
 
 func TestServe_DisableList(t *testing.T) {
-	h := handlerWith(PathOptions{DisableList: true})
+	h := handlerWith(PathOptions{Flags: DisableList})
 
 	req := httptest.NewRequest(http.MethodGet, "/teststruct/", nil)
 	w := httptest.NewRecorder()
@@ -109,7 +109,7 @@ func TestServe_DisableFilters(t *testing.T) {
 		_ = testCRUD.Save(context.Background(), ts, gocrud.SaveOptions{})
 	}
 
-	h := handlerWith(PathOptions{DisableFilters: true})
+	h := handlerWith(PathOptions{Flags: DisableFilters})
 
 	// Request with a filter that would normally narrow to 3 rows — should be ignored.
 	url := fmt.Sprintf("/teststruct/?limit=100&filter_val_PrimaryEmail=a@example.com&filter_op_PrimaryEmail=eq")

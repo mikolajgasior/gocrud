@@ -44,14 +44,14 @@ func (h *Handler) Serve(w http.ResponseWriter, r *http.Request) {
 
 	// create and update
 	if r.Method == http.MethodPut {
-		if id == "" && pathOpts.DisableCreate {
+		if id == "" && pathOpts.Flags&DisableCreate > 0 {
 			jsonresp.Write(w, http.StatusMethodNotAllowed, &jsonresp.Response{
 				Ok:   true,
 				Code: CodeNotAllowed,
 			})
 			return
 		}
-		if id != "" && pathOpts.DisableUpdate {
+		if id != "" && pathOpts.Flags&DisableUpdate > 0 {
 			jsonresp.Write(w, http.StatusMethodNotAllowed, &jsonresp.Response{
 				Ok:   true,
 				Code: CodeNotAllowed,
@@ -64,7 +64,7 @@ func (h *Handler) Serve(w http.ResponseWriter, r *http.Request) {
 
 	// delete
 	if r.Method == http.MethodDelete && id != "" {
-		if pathOpts.DisableDelete {
+		if pathOpts.Flags&DisableDelete > 0 {
 			jsonresp.Write(w, http.StatusMethodNotAllowed, &jsonresp.Response{
 				Ok:   true,
 				Code: CodeNotAllowed,
@@ -77,7 +77,7 @@ func (h *Handler) Serve(w http.ResponseWriter, r *http.Request) {
 
 	// read
 	if r.Method == http.MethodGet && id != "" {
-		if pathOpts.DisableRead {
+		if pathOpts.Flags&DisableRead > 0 {
 			jsonresp.Write(w, http.StatusMethodNotAllowed, &jsonresp.Response{
 				Ok:   true,
 				Code: CodeNotAllowed,
@@ -90,7 +90,7 @@ func (h *Handler) Serve(w http.ResponseWriter, r *http.Request) {
 
 	// list
 	if r.Method == http.MethodGet && id == "" {
-		if pathOpts.DisableList {
+		if pathOpts.Flags&DisableList > 0 {
 			jsonresp.Write(w, http.StatusMethodNotAllowed, &jsonresp.Response{
 				Ok:   true,
 				Code: CodeNotAllowed,

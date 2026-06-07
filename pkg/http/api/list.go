@@ -30,7 +30,7 @@ func (h *Handler) handleAPIList(ctx context.Context, w http.ResponseWriter, r *h
 
 	var filterVals, filterOps map[string]string
 
-	if !pathOpts.DisableFilters {
+	if pathOpts.Flags&DisableFilters == 0 {
 		filterVals = make(map[string]string)
 		filterOps = make(map[string]string)
 
