@@ -859,8 +859,9 @@ handler := api.New(svc, api.Options{})
 </table>
 <h3 id="options">Options</h3>
 <pre><code class="language-go">type Options struct {
-    CORS  cors.CORS
-    Paths map[string]PathOptions
+    CORS       cors.CORS
+    Paths      map[string]PathOptions
+    UserIDFunc func(r *http.Request) uint64
 }
 </code></pre>
 <table>
@@ -882,62 +883,58 @@ handler := api.New(svc, api.Options{})
 <td><code>map[string]PathOptions</code></td>
 <td>Per-path configuration. Paths absent from the map use the zero value (all operations enabled, all filters allowed).</td>
 </tr>
+<tr>
+<td><code>UserIDFunc</code></td>
+<td><code>func(*http.Request) uint64</code></td>
+<td>Called on every create and update request to obtain the current user's ID, passed to the service as <code>ModifiedBy</code>. When <code>nil</code>, <code>ModifiedBy</code> is always <code>0</code>.</td>
+</tr>
 </tbody>
 </table>
 <h3 id="pathoptions">PathOptions</h3>
 <pre><code class="language-go">type PathOptions struct {
-    // Operation guards
-    DisableCreate  bool
-    DisableUpdate  bool
-    DisableDelete  bool
-    DisableRead    bool
-    DisableList    bool
-
-    // Filter constraints
-    DisableFilters bool
+    Flags          int64
     AllowedFilters []string
 
-    // Per-operation constructor overrides
     CreateConstructor func() interface{}
     UpdateConstructor func() interface{}
     ReadConstructor   func() interface{}
     ListConstructor   func() interface{}
 }
 </code></pre>
-<p><strong>Operation guards</strong></p>
+<p><strong>Flags</strong></p>
+<p><code>Flags</code> is a bitmask that controls which operations and features are disabled for a path. Combine multiple flags with <code>|</code>. The zero value enables everything.</p>
+<p>The following flag constants are defined in the <code>api</code> package:</p>
 <table>
 <thead>
 <tr>
-<th>Field</th>
-<th>Type</th>
-<th>Description</th>
+<th>Constant</th>
+<th>Disables</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>DisableCreate</code></td>
-<td><code>bool</code></td>
-<td>Reject <code>PUT /{path}/</code> (create) with <code>405</code></td>
+<td><code>PUT /{path}/</code> (create) — responds <code>405</code></td>
 </tr>
 <tr>
 <td><code>DisableUpdate</code></td>
-<td><code>bool</code></td>
-<td>Reject <code>PUT /{path}/{id}</code> (update) with <code>405</code></td>
+<td><code>PUT /{path}/{id}</code> (update) — responds <code>405</code></td>
 </tr>
 <tr>
 <td><code>DisableDelete</code></td>
-<td><code>bool</code></td>
-<td>Reject <code>DELETE /{path}/{id}</code> with <code>405</code></td>
+<td><code>DELETE /{path}/{id}</code> — responds <code>405</code></td>
 </tr>
 <tr>
 <td><code>DisableRead</code></td>
-<td><code>bool</code></td>
-<td>Reject <code>GET /{path}/{id}</code> with <code>405</code></td>
+<td><code>GET /{path}/{id}</code> — responds <code>405</code></td>
 </tr>
 <tr>
 <td><code>DisableList</code></td>
-<td><code>bool</code></td>
-<td>Reject <code>GET /{path}/</code> with <code>405</code></td>
+<td><code>GET /{path}/</code> — responds <code>405</code></td>
+</tr>
+<tr>
+<td><code>DisableFilters</code></td>
+<td>All <code>filter_val_*</code> / <code>filter_op_*</code> query parameters are ignored</td>
 </tr>
 </tbody>
 </table>
@@ -952,14 +949,9 @@ handler := api.New(svc, api.Options{})
 </thead>
 <tbody>
 <tr>
-<td><code>DisableFilters</code></td>
-<td><code>bool</code></td>
-<td>Ignore all <code>filter_val_*</code> / <code>filter_op_*</code> query parameters</td>
-</tr>
-<tr>
 <td><code>AllowedFilters</code></td>
 <td><code>[]string</code></td>
-<td>Whitelist of field names that may be used as filters. Empty slice means all fields are allowed (unless <code>DisableFilters</code> is set).</td>
+<td>Whitelist of field names that may be used as filters. Empty slice means all fields are allowed (unless <code>DisableFilters</code> is set via <code>Flags</code>).</td>
 </tr>
 </tbody>
 </table>
@@ -1008,15 +1000,12 @@ type User_Create struct {
 handler := api.New(svc, api.Options{
     Paths: map[string]api.PathOptions{
         &quot;users&quot;: {
-            DisableDelete:     true,
+            Flags:             api.DisableDelete,
             AllowedFilters:    []string{&quot;Role&quot;, &quot;IsActive&quot;},
             CreateConstructor: func() interface{} { return &amp;User_Create{} },
         },
         &quot;audit_logs&quot;: {
-            DisableCreate:  true,
-            DisableUpdate:  true,
-            DisableDelete:  true,
-            DisableFilters: true,
+            Flags: api.DisableCreate | api.DisableUpdate | api.DisableDelete | api.DisableFilters,
         },
     },
 })
