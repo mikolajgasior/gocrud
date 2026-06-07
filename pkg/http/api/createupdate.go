@@ -30,22 +30,18 @@ func (h *Handler) handleAPICreateUpdate(ctx context.Context, w http.ResponseWrit
 			return
 		}
 
-		if pathOpts.UpdateConstructor != nil {
-			// Use the override constructor — skip reading the existing record.
-			// The URL id is authoritative; any id in the JSON body is overwritten below.
-			obj = pathOpts.UpdateConstructor()
-		} else {
-			obj, err = h.svc.Read(ctx, path, idInt, nil)
-			if err != nil {
-				if errors.Is(err, svccrud.NotFoundError) {
-					jsonresp.Write(w, http.StatusNotFound, &jsonresp.Response{
-						Ok:   true,
-						Code: CodeServiceError,
-					})
-					return
-				}
+		// Use the override constructor — skip reading the existing record.
+		// The URL id is authoritative; any id in the JSON body is overwritten below.
+		obj, err = h.svc.Read(ctx, path, idInt, pathOpts.UpdateConstructor)
+		if err != nil {
+			if errors.Is(err, svccrud.NotFoundError) {
+				jsonresp.Write(w, http.StatusNotFound, &jsonresp.Response{
+					Ok:   true,
+					Code: CodeServiceError,
+				})
 				return
 			}
+			return
 		}
 	} else {
 		if pathOpts.CreateConstructor != nil {
