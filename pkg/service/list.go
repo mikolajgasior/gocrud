@@ -10,17 +10,17 @@ import (
 )
 
 // List returns a paginated, filtered list of records. When constructor is nil
-// the path's registered constructor is used; pass a non-nil value to scan rows
+// the registry's constructor for key is used; pass a non-nil value to scan rows
 // into a different struct type (e.g. a list-specific projection).
-func (c *CRUD) List(ctx context.Context, path string, limit, offset int, order, orderDirection string, filterVals, filterOps map[string]string, rowFunc func(interface{}) interface{}, constructor func() interface{}) ([]interface{}, error) {
+func (c *CRUD) List(ctx context.Context, key string, limit, offset int, order, orderDirection string, filterVals, filterOps map[string]string, rowFunc func(interface{}) interface{}, constructor func() interface{}) ([]interface{}, error) {
 	logAttrService := logger.AttrService(c, "List")
 
 	if constructor == nil {
 		var ok bool
-		constructor, ok = c.paths[path]
+		constructor, ok = c.registry[key]
 		if !ok {
-			slog.Error("path not found", logAttrService)
-			return nil, InvalidPathError
+			slog.Error("key not found", logAttrService)
+			return nil, InvalidKeyError
 		}
 	}
 

@@ -8,10 +8,10 @@ import (
 	"codeberg.org/mikolajgasior/gocrud/pkg/logger"
 )
 
-func (c *CRUD) Delete(ctx context.Context, path string, id uint64) error {
+func (c *CRUD) Delete(ctx context.Context, key string, id uint64) error {
 	logAttrService := logger.AttrService(c, "Delete")
 
-	obj, err := c.Read(ctx, path, id, nil)
+	obj, err := c.Read(ctx, key, id, nil)
 	if err != nil {
 		return err
 	}

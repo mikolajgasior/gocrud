@@ -9,13 +9,13 @@ import (
 	"codeberg.org/mikolajgasior/gocrud/pkg/logger"
 )
 
-func (c *CRUD) Num(ctx context.Context, path string, filterVals, filterOps map[string]string) (uint64, error) {
+func (c *CRUD) Num(ctx context.Context, key string, filterVals, filterOps map[string]string) (uint64, error) {
 	logAttrService := logger.AttrService(c, "Num")
 
-	constructor, ok := c.paths[path]
+	constructor, ok := c.registry[key]
 	if !ok {
-		slog.Error("path not found", logAttrService)
-		return 0, InvalidPathError
+		slog.Error("key not found", logAttrService)
+		return 0, InvalidKeyError
 	}
 
 	filters, err := buildFilters(filterVals, filterOps, logAttrService)

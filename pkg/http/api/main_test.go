@@ -54,7 +54,11 @@ func createService() {
 }
 
 func createHandler() {
-	testHandler = New(testService, Options{})
+	testHandler = New(testService, Options{
+		Routes: map[string]Route{
+			"teststruct": {},
+		},
+	})
 }
 
 func recreateTestStructTable() {

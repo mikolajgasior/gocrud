@@ -16,20 +16,27 @@ func (h *Handler) Serve(w http.ResponseWriter, r *http.Request) {
 	logAttrHandler := logger.AttrHandler(h)
 	logAttrPath := logger.AttrPath(r.URL.Path)
 
-	foundPath := ""
-	for _, path := range h.svc.Paths() {
-		if strings.HasPrefix(r.URL.Path, "/"+path+"/") {
-			foundPath = path
+	foundURLPath := ""
+	var foundRoute Route
+	for urlPath, route := range h.options.Routes {
+		if strings.HasPrefix(r.URL.Path, "/"+urlPath+"/") {
+			foundURLPath = urlPath
+			foundRoute = route
 			break
 		}
 	}
 
-	if foundPath == "" {
+	if foundURLPath == "" {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	idPath := r.URL.Path[len("/"+foundPath+"/"):]
+	key := foundRoute.RegistryKey
+	if key == "" {
+		key = foundURLPath
+	}
+
+	idPath := r.URL.Path[len("/"+foundURLPath+"/"):]
 	id, ok := urlpath.ID(idPath)
 	if !ok {
 		slog.Debug("ID in URI not numeric", logAttrHandler, logAttrPath)
@@ -40,64 +47,62 @@ func (h *Handler) Serve(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pathOpts := h.options.Paths[foundPath]
-
 	// create and update
 	if r.Method == http.MethodPut {
-		if id == "" && pathOpts.Flags&DisableCreate > 0 {
+		if id == "" && foundRoute.Flags&DisableCreate > 0 {
 			jsonresp.Write(w, http.StatusMethodNotAllowed, &jsonresp.Response{
 				Ok:   true,
 				Code: CodeNotAllowed,
 			})
 			return
 		}
-		if id != "" && pathOpts.Flags&DisableUpdate > 0 {
+		if id != "" && foundRoute.Flags&DisableUpdate > 0 {
 			jsonresp.Write(w, http.StatusMethodNotAllowed, &jsonresp.Response{
 				Ok:   true,
 				Code: CodeNotAllowed,
 			})
 			return
 		}
-		h.handleAPICreateUpdate(r.Context(), w, r, foundPath, id)
+		h.handleAPICreateUpdate(r.Context(), w, r, key, foundRoute, id)
 		return
 	}
 
 	// delete
 	if r.Method == http.MethodDelete && id != "" {
-		if pathOpts.Flags&DisableDelete > 0 {
+		if foundRoute.Flags&DisableDelete > 0 {
 			jsonresp.Write(w, http.StatusMethodNotAllowed, &jsonresp.Response{
 				Ok:   true,
 				Code: CodeNotAllowed,
 			})
 			return
 		}
-		h.handleAPIDelete(r.Context(), w, foundPath, id)
+		h.handleAPIDelete(r.Context(), w, key, id)
 		return
 	}
 
 	// read
 	if r.Method == http.MethodGet && id != "" {
-		if pathOpts.Flags&DisableRead > 0 {
+		if foundRoute.Flags&DisableRead > 0 {
 			jsonresp.Write(w, http.StatusMethodNotAllowed, &jsonresp.Response{
 				Ok:   true,
 				Code: CodeNotAllowed,
 			})
 			return
 		}
-		h.handleAPIRead(r.Context(), w, r, foundPath, id)
+		h.handleAPIRead(r.Context(), w, r, key, foundRoute, id)
 		return
 	}
 
 	// list
 	if r.Method == http.MethodGet && id == "" {
-		if pathOpts.Flags&DisableList > 0 {
+		if foundRoute.Flags&DisableList > 0 {
 			jsonresp.Write(w, http.StatusMethodNotAllowed, &jsonresp.Response{
 				Ok:   true,
 				Code: CodeNotAllowed,
 			})
 			return
 		}
-		h.handleAPIList(r.Context(), w, r, foundPath)
+		h.handleAPIList(r.Context(), w, r, key, foundRoute)
 		return
 	}
 

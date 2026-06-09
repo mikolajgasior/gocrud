@@ -13,18 +13,18 @@ import (
 )
 
 var (
-	InvalidPathError = errors.New("invalid path")
+	InvalidKeyError = errors.New("invalid key")
 )
 
 type CRUD struct {
-	paths map[string]func() interface{}
-	crud  *gocrud.CRUD
+	registry map[string]func() interface{}
+	crud     *gocrud.CRUD
 }
 
-func New(paths map[string]func() interface{}, dbConn *sql.DB, dialect string) *CRUD {
+func New(registry map[string]func() interface{}, dbConn *sql.DB, dialect string) *CRUD {
 	return &CRUD{
-		paths: paths,
-		crud:  gocrud.New(dbConn, gocrud.Options{Dialect: dialect}),
+		registry: registry,
+		crud:     gocrud.New(dbConn, gocrud.Options{Dialect: dialect}),
 	}
 }
 
@@ -32,7 +32,7 @@ func (c *CRUD) CreateTables(ctx context.Context) error {
 	logAttrService := logger.AttrService(c, "CreateTables")
 
 	var err error
-	for _, constructor := range c.paths {
+	for _, constructor := range c.registry {
 		err = c.crud.CreateTable(ctx, constructor())
 		if err != nil {
 			slog.Error("error creating table", logAttrService, logger.AttrError(err))
@@ -42,8 +42,8 @@ func (c *CRUD) CreateTables(ctx context.Context) error {
 	return nil
 }
 
-func (c *CRUD) New(path string) interface{} {
-	constructor, ok := c.paths[path]
+func (c *CRUD) New(key string) interface{} {
+	constructor, ok := c.registry[key]
 	if !ok {
 		return nil
 	}
@@ -55,20 +55,20 @@ func (c *CRUD) ID(obj interface{}) uint64 {
 }
 
 // PasswordFieldNames returns the struct field names tagged as passwords for
-// the constructor registered at path. Returns nil if the path is unknown or
+// the constructor registered at key. Returns nil if the key is unknown or
 // the struct has no password fields.
-func (c *CRUD) PasswordFieldNames(path string) []string {
-	constructor, ok := c.paths[path]
+func (c *CRUD) PasswordFieldNames(key string) []string {
+	constructor, ok := c.registry[key]
 	if !ok {
 		return nil
 	}
 	return c.crud.PasswordFieldsFor(constructor())
 }
 
-// Paths returns the registered path keys.
-func (c *CRUD) Paths() []string {
-	keys := make([]string, 0, len(c.paths))
-	for k := range c.paths {
+// Registry returns the registered path keys.
+func (c *CRUD) Registry() []string {
+	keys := make([]string, 0, len(c.registry))
+	for k := range c.registry {
 		keys = append(keys, k)
 	}
 	return keys

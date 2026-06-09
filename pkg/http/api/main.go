@@ -32,14 +32,16 @@ var (
 	filterOpRegexp  = regexp.MustCompile("^filter_op_[a-zA-Z0-9_]+$")
 )
 
-// PathOptions controls which operations and filters are available for a single
-// path. The zero value enables everything — only set fields you want to restrict.
-type PathOptions struct {
+// Route maps a URL path segment to a service registry key and configures
+// per-operation behavior. When RegistryKey is empty the URL path segment is
+// used as the registry key.
+type Route struct {
+	RegistryKey    string
 	Flags          int64
 	AllowedFilters []string // when non-empty, only the listed fields may be used as filters
 
 	// Per-operation constructor overrides. When nil the service's registered
-	// constructor for the path is used. Set to use a different struct type for
+	// constructor for the key is used. Set to use a different struct type for
 	// a specific operation — for example a create-only struct with fewer fields
 	// that implements a custom insertQueryBuilder.
 	CreateConstructor func() interface{}
@@ -49,8 +51,8 @@ type PathOptions struct {
 }
 
 type Options struct {
-	CORS  cors.CORS
-	Paths map[string]PathOptions
+	CORS   cors.CORS
+	Routes map[string]Route
 	// UserIDFunc is called on every create and update request to obtain the
 	// current user's ID, which is passed to the service as ModifiedBy.
 	// When nil, ModifiedBy is always 0.

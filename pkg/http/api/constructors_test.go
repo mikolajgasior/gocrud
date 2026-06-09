@@ -48,7 +48,7 @@ func TestServe_CreateConstructor(t *testing.T) {
 	req := httptest.NewRequest(http.MethodPut, "/teststruct/", bytes.NewReader(body))
 	w := httptest.NewRecorder()
 
-	h := handlerWith(PathOptions{
+	h := handlerWith(Route{
 		CreateConstructor: func() interface{} { return &TestStruct_Create{} },
 	})
 	h.Serve(w, req)
@@ -86,7 +86,7 @@ func TestServe_UpdateConstructor(t *testing.T) {
 	req := httptest.NewRequest(http.MethodPut, fmt.Sprintf("/teststruct/%d", original.ID), bytes.NewReader(body))
 	w := httptest.NewRecorder()
 
-	h := handlerWith(PathOptions{
+	h := handlerWith(Route{
 		UpdateConstructor: func() interface{} { return &TestStruct_Update{} },
 	})
 	h.Serve(w, req)
@@ -119,7 +119,7 @@ func TestServe_ReadConstructor(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/teststruct/%d", inserted.ID), nil)
 	w := httptest.NewRecorder()
 
-	h := handlerWith(PathOptions{
+	h := handlerWith(Route{
 		ReadConstructor: func() interface{} { return &TestStruct_ReadOnly{} },
 	})
 	h.Serve(w, req)
@@ -161,7 +161,7 @@ func TestServe_ListConstructor(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/teststruct/?limit=10", nil)
 	w := httptest.NewRecorder()
 
-	h := handlerWith(PathOptions{
+	h := handlerWith(Route{
 		ListConstructor: func() interface{} { return &TestStruct_ListOnly{} },
 	})
 	h.Serve(w, req)

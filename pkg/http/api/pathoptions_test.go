@@ -14,11 +14,11 @@ import (
 )
 
 // handlerWith returns a new Handler using the shared testService but with the
-// given PathOptions applied to "teststruct".
-func handlerWith(opts PathOptions) *Handler {
+// given Route applied to "teststruct".
+func handlerWith(route Route) *Handler {
 	return New(testService, Options{
-		Paths: map[string]PathOptions{
-			"teststruct": opts,
+		Routes: map[string]Route{
+			"teststruct": route,
 		},
 	})
 }
@@ -26,7 +26,7 @@ func handlerWith(opts PathOptions) *Handler {
 // ---------- Disabled operations ----------
 
 func TestServe_DisableCreate(t *testing.T) {
-	h := handlerWith(PathOptions{Flags: DisableCreate})
+	h := handlerWith(Route{Flags: DisableCreate})
 
 	req := httptest.NewRequest(http.MethodPut, "/teststruct/", nil)
 	w := httptest.NewRecorder()
@@ -39,7 +39,7 @@ func TestServe_DisableCreate(t *testing.T) {
 }
 
 func TestServe_DisableUpdate(t *testing.T) {
-	h := handlerWith(PathOptions{Flags: DisableUpdate})
+	h := handlerWith(Route{Flags: DisableUpdate})
 
 	req := httptest.NewRequest(http.MethodPut, "/teststruct/1", nil)
 	w := httptest.NewRecorder()
@@ -52,7 +52,7 @@ func TestServe_DisableUpdate(t *testing.T) {
 }
 
 func TestServe_DisableDelete(t *testing.T) {
-	h := handlerWith(PathOptions{Flags: DisableDelete})
+	h := handlerWith(Route{Flags: DisableDelete})
 
 	req := httptest.NewRequest(http.MethodDelete, "/teststruct/1", nil)
 	w := httptest.NewRecorder()
@@ -65,7 +65,7 @@ func TestServe_DisableDelete(t *testing.T) {
 }
 
 func TestServe_DisableRead(t *testing.T) {
-	h := handlerWith(PathOptions{Flags: DisableRead})
+	h := handlerWith(Route{Flags: DisableRead})
 
 	req := httptest.NewRequest(http.MethodGet, "/teststruct/1", nil)
 	w := httptest.NewRecorder()
@@ -78,7 +78,7 @@ func TestServe_DisableRead(t *testing.T) {
 }
 
 func TestServe_DisableList(t *testing.T) {
-	h := handlerWith(PathOptions{Flags: DisableList})
+	h := handlerWith(Route{Flags: DisableList})
 
 	req := httptest.NewRequest(http.MethodGet, "/teststruct/", nil)
 	w := httptest.NewRecorder()
@@ -109,7 +109,7 @@ func TestServe_DisableFilters(t *testing.T) {
 		_ = testCRUD.Save(context.Background(), ts, gocrud.SaveOptions{})
 	}
 
-	h := handlerWith(PathOptions{Flags: DisableFilters})
+	h := handlerWith(Route{Flags: DisableFilters})
 
 	// Request with a filter that would normally narrow to 3 rows — should be ignored.
 	url := fmt.Sprintf("/teststruct/?limit=100&filter_val_PrimaryEmail=a@example.com&filter_op_PrimaryEmail=eq")
@@ -141,7 +141,7 @@ func TestServe_AllowedFilters_AllowedFieldIsApplied(t *testing.T) {
 		_ = testCRUD.Save(context.Background(), ts, gocrud.SaveOptions{})
 	}
 
-	h := handlerWith(PathOptions{AllowedFilters: []string{"PrimaryEmail"}})
+	h := handlerWith(Route{AllowedFilters: []string{"PrimaryEmail"}})
 
 	url := fmt.Sprintf("/teststruct/?limit=100&filter_val_PrimaryEmail=a@example.com&filter_op_PrimaryEmail=eq")
 	req := httptest.NewRequest(http.MethodGet, url, nil)
@@ -173,7 +173,7 @@ func TestServe_AllowedFilters_DisallowedFieldIsIgnored(t *testing.T) {
 	}
 
 	// Only "Age" is allowed — PrimaryEmail filter should be dropped.
-	h := handlerWith(PathOptions{AllowedFilters: []string{"Age"}})
+	h := handlerWith(Route{AllowedFilters: []string{"Age"}})
 
 	url := fmt.Sprintf("/teststruct/?limit=100&filter_val_PrimaryEmail=a@example.com&filter_op_PrimaryEmail=eq")
 	req := httptest.NewRequest(http.MethodGet, url, nil)

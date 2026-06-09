@@ -37,7 +37,11 @@ func passStructService() (*service.CRUD, *Handler) {
 	svc := service.New(map[string]func() interface{}{
 		"passstruct": func() interface{} { return &PassStruct{} },
 	}, testDB, gocrud.DialectPostgres)
-	h := New(svc, Options{})
+	h := New(svc, Options{
+		Routes: map[string]Route{
+			"passstruct": {},
+		},
+	})
 	return svc, h
 }
 
@@ -45,7 +49,11 @@ func passStructJsonService() (*service.CRUD, *Handler) {
 	svc := service.New(map[string]func() interface{}{
 		"passstructjson": func() interface{} { return &PassStructJson{} },
 	}, testDB, gocrud.DialectPostgres)
-	h := New(svc, Options{})
+	h := New(svc, Options{
+		Routes: map[string]Route{
+			"passstructjson": {},
+		},
+	})
 	return svc, h
 }
 

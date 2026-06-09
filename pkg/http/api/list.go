@@ -11,7 +11,7 @@ import (
 	svccrud "codeberg.org/mikolajgasior/gocrud/pkg/service"
 )
 
-func (h *Handler) handleAPIList(ctx context.Context, w http.ResponseWriter, r *http.Request, path string) {
+func (h *Handler) handleAPIList(ctx context.Context, w http.ResponseWriter, r *http.Request, key string, route Route) {
 	params := r.URL.Query()
 
 	limit, _ := strconv.Atoi(params.Get("limit"))
@@ -26,19 +26,17 @@ func (h *Handler) handleAPIList(ctx context.Context, w http.ResponseWriter, r *h
 	order := params.Get("order")
 	orderDirection := params.Get("order_direction")
 
-	pathOpts := h.options.Paths[path]
-
 	var filterVals, filterOps map[string]string
 
-	if pathOpts.Flags&DisableFilters == 0 {
+	if route.Flags&DisableFilters == 0 {
 		filterVals = make(map[string]string)
 		filterOps = make(map[string]string)
 
 		// Build allowed-filter lookup once (nil map means all fields are allowed).
 		var allowed map[string]bool
-		if len(pathOpts.AllowedFilters) > 0 {
-			allowed = make(map[string]bool, len(pathOpts.AllowedFilters))
-			for _, f := range pathOpts.AllowedFilters {
+		if len(route.AllowedFilters) > 0 {
+			allowed = make(map[string]bool, len(route.AllowedFilters))
+			for _, f := range route.AllowedFilters {
 				allowed[f] = true
 			}
 		}
@@ -59,7 +57,7 @@ func (h *Handler) handleAPIList(ctx context.Context, w http.ResponseWriter, r *h
 		}
 	}
 
-	objs, err := h.svc.List(ctx, path, limit, offset, order, orderDirection, filterVals, filterOps, nil, h.options.Paths[path].ListConstructor)
+	objs, err := h.svc.List(ctx, key, limit, offset, order, orderDirection, filterVals, filterOps, nil, route.ListConstructor)
 	if err != nil {
 		var validErr *svccrud.FilterValidationError
 		if errors.As(err, &validErr) {
@@ -79,7 +77,7 @@ func (h *Handler) handleAPIList(ctx context.Context, w http.ResponseWriter, r *h
 		return
 	}
 
-	pwFields := h.svc.PasswordFieldNames(path)
+	pwFields := h.svc.PasswordFieldNames(key)
 	for i, obj := range objs {
 		objs[i] = responseData(obj, pwFields)
 	}

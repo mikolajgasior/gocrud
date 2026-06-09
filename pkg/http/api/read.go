@@ -10,7 +10,7 @@ import (
 	svccrud "codeberg.org/mikolajgasior/gocrud/pkg/service"
 )
 
-func (h *Handler) handleAPIRead(ctx context.Context, w http.ResponseWriter, r *http.Request, path, id string) {
+func (h *Handler) handleAPIRead(ctx context.Context, w http.ResponseWriter, r *http.Request, key string, route Route, id string) {
 	idInt, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
 		jsonresp.Write(w, http.StatusBadRequest, &jsonresp.Response{
@@ -20,7 +20,7 @@ func (h *Handler) handleAPIRead(ctx context.Context, w http.ResponseWriter, r *h
 		return
 	}
 
-	obj, err := h.svc.Read(ctx, path, idInt, h.options.Paths[path].ReadConstructor)
+	obj, err := h.svc.Read(ctx, key, idInt, route.ReadConstructor)
 	if err != nil {
 		if errors.Is(err, svccrud.NotFoundError) {
 			jsonresp.Write(w, http.StatusNotFound, &jsonresp.Response{
@@ -40,6 +40,6 @@ func (h *Handler) handleAPIRead(ctx context.Context, w http.ResponseWriter, r *h
 	jsonresp.Write(w, http.StatusOK, &jsonresp.Response{
 		Ok:   true,
 		Code: jsonresp.CodeSuccess,
-		Data: responseData(obj, h.svc.PasswordFieldNames(path)),
+		Data: responseData(obj, h.svc.PasswordFieldNames(key)),
 	})
 }
