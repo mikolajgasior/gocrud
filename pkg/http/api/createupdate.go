@@ -41,6 +41,16 @@ func (h *Handler) handleAPICreateUpdate(ctx context.Context, w http.ResponseWrit
 			}
 			return
 		}
+
+		if route.AllowUpdate != nil {
+			if err := route.AllowUpdate(obj, r); err != nil {
+				jsonresp.Write(w, http.StatusForbidden, &jsonresp.Response{
+					Ok:   true,
+					Code: CodeForbidden,
+				})
+				return
+			}
+		}
 	} else {
 		if route.CreateConstructor != nil {
 			obj = route.CreateConstructor()
@@ -56,6 +66,16 @@ func (h *Handler) handleAPICreateUpdate(ctx context.Context, w http.ResponseWrit
 			Code: jsonresp.CodeUnmarshalRequest,
 		})
 		return
+	}
+
+	if id == "" && route.AllowCreate != nil {
+		if err := route.AllowCreate(obj, r); err != nil {
+			jsonresp.Write(w, http.StatusForbidden, &jsonresp.Response{
+				Ok:   true,
+				Code: CodeForbidden,
+			})
+			return
+		}
 	}
 
 	// When an update constructor is used the URL id must win over any id in the

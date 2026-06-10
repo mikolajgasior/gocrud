@@ -76,7 +76,7 @@ func (h *Handler) Serve(w http.ResponseWriter, r *http.Request) {
 			})
 			return
 		}
-		h.handleAPIDelete(r.Context(), w, key, id)
+		h.handleAPIDelete(r.Context(), w, r, key, foundRoute, id)
 		return
 	}
 

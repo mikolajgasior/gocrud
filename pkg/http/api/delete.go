@@ -10,7 +10,7 @@ import (
 	svccrud "codeberg.org/mikolajgasior/gocrud/pkg/service"
 )
 
-func (h *Handler) handleAPIDelete(ctx context.Context, w http.ResponseWriter, key, id string) {
+func (h *Handler) handleAPIDelete(ctx context.Context, w http.ResponseWriter, r *http.Request, key string, route Route, id string) {
 	idInt, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
 		jsonresp.Write(w, http.StatusBadRequest, &jsonresp.Response{
@@ -18,6 +18,31 @@ func (h *Handler) handleAPIDelete(ctx context.Context, w http.ResponseWriter, ke
 			Code: jsonresp.CodeBadRequest,
 		})
 		return
+	}
+
+	if route.AllowDelete != nil {
+		obj, err := h.svc.Read(ctx, key, idInt, nil)
+		if err != nil {
+			if errors.Is(err, svccrud.NotFoundError) {
+				jsonresp.Write(w, http.StatusNotFound, &jsonresp.Response{
+					Ok:   true,
+					Code: jsonresp.CodeNotFound,
+				})
+				return
+			}
+			jsonresp.Write(w, http.StatusInternalServerError, &jsonresp.Response{
+				Ok:   true,
+				Code: CodeServiceError,
+			})
+			return
+		}
+		if err := route.AllowDelete(obj, r); err != nil {
+			jsonresp.Write(w, http.StatusForbidden, &jsonresp.Response{
+				Ok:   true,
+				Code: CodeForbidden,
+			})
+			return
+		}
 	}
 
 	err = h.svc.Delete(ctx, key, idInt)

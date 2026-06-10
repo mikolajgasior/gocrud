@@ -11,6 +11,7 @@ import (
 const (
 	CodeServiceError = "SERVICE_ERROR"
 	CodeNotAllowed   = "NOT_ALLOWED"
+	CodeForbidden    = "FORBIDDEN"
 )
 
 const (
@@ -39,6 +40,14 @@ type Route struct {
 	RegistryKey    string
 	Flags          int64
 	AllowedFilters []string // when non-empty, only the listed fields may be used as filters
+
+	// Allow hooks — called with the object and request; return non-nil to reject
+	// with 403. AllowUpdate receives the loaded record before the request body is
+	// applied, so it reflects the stored state (e.g. the original owner).
+	AllowCreate func(obj interface{}, r *http.Request) error
+	AllowUpdate func(obj interface{}, r *http.Request) error
+	AllowRead   func(obj interface{}, r *http.Request) error
+	AllowDelete func(obj interface{}, r *http.Request) error
 
 	// Per-operation constructor overrides. When nil the service's registered
 	// constructor for the key is used. Set to use a different struct type for

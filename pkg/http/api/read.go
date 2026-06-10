@@ -37,6 +37,16 @@ func (h *Handler) handleAPIRead(ctx context.Context, w http.ResponseWriter, r *h
 		return
 	}
 
+	if route.AllowRead != nil {
+		if err := route.AllowRead(obj, r); err != nil {
+			jsonresp.Write(w, http.StatusForbidden, &jsonresp.Response{
+				Ok:   true,
+				Code: CodeForbidden,
+			})
+			return
+		}
+	}
+
 	jsonresp.Write(w, http.StatusOK, &jsonresp.Response{
 		Ok:   true,
 		Code: jsonresp.CodeSuccess,

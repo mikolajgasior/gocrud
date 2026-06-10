@@ -89,6 +89,16 @@ func main() {
 		return id
 	}
 
+	// noteOwner rejects requests where X-User-ID does not match the note's UserID.
+	noteOwner := func(obj interface{}, r *http.Request) error {
+		note := obj.(*Note)
+		headerUserID, _ := strconv.ParseUint(r.Header.Get("X-User-ID"), 10, 64)
+		if note.UserID != headerUserID {
+			return errors.New("not the note owner")
+		}
+		return nil
+	}
+
 	handler := crudapi.New(svc, crudapi.Options{
 		UserIDFunc: userIDFromRequest,
 		Routes: map[string]crudapi.Route{
@@ -98,6 +108,8 @@ func main() {
 			"notes": {
 				CreateConstructor: func() interface{} { return &Note_Draft{} },
 				AllowedFilters:    []string{"UserID"},
+				AllowUpdate:       noteOwner,
+				AllowDelete:       noteOwner,
 			},
 		},
 	})
