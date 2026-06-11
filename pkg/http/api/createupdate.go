@@ -35,10 +35,14 @@ func (h *Handler) handleAPICreateUpdate(ctx context.Context, w http.ResponseWrit
 			if errors.Is(err, svccrud.NotFoundError) {
 				jsonresp.Write(w, http.StatusNotFound, &jsonresp.Response{
 					Ok:   true,
-					Code: CodeServiceError,
+					Code: jsonresp.CodeNotFound,
 				})
 				return
 			}
+			jsonresp.Write(w, http.StatusInternalServerError, &jsonresp.Response{
+				Ok:   true,
+				Code: CodeServiceError,
+			})
 			return
 		}
 

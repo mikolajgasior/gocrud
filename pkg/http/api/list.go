@@ -14,10 +14,15 @@ import (
 func (h *Handler) handleAPIList(ctx context.Context, w http.ResponseWriter, r *http.Request, key string, route Route) {
 	params := r.URL.Query()
 
+	const maxLimit = 1000
+
 	limit, _ := strconv.Atoi(params.Get("limit"))
 	offset, _ := strconv.Atoi(params.Get("offset"))
 	if limit < 1 {
 		limit = 10
+	}
+	if limit > maxLimit {
+		limit = maxLimit
 	}
 	if offset < 0 {
 		offset = 0

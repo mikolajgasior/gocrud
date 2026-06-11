@@ -7,8 +7,10 @@ import (
 	"net/http"
 )
 
+const maxBodyBytes = 1 << 20 // 1 MiB
+
 func Unmarshal(r *http.Request, v interface{}) error {
-	body, err := io.ReadAll(r.Body)
+	body, err := io.ReadAll(io.LimitReader(r.Body, maxBodyBytes))
 	if err != nil {
 		return fmt.Errorf("read request body: %w", err)
 	}

@@ -16,6 +16,11 @@ func (h *Handler) Serve(w http.ResponseWriter, r *http.Request) {
 	logAttrHandler := logger.AttrHandler(h)
 	logAttrPath := logger.AttrPath(r.URL.Path)
 
+	if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
 	foundURLPath := ""
 	var foundRoute Route
 	for urlPath, route := range h.options.Routes {
