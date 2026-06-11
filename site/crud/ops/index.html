@@ -868,51 +868,6 @@
 </tr>
 </tbody>
 </table>
-<p><strong>Delete Cascade (<code>on_del:del</code>)</strong></p>
-<p>When <code>on_del</code> is set to <code>del</code>, deleting the parent object will also remove all associated child records from the database. The <code>del_field</code> specifies which column in the child table holds the reference to the parent's ID.</p>
-<p><strong>Update Cascade (<code>on_del:upd</code>)</strong></p>
-<p>When <code>on_del</code> is set to <code>upd</code>, deleting the parent object will not remove the child records. Instead, a specified field in each child record is updated to a given value. This is useful for preserving child records while severing the relationship (e.g., setting a foreign key to zero rather than deleting the row).</p>
-<p>Alongside <code>del_field</code>, two additional keys are required:</p>
-<ul>
-<li><code>del_upd_field</code> — the field in the child struct to modify.</li>
-<li><code>del_upd_val</code> — the value to assign to that field.</li>
-</ul>
-<p><strong>Example</strong></p>
-<pre><code class="language-go">type TestCompany struct {
-    ID            uint64
-    Name          string
-    TestEmployees []TestEmployee `crud:&quot;on_del:del del_field:TestCompanyID&quot;`
-}
-
-type TestEmployee struct {
-    ID              uint64
-    Name            string
-    TestCompanyID   uint64
-    TestCreditCards []TestCreditCard `crud:&quot;on_del:del del_field:TestEmployeeID&quot;`
-    TestComments    []TestComment    `crud:&quot;on_del:upd del_field:TestEmployeeID del_upd_field:TestEmployeeID del_upd_val:0&quot;`
-}
-
-type TestComment struct {
-    ID             uint64
-    Comment        string
-    TestEmployeeID uint64
-}
-
-type TestCreditCard struct {
-    ID             uint64
-    Number         string
-    TestEmployeeID uint64
-}
-</code></pre>
-<p><strong>What happens on deletion:</strong></p>
-<ul>
-<li>Deleting a <code>TestCompany</code> → All <code>TestEmployee</code> records where <code>TestCompanyID</code> matches the company's <code>ID</code> are deleted. This cascades further: deleting those employees will also delete their <code>TestCreditCard</code> records and update their <code>TestComment</code> records.</li>
-<li>Deleting a <code>TestEmployee</code> → Two things happen:</li>
-<li>All <code>TestCreditCard</code> records where <code>TestEmployeeID</code> matches are deleted.</li>
-<li>All <code>TestComment</code> records where <code>TestEmployeeID</code> matches have their <code>TestEmployeeID</code> field updated to <code>0</code>, preserving the comments but unlinking them from the removed employee.</li>
-</ul>
-<p><strong>Cascading Chains</strong></p>
-<p>Cascade operations chain automatically. In the example above, deleting a <code>TestCompany</code> triggers deletion of its <code>TestEmployee</code> records, which in turn triggers deletion of their <code>TestCreditCard</code> records and the update of their <code>TestComment</code> records. Be mindful of deep cascade chains to avoid unintended data loss.</p>
 <h2 id="deletemultiple">DeleteMultiple</h2>
 <p>The <code>DeleteMultiple</code> method removes multiple records from the database table that match specific filter criteria, similar to how <code>Get</code> retrieves them. It also supports controlled cascade deletion.</p>
 <p><strong>Signature</strong></p>
@@ -933,7 +888,6 @@ type TestCreditCard struct {
 <p><strong>DeleteMultipleOptions</strong></p>
 <pre><code class="language-go">type DeleteMultipleOptions struct {
     Filters            *sqlfilters.Filters // Conditions to select rows for deletion
-    CascadeDeleteDepth int8                // Maximum depth for cascade operations (-1 for unlimited, 0 for none)
 }
 </code></pre>
 <h2 id="updatemultiple">UpdateMultiple</h2>

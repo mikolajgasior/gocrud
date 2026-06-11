@@ -1,6 +1,6 @@
 # Service
 
-The `pkg/service` package provides a higher-level wrapper around the core CRUD object. Where the core layer works directly with struct instances, the service layer is driven by a **path registry** — a map of string keys to constructor functions — and accepts filter values as plain strings, making it a natural fit for wiring up to HTTP handlers.
+The `pkg/service` package provides a higher-level wrapper around the core CRUD object. Where the core layer works directly with struct instances, the service layer is driven by a **registry** — a map of string keys to constructor functions — and accepts filter values as plain strings, making it a natural fit for wiring up to HTTP handlers.
 
 ## Initialization
 
@@ -22,7 +22,7 @@ svc := svccrud.New(
 
 `New` takes three arguments:
 
-* **paths** `map[string]func() interface{}` — a registry mapping path keys to constructor functions. Each function must return a pointer to a new zero-value struct.
+* **registry** `map[string]func() interface{}` — maps string keys to constructor functions. Each function must return a pointer to a new zero-value struct.
 * **dbConn** `*sql.DB` — an open database connection.
 * **dialect** `string` — the SQL dialect; must be `gocrud.DialectPostgres` or `gocrud.DialectSQLite`. Passing an empty or unrecognised value causes a panic at startup.
 
@@ -32,7 +32,7 @@ svc := svccrud.New(
 err := svc.CreateTables(ctx)
 ```
 
-Iterates over all registered paths and calls `CREATE TABLE IF NOT EXISTS` for each struct. Useful during application startup when `CREATE_TABLES=true` is set.
+Iterates over all registered keys and calls `CREATE TABLE IF NOT EXISTS` for each struct. Useful during application startup when `CREATE_TABLES=true` is set.
 
 ## Methods
 
@@ -68,7 +68,7 @@ obj, err := svc.Read(ctx, "users", id, nil)
 
 Loads a single record by `id`. Returns `NotFoundError` if no record with that ID exists.
 
-The last argument is an optional constructor (`func() interface{}`). When `nil` the path's registered constructor is used. Pass a non-nil constructor to load the record into a different struct type — for example a read-specific projection with fewer fields, which will generate a narrower `SELECT`.
+The last argument is an optional constructor (`func() interface{}`). When `nil` the key's registered constructor is used. Pass a non-nil constructor to load the record into a different struct type — for example a read-specific projection with fewer fields, which will generate a narrower `SELECT`.
 
 ```go
 // The "_" suffix is stripped when deriving the table name:
@@ -108,13 +108,13 @@ objs, err := svc.List(
 )
 ```
 
-Returns a paginated, filtered, ordered list of objects for the given path. All filter values are passed as strings and converted to the correct field types automatically.
+Returns a paginated, filtered, ordered list of objects for the given key. All filter values are passed as strings and converted to the correct field types automatically.
 
 **Parameters:**
 
 | Parameter | Type | Description |
 |---|---|---|
-| `path` | `string` | Registry key |
+| `key` | `string` | Registry key |
 | `limit` | `int` | SQL `LIMIT` |
 | `offset` | `int` | SQL `OFFSET` |
 | `order` | `string` | Field name to sort by (empty = no ordering) |
@@ -122,7 +122,7 @@ Returns a paginated, filtered, ordered list of objects for the given path. All f
 | `filterVals` | `map[string]string` | Field name → value |
 | `filterOps` | `map[string]string` | Field name → operator string (see below) |
 | `rowFunc` | `func(interface{}) interface{}` | Optional per-row transform; `nil` returns raw structs |
-| `constructor` | `func() interface{}` | Optional struct constructor; `nil` uses the path's registered constructor. Pass a non-nil value to scan rows into a different struct type (e.g. a list projection with fewer fields). |
+| `constructor` | `func() interface{}` | Optional struct constructor; `nil` uses the key's registered constructor. Pass a non-nil value to scan rows into a different struct type (e.g. a list projection with fewer fields). |
 
 **Filter operators:**
 
@@ -158,7 +158,7 @@ Returns the count of records matching the given filters. Accepts the same `filte
 ### Helper methods
 
 ```go
-obj  := svc.New("users")   // returns a new zero-value *User, or nil if path unknown
+obj  := svc.New("users")   // returns a new zero-value *User, or nil if key unknown
 id   := svc.ID(obj)        // returns obj.ID as uint64
 ```
 
@@ -169,24 +169,22 @@ id   := svc.ID(obj)        // returns obj.ID as uint64
 | `*ModelValidationError` | — | `Save` / `SaveFromForm`: struct field validation failed |
 | `*FilterValidationError` | — | `List` / `Num`: unknown filter operator or filter validation failed |
 | `NotFoundError` | `errors.Is(err, NotFoundError)` | `Read` / `Delete`: no record with the given ID |
-| `InvalidPathError` | `errors.Is(err, InvalidPathError)` | Any method: path key not in the registry |
+| `InvalidKeyError` | `errors.Is(err, InvalidKeyError)` | Any method: key not found in the registry |
 
 Both `ModelValidationError` and `FilterValidationError` carry a `Violations map[string]uint64` field containing the per-field failure codes from the [struct-validator](https://github.com/mikolajgasior/struct-validator) library.
 
 ## Example
 
-The `cmd/poc` application wires the service into HTTP modules:
-
 ```go
 svc := svccrud.New(map[string]func() interface{}{
-    "warehouse/products":  func() interface{} { return &Product{} },
-    "warehouse/suppliers": func() interface{} { return &Supplier{} },
+    "users": func() interface{} { return &User{} },
+    "notes": func() interface{} { return &Note{} },
 }, dbConn, gocrud.DialectPostgres)
 
 // In an HTTP handler:
-objs, err := svc.List(ctx, "warehouse/products", 20, 0, "Name", "asc",
-    map[string]string{"CategoryID": r.URL.Query().Get("category_id")},
-    map[string]string{"CategoryID": "eq"},
+objs, err := svc.List(ctx, "notes", 20, 0, "CreatedAt", "desc",
+    map[string]string{"UserID": r.Header.Get("X-User-ID")},
+    map[string]string{"UserID": "eq"},
     nil, // rowFunc
     nil, // constructor (use registered default)
 )

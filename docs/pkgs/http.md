@@ -1,6 +1,6 @@
 # HTTP API
 
-The `pkg/http/api` package mounts a ready-made JSON REST API on top of a [Service](service.md) instance. A single handler covers list, read, create/update, and delete for every path registered in the service.
+The `pkg/http/api` package mounts a ready-made JSON REST API on top of a [Service](service.md) instance. A single handler covers list, read, create/update, and delete for every route registered in the service.
 
 ## Initialization
 
@@ -10,7 +10,7 @@ import (
     svccrud "codeberg.org/mikolajgasior/gocrud/pkg/service"
 )
 
-svc := svccrud.New(paths, dbConn, gocrud.DialectPostgres)
+svc := svccrud.New(registry, dbConn, gocrud.DialectPostgres)
 
 handler := api.New(svc, api.Options{})
 ```
@@ -27,7 +27,7 @@ handler := api.New(svc, api.Options{})
 ```go
 type Options struct {
     CORS       cors.CORS
-    Paths      map[string]PathOptions
+    Routes     map[string]Route
     UserIDFunc func(r *http.Request) uint64
 }
 ```
@@ -35,15 +35,32 @@ type Options struct {
 | Field | Type | Description |
 |---|---|---|
 | `CORS` | `cors.CORS` | CORS headers written on every response. Zero value emits no CORS headers. |
-| `Paths` | `map[string]PathOptions` | Per-path configuration. Paths absent from the map use the zero value (all operations enabled, all filters allowed). |
+| `Routes` | `map[string]Route` | Per-route configuration keyed by URL path segment. Routes absent from the map use the zero value (all operations enabled, all filters allowed). |
 | `UserIDFunc` | `func(*http.Request) uint64` | Called on every create and update request to obtain the current user's ID, passed to the service as `ModifiedBy`. When `nil`, `ModifiedBy` is always `0`. |
 
-### PathOptions
+### Route
+
+`Route` maps a URL path segment to a service registry key and configures per-operation behavior.
 
 ```go
-type PathOptions struct {
+type Route struct {
+    RegistryKey    string
     Flags          int64
     AllowedFilters []string
+
+    AllowCreate func(obj interface{}, r *http.Request) error
+    AllowUpdate func(obj interface{}, r *http.Request) error
+    AllowRead   func(obj interface{}, r *http.Request) error
+    AllowDelete func(obj interface{}, r *http.Request) error
+
+    PreCreate func(obj interface{}, r *http.Request) error
+    PreUpdate func(obj interface{}, r *http.Request) error
+
+    PostRead     func(obj interface{}, r *http.Request) error
+    PostListItem func(obj interface{}, r *http.Request) error
+
+    FilterList func(r *http.Request) FilterSet
+    FilterRead func(r *http.Request) FilterSet
 
     CreateConstructor func() interface{}
     UpdateConstructor func() interface{}
@@ -52,11 +69,19 @@ type PathOptions struct {
 }
 ```
 
+**RegistryKey**
+
+When `RegistryKey` is empty the URL path segment is used as the service registry key. Set it explicitly when the URL path and the registry key should differ:
+
+```go
+Routes: map[string]api.Route{
+    "v1/users": {RegistryKey: "users"},
+}
+```
+
 **Flags**
 
-`Flags` is a bitmask that controls which operations and features are disabled for a path. Combine multiple flags with `|`. The zero value enables everything.
-
-The following flag constants are defined in the `api` package:
+`Flags` is a bitmask that controls which operations and features are disabled for a route. Combine multiple flags with `|`. The zero value enables everything.
 
 | Constant | Disables |
 |---|---|
@@ -67,46 +92,146 @@ The following flag constants are defined in the `api` package:
 | `DisableList` | `GET /{path}/` — responds `405` |
 | `DisableFilters` | All `filter_val_*` / `filter_op_*` query parameters are ignored |
 
-**Filter constraints**
+**AllowedFilters**
 
-| Field | Type | Description |
+`AllowedFilters` is a whitelist of field names that clients may pass as filters. When empty all fields are allowed (unless `DisableFilters` is set). Fields not in the list are silently dropped from the request.
+
+```go
+Routes: map[string]api.Route{
+    "notes": {AllowedFilters: []string{"UserID", "Status"}},
+}
+```
+
+**Authorization hooks — Allow\***
+
+Each `Allow*` hook is called with the loaded object and the request. Return a non-nil error to reject the operation with `403 Forbidden`.
+
+| Field | When called | Object passed |
 |---|---|---|
-| `AllowedFilters` | `[]string` | Whitelist of field names that may be used as filters. Empty slice means all fields are allowed (unless `DisableFilters` is set via `Flags`). |
+| `AllowCreate` | After the request body is unmarshalled, before saving | The new object populated from the request |
+| `AllowUpdate` | After the existing record is loaded, **before** the request body is applied | The **stored** record (original state) |
+| `AllowRead` | After the record is loaded | The loaded record |
+| `AllowDelete` | After the record is loaded, before deletion | The loaded record |
+
+`AllowUpdate` receives the record as stored in the database so it reflects the original owner or state — the incoming request values have not been applied yet.
+
+```go
+noteOwner := func(obj interface{}, r *http.Request) error {
+    note := obj.(*Note)
+    headerUserID, _ := strconv.ParseUint(r.Header.Get("X-User-ID"), 10, 64)
+    if note.UserID != headerUserID {
+        return errors.New("not the note owner")
+    }
+    return nil
+}
+
+Routes: map[string]api.Route{
+    "notes": {
+        AllowUpdate: noteOwner,
+        AllowDelete: noteOwner,
+    },
+}
+```
+
+**Server-side filters — FilterList / FilterRead**
+
+These hooks inject server-controlled filters into queries, merging with (and taking precedence over) any client-supplied filters so clients cannot override them.
+
+`FilterList` is applied to every list request (`GET /{path}/`). `FilterRead` is applied when reading a single record by ID (`GET /{path}/{id}`); when set, the handler uses `List(limit=1)` with the ID added as an extra constraint so mismatches return `404` rather than revealing record existence.
+
+```go
+type FilterSet struct {
+    Vals map[string]string // field → value
+    Ops  map[string]string // field → operator (defaults to "eq" when absent)
+}
+```
+
+```go
+Routes: map[string]api.Route{
+    "notes": {
+        FilterList: func(r *http.Request) api.FilterSet {
+            return api.FilterSet{
+                Vals: map[string]string{"UserID": r.Header.Get("X-User-ID")},
+            }
+        },
+        FilterRead: func(r *http.Request) api.FilterSet {
+            return api.FilterSet{
+                Vals: map[string]string{"UserID": r.Header.Get("X-User-ID")},
+            }
+        },
+    },
+}
+```
+
+**Pre hooks — PreCreate / PreUpdate**
+
+Called with the fully-prepared object just before it is written to the database. The request body has already been applied and the ID is set. Use these to stamp server-controlled fields (e.g. a server-assigned comment, a status value) that should not be settable by the client.
+
+Return a non-nil error to abort the operation with `500 Internal Server Error`.
+
+```go
+Routes: map[string]api.Route{
+    "notes": {
+        PreCreate: func(obj interface{}, _ *http.Request) error {
+            obj.(*Note).Status = "pending"
+            return nil
+        },
+    },
+}
+```
+
+**Post hooks — PostRead / PostListItem**
+
+Called on loaded objects just before they are serialised to JSON. Use these to set or transform fields in the response that should differ from the stored values.
+
+| Field | Fires on |
+|---|---|
+| `PostRead` | A single-record read (`GET /{path}/{id}`) |
+| `PostListItem` | Each item in a list response (`GET /{path}/`) |
+
+Return a non-nil error to abort with `500 Internal Server Error`. For `PostListItem` an error aborts the entire list response.
+
+```go
+Routes: map[string]api.Route{
+    "notes": {
+        PostRead: func(obj interface{}, _ *http.Request) error {
+            obj.(*Note).Comment = "Returned from gocrud"
+            return nil
+        },
+        PostListItem: func(obj interface{}, _ *http.Request) error {
+            obj.(*Note).Comment = "Returned from gocrud"
+            return nil
+        },
+    },
+}
+```
 
 **Constructor overrides**
 
-By default each operation uses the constructor registered for the path in the service. Setting a constructor here overrides that for the specific operation, allowing a different struct type to be used — for example a create-only struct with fewer fields that implements a custom `InsertQuery()` method.
+By default each operation uses the constructor registered for the key in the service. Setting a constructor here overrides that for the specific operation, allowing a different struct type — for example a create-only struct with fewer fields.
 
 | Field | Type | Description |
 |---|---|---|
-| `CreateConstructor` | `func() interface{}` | Constructor used when creating a new record (`PUT /{path}/`) |
-| `UpdateConstructor` | `func() interface{}` | Constructor used when updating a record (`PUT /{path}/{id}`). The existing record is **not** pre-loaded; the URL id is stamped onto the object after JSON unmarshalling. |
-| `ReadConstructor` | `func() interface{}` | Constructor used when reading a single record (`GET /{path}/{id}`). Only the fields present on the override struct are SELECTed. |
-| `ListConstructor` | `func() interface{}` | Constructor used when listing records (`GET /{path}/`). Only the fields present on the override struct are SELECTed. |
-
-**Example** — read-only path, restricted filtering, and a minimal create struct:
+| `CreateConstructor` | `func() interface{}` | Constructor for `PUT /{path}/` (create) |
+| `UpdateConstructor` | `func() interface{}` | Constructor for `PUT /{path}/{id}` (update). The existing record is **not** pre-loaded; the URL id is stamped onto the object after JSON unmarshalling. |
+| `ReadConstructor` | `func() interface{}` | Constructor for `GET /{path}/{id}`. Only fields present on the override struct are SELECTed. |
+| `ListConstructor` | `func() interface{}` | Constructor for `GET /{path}/`. Only fields present on the override struct are SELECTed. |
 
 ```go
-// The "_" suffix is stripped when deriving the table name:
-//   strings.Split("User_Create", "_")[0] = "User" → table "user"
-type User_Create struct {
-    ID    uint64
-    Email string `crud:"req email"`
-    Role  string `crud:"req len:3,30"`
+// "_" suffix is stripped when deriving the table name:
+//   strings.Split("Note_Draft", "_")[0] = "Note" → table "note"
+type Note_Draft struct {
+    ID      uint64
+    Title   string `crud:"req len:1,200"`
+    Content string
+    UserID  uint64 `crud:"req"`
 }
 
-handler := api.New(svc, api.Options{
-    Paths: map[string]api.PathOptions{
-        "users": {
-            Flags:             api.DisableDelete,
-            AllowedFilters:    []string{"Role", "IsActive"},
-            CreateConstructor: func() interface{} { return &User_Create{} },
-        },
-        "audit_logs": {
-            Flags: api.DisableCreate | api.DisableUpdate | api.DisableDelete | api.DisableFilters,
-        },
+Routes: map[string]api.Route{
+    "notes": {
+        CreateConstructor: func() interface{} { return &Note_Draft{} },
     },
-})
+}
 ```
 
 ## Mounting
@@ -115,15 +240,11 @@ handler := api.New(svc, api.Options{
 
 ```go
 mux := http.NewServeMux()
-
-subMux := http.NewServeMux()
-subMux.HandleFunc("/", handler.Serve)
-mux.Handle("/api/", http.StripPrefix("/api", subMux))
-
+mux.Handle("/api/", http.StripPrefix("/api", http.HandlerFunc(handler.Serve)))
 http.ListenAndServe(":8080", mux)
 ```
 
-After stripping the mount prefix the handler expects URLs of the form `/{path}/{id}` where `path` is a key from the registry and `id` is an optional numeric record ID.
+After stripping the mount prefix the handler expects URLs of the form `/{path}/{id}` where `path` is a key from `Options.Routes` and `id` is an optional numeric record ID.
 
 ## URL scheme
 
@@ -132,12 +253,11 @@ After stripping the mount prefix the handler expects URLs of the form `/{path}/{
 /{path}/{id}       — read / update / delete
 ```
 
-`path` must exactly match a key in the paths registry (e.g. `users`, `warehouse/products`).
-`id` must be a positive integer or absent.
+`path` must match a key in `Options.Routes`. `id` must be a positive integer or absent.
 
 ## Password fields
 
-Fields tagged `crud:"pass"` are **never included in responses** from the Read and List endpoints. The handler strips them before serialising the object to JSON, regardless of whether the struct field has a `json` tag or not. This applies to both the default struct and any override struct supplied via `ReadConstructor` / `ListConstructor`.
+Fields tagged `crud:"pass"` are **never included in responses** from the Read and List endpoints. The handler strips them before serialising the object to JSON, regardless of whether the struct field has a `json` tag or not.
 
 ```go
 type User struct {
@@ -146,8 +266,6 @@ type User struct {
     Password string `crud:"pass"` // omitted from GET /users/ and GET /users/{id}
 }
 ```
-
-The CRUD layer also zeroes password fields immediately after scanning a row from the database (in both `Load` and `Get`), so hashes never reach caller code even outside the HTTP layer.
 
 ## Endpoints
 
@@ -166,17 +284,12 @@ Returns a paginated, filtered list of records.
 | `filter_val_{Field}` | string | — | Filter value for the named field |
 | `filter_op_{Field}` | string | `eq` | Filter operator for the named field (see [operators](service.md#list)) |
 
-**Example request:**
-```
-GET /users/?limit=20&offset=0&order=LastName&order_direction=asc&filter_val_Role=admin&filter_op_Role=eq
-```
-
 **Response `200 OK`:**
 ```json
 {
   "ok": true,
   "code": "SUCCESS",
-  "data": [ { "id": 1, "username": "alice", ... }, ... ]
+  "data": [ { "id": 1, "title": "Hello", ... }, ... ]
 }
 ```
 
@@ -191,7 +304,7 @@ Returns a single record by ID.
 {
   "ok": true,
   "code": "SUCCESS",
-  "data": { "id": 42, "username": "alice", ... }
+  "data": { "id": 42, "title": "Hello", ... }
 }
 ```
 
@@ -204,11 +317,11 @@ Returns a single record by ID.
 
 ### Create — `PUT /{path}/`
 
-Creates a new record. The request body must be a JSON object whose keys match the struct's `json` tags.
+Creates a new record. The request body must be a JSON object whose keys match the struct's `json` tags (or field names when no `json` tag is set).
 
 **Request body:**
 ```json
-{ "username": "alice", "email": "alice@example.com", "role": "admin" }
+{ "title": "Hello", "content": "World" }
 ```
 
 **Response `201 Created`:**
@@ -233,7 +346,7 @@ Creates a new record. The request body must be a JSON object whose keys match th
 
 ### Update — `PUT /{path}/{id}`
 
-Updates an existing record. The request body replaces the record's fields. The record must exist; if not, `404` is returned.
+Updates an existing record. The request body replaces the record's fields. Returns `404` if the record does not exist.
 
 **Response `200 OK`:**
 ```json
@@ -244,7 +357,7 @@ Updates an existing record. The request body replaces the record's fields. The r
 
 ### Delete — `DELETE /{path}/{id}`
 
-Deletes a record by ID. Cascade rules defined on the struct are applied automatically.
+Deletes a record by ID.
 
 **Response `200 OK`:**
 ```json
@@ -288,8 +401,9 @@ Every response is a JSON object with the following shape:
 | `VALIDATION_FAILED` | 400 | Request body failed struct validation |
 | `BAD_REQUEST` | 400 | Malformed URL or unparseable request body |
 | `URL_PATH_ID` | 400 | ID segment in the URL is not a valid number |
-| `NOT_ALLOWED` | 405 | Operation is disabled for this path via `PathOptions` |
-| `SERVICE_ERROR` | 500 | Internal error from the service layer |
+| `NOT_ALLOWED` | 405 | Operation is disabled for this route via `Flags` |
+| `FORBIDDEN` | 403 | An `Allow*` hook rejected the request |
+| `SERVICE_ERROR` | 500 | Internal error from the service or a `Pre*` / `Post*` hook |
 
 ## CORS
 
@@ -311,7 +425,7 @@ handler := api.New(svc, api.Options{
 })
 ```
 
-Leave `CORS` as its zero value (`cors.CORS{}`) to emit no CORS headers.
+Leave `CORS` as its zero value to emit no CORS headers.
 
 ## Complete example
 
@@ -319,35 +433,91 @@ Leave `CORS` as its zero value (`cors.CORS{}`) to emit no CORS headers.
 package main
 
 import (
+    "context"
+    "errors"
     "net/http"
+    "strconv"
 
     "codeberg.org/mikolajgasior/gocrud"
-    "codeberg.org/mikolajgasior/gocrud/pkg/http/api"
+    crudapi "codeberg.org/mikolajgasior/gocrud/pkg/http/api"
     svccrud "codeberg.org/mikolajgasior/gocrud/pkg/service"
     _ "github.com/lib/pq"
 )
 
-type User struct {
-    ID    uint64 `json:"id"`
-    Name  string `json:"name"  crud:"req len:2,100"`
-    Email string `json:"email" crud:"req email"`
+type Note struct {
+    ID      uint64
+    Title   string `crud:"req len:1,200"`
+    Content string
+    UserID  uint64 `crud:"req"`
+}
+
+// Note_Draft is the create payload; "_" is stripped to derive table name "note".
+type Note_Draft struct {
+    ID      uint64
+    Title   string `crud:"req len:1,200"`
+    Content string
+    UserID  uint64 `crud:"req"`
 }
 
 func main() {
     db, _ := sql.Open("postgres", "host=localhost user=app password=secret dbname=app sslmode=disable")
 
-    paths := map[string]func() interface{}{
-        "users": func() interface{} { return &User{} },
+    svc := svccrud.New(map[string]func() interface{}{
+        "notes": func() interface{} { return &Note{} },
+    }, db, gocrud.DialectPostgres)
+
+    svc.CreateTables(context.Background())
+
+    userFromHeader := func(r *http.Request) uint64 {
+        id, _ := strconv.ParseUint(r.Header.Get("X-User-ID"), 10, 64)
+        return id
     }
 
-    svc := svccrud.New(paths, db, gocrud.DialectPostgres)
-    handler := api.New(svc, api.Options{})
+    ownerOnly := func(obj interface{}, r *http.Request) error {
+        note := obj.(*Note)
+        uid, _ := strconv.ParseUint(r.Header.Get("X-User-ID"), 10, 64)
+        if note.UserID != uid {
+            return errors.New("not the owner")
+        }
+        return nil
+    }
+
+    handler := crudapi.New(svc, crudapi.Options{
+        UserIDFunc: userFromHeader,
+        Routes: map[string]crudapi.Route{
+            "notes": {
+                CreateConstructor: func() interface{} { return &Note_Draft{} },
+                AllowedFilters:    []string{"UserID"},
+                AllowUpdate:       ownerOnly,
+                AllowDelete:       ownerOnly,
+                PreCreate: func(obj interface{}, r *http.Request) error {
+                    obj.(*Note_Draft).UserID = userFromHeader(r)
+                    return nil
+                },
+                PostRead: func(obj interface{}, _ *http.Request) error {
+                    obj.(*Note).Title = "[read] " + obj.(*Note).Title
+                    return nil
+                },
+                PostListItem: func(obj interface{}, _ *http.Request) error {
+                    obj.(*Note).Title = "[list] " + obj.(*Note).Title
+                    return nil
+                },
+                FilterList: func(r *http.Request) crudapi.FilterSet {
+                    return crudapi.FilterSet{
+                        Vals: map[string]string{"UserID": r.Header.Get("X-User-ID")},
+                    }
+                },
+                FilterRead: func(r *http.Request) crudapi.FilterSet {
+                    return crudapi.FilterSet{
+                        Vals: map[string]string{"UserID": r.Header.Get("X-User-ID")},
+                    }
+                },
+            },
+        },
+    })
 
     mux := http.NewServeMux()
-    subMux := http.NewServeMux()
-    subMux.HandleFunc("/", handler.Serve)
-    mux.Handle("/api/", http.StripPrefix("/api", subMux))
-
+    mux.Handle("/api/", http.StripPrefix("/api", http.HandlerFunc(handler.Serve)))
     http.ListenAndServe(":8080", mux)
 }
 ```
@@ -356,8 +526,8 @@ With this setup:
 
 | Request | Action |
 |---|---|
-| `GET /api/users/` | List users |
-| `GET /api/users/1` | Read user 1 |
-| `PUT /api/users/` | Create user |
-| `PUT /api/users/1` | Update user 1 |
-| `DELETE /api/users/1` | Delete user 1 |
+| `GET /api/notes/` | List the caller's notes (UserID injected from header) |
+| `GET /api/notes/1` | Read note 1 (404 if UserID doesn't match) |
+| `PUT /api/notes/` | Create a note (UserID stamped by PreCreate) |
+| `PUT /api/notes/1` | Update note 1 (403 if not the owner) |
+| `DELETE /api/notes/1` | Delete note 1 (403 if not the owner) |

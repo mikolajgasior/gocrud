@@ -772,7 +772,7 @@
 
 
 <h1 id="service">Service</h1>
-<p>The <code>pkg/service</code> package provides a higher-level wrapper around the core CRUD object. Where the core layer works directly with struct instances, the service layer is driven by a <strong>path registry</strong> — a map of string keys to constructor functions — and accepts filter values as plain strings, making it a natural fit for wiring up to HTTP handlers.</p>
+<p>The <code>pkg/service</code> package provides a higher-level wrapper around the core CRUD object. Where the core layer works directly with struct instances, the service layer is driven by a <strong>registry</strong> — a map of string keys to constructor functions — and accepts filter values as plain strings, making it a natural fit for wiring up to HTTP handlers.</p>
 <h2 id="initialization">Initialization</h2>
 <pre><code class="language-go">import (
     &quot;codeberg.org/mikolajgasior/gocrud&quot;
@@ -790,14 +790,14 @@ svc := svccrud.New(
 </code></pre>
 <p><code>New</code> takes three arguments:</p>
 <ul>
-<li><strong>paths</strong> <code>map[string]func() interface{}</code> — a registry mapping path keys to constructor functions. Each function must return a pointer to a new zero-value struct.</li>
+<li><strong>registry</strong> <code>map[string]func() interface{}</code> — maps string keys to constructor functions. Each function must return a pointer to a new zero-value struct.</li>
 <li><strong>dbConn</strong> <code>*sql.DB</code> — an open database connection.</li>
 <li><strong>dialect</strong> <code>string</code> — the SQL dialect; must be <code>gocrud.DialectPostgres</code> or <code>gocrud.DialectSQLite</code>. Passing an empty or unrecognised value causes a panic at startup.</li>
 </ul>
 <h3 id="creating-tables">Creating tables</h3>
 <pre><code class="language-go">err := svc.CreateTables(ctx)
 </code></pre>
-<p>Iterates over all registered paths and calls <code>CREATE TABLE IF NOT EXISTS</code> for each struct. Useful during application startup when <code>CREATE_TABLES=true</code> is set.</p>
+<p>Iterates over all registered keys and calls <code>CREATE TABLE IF NOT EXISTS</code> for each struct. Useful during application startup when <code>CREATE_TABLES=true</code> is set.</p>
 <h2 id="methods">Methods</h2>
 <h3 id="save">Save</h3>
 <pre><code class="language-go">err := svc.Save(ctx, obj, now, userID)
@@ -815,7 +815,7 @@ svc := svccrud.New(
 <pre><code class="language-go">obj, err := svc.Read(ctx, &quot;users&quot;, id, nil)
 </code></pre>
 <p>Loads a single record by <code>id</code>. Returns <code>NotFoundError</code> if no record with that ID exists.</p>
-<p>The last argument is an optional constructor (<code>func() interface{}</code>). When <code>nil</code> the path's registered constructor is used. Pass a non-nil constructor to load the record into a different struct type — for example a read-specific projection with fewer fields, which will generate a narrower <code>SELECT</code>.</p>
+<p>The last argument is an optional constructor (<code>func() interface{}</code>). When <code>nil</code> the key's registered constructor is used. Pass a non-nil constructor to load the record into a different struct type — for example a read-specific projection with fewer fields, which will generate a narrower <code>SELECT</code>.</p>
 <pre><code class="language-go">// The &quot;_&quot; suffix is stripped when deriving the table name:
 //   strings.Split(&quot;User_Summary&quot;, &quot;_&quot;)[0] = &quot;User&quot; → table &quot;user&quot;
 type User_Summary struct {
@@ -843,7 +843,7 @@ obj, err := svc.Read(ctx, &quot;users&quot;, id, func() interface{} { return &am
     nil, // optional constructor override
 )
 </code></pre>
-<p>Returns a paginated, filtered, ordered list of objects for the given path. All filter values are passed as strings and converted to the correct field types automatically.</p>
+<p>Returns a paginated, filtered, ordered list of objects for the given key. All filter values are passed as strings and converted to the correct field types automatically.</p>
 <p><strong>Parameters:</strong></p>
 <table>
 <thead>
@@ -855,7 +855,7 @@ obj, err := svc.Read(ctx, &quot;users&quot;, id, func() interface{} { return &am
 </thead>
 <tbody>
 <tr>
-<td><code>path</code></td>
+<td><code>key</code></td>
 <td><code>string</code></td>
 <td>Registry key</td>
 </tr>
@@ -897,7 +897,7 @@ obj, err := svc.Read(ctx, &quot;users&quot;, id, func() interface{} { return &am
 <tr>
 <td><code>constructor</code></td>
 <td><code>func() interface{}</code></td>
-<td>Optional struct constructor; <code>nil</code> uses the path's registered constructor. Pass a non-nil value to scan rows into a different struct type (e.g. a list projection with fewer fields).</td>
+<td>Optional struct constructor; <code>nil</code> uses the key's registered constructor. Pass a non-nil value to scan rows into a different struct type (e.g. a list projection with fewer fields).</td>
 </tr>
 </tbody>
 </table>
@@ -959,7 +959,7 @@ obj, err := svc.Read(ctx, &quot;users&quot;, id, func() interface{} { return &am
 <p>Returns the count of records matching the given filters. Accepts the same <code>filterVals</code>/<code>filterOps</code> maps as <code>List</code>. Useful for pagination — combine with <code>List</code>'s <code>limit</code>/<code>offset</code> to get a total alongside a page of results.</p>
 <hr />
 <h3 id="helper-methods">Helper methods</h3>
-<pre><code class="language-go">obj  := svc.New(&quot;users&quot;)   // returns a new zero-value *User, or nil if path unknown
+<pre><code class="language-go">obj  := svc.New(&quot;users&quot;)   // returns a new zero-value *User, or nil if key unknown
 id   := svc.ID(obj)        // returns obj.ID as uint64
 </code></pre>
 <h2 id="error-types">Error types</h2>
@@ -988,24 +988,23 @@ id   := svc.ID(obj)        // returns obj.ID as uint64
 <td><code>Read</code> / <code>Delete</code>: no record with the given ID</td>
 </tr>
 <tr>
-<td><code>InvalidPathError</code></td>
-<td><code>errors.Is(err, InvalidPathError)</code></td>
-<td>Any method: path key not in the registry</td>
+<td><code>InvalidKeyError</code></td>
+<td><code>errors.Is(err, InvalidKeyError)</code></td>
+<td>Any method: key not found in the registry</td>
 </tr>
 </tbody>
 </table>
 <p>Both <code>ModelValidationError</code> and <code>FilterValidationError</code> carry a <code>Violations map[string]uint64</code> field containing the per-field failure codes from the <a href="https://github.com/mikolajgasior/struct-validator">struct-validator</a> library.</p>
 <h2 id="example">Example</h2>
-<p>The <code>cmd/poc</code> application wires the service into HTTP modules:</p>
 <pre><code class="language-go">svc := svccrud.New(map[string]func() interface{}{
-    &quot;warehouse/products&quot;:  func() interface{} { return &amp;Product{} },
-    &quot;warehouse/suppliers&quot;: func() interface{} { return &amp;Supplier{} },
+    &quot;users&quot;: func() interface{} { return &amp;User{} },
+    &quot;notes&quot;: func() interface{} { return &amp;Note{} },
 }, dbConn, gocrud.DialectPostgres)
 
 // In an HTTP handler:
-objs, err := svc.List(ctx, &quot;warehouse/products&quot;, 20, 0, &quot;Name&quot;, &quot;asc&quot;,
-    map[string]string{&quot;CategoryID&quot;: r.URL.Query().Get(&quot;category_id&quot;)},
-    map[string]string{&quot;CategoryID&quot;: &quot;eq&quot;},
+objs, err := svc.List(ctx, &quot;notes&quot;, 20, 0, &quot;CreatedAt&quot;, &quot;desc&quot;,
+    map[string]string{&quot;UserID&quot;: r.Header.Get(&quot;X-User-ID&quot;)},
+    map[string]string{&quot;UserID&quot;: &quot;eq&quot;},
     nil, // rowFunc
     nil, // constructor (use registered default)
 )
