@@ -40,6 +40,7 @@ type Note struct {
 	ID         uint64
 	Title      string `crud:"req len:1,200"`
 	Content    string
+	Comment    string
 	UserID     uint64 `crud:"req"`
 	CreatedAt  int64
 	CreatedBy  uint64
@@ -52,6 +53,7 @@ type Note_Draft struct {
 	ID      uint64
 	Title   string `crud:"req len:1,200"`
 	Content string
+	Comment string
 	UserID  uint64 `crud:"req"`
 }
 
@@ -89,6 +91,17 @@ func main() {
 		return id
 	}
 
+	// noteComment stamps every create and update with a server-controlled comment.
+	noteComment := func(obj interface{}, _ *http.Request) error {
+		switch n := obj.(type) {
+		case *Note:
+			n.Comment = "Added with API"
+		case *Note_Draft:
+			n.Comment = "Added with API"
+		}
+		return nil
+	}
+
 	// noteOwner rejects requests where X-User-ID does not match the note's UserID.
 	noteOwner := func(obj interface{}, r *http.Request) error {
 		note := obj.(*Note)
@@ -110,6 +123,26 @@ func main() {
 				AllowedFilters:    []string{"UserID"},
 				AllowUpdate:       noteOwner,
 				AllowDelete:       noteOwner,
+				PreCreate:         noteComment,
+				PreUpdate:         noteComment,
+				PostRead: func(obj interface{}, _ *http.Request) error {
+					obj.(*Note).Comment = "Returned from gocrud"
+					return nil
+				},
+				PostListItem: func(obj interface{}, _ *http.Request) error {
+					obj.(*Note).Comment = "Returned from gocrud"
+					return nil
+				},
+				FilterList: func(r *http.Request) crudapi.FilterSet {
+					return crudapi.FilterSet{
+						Vals: map[string]string{"UserID": r.Header.Get("X-User-ID")},
+					}
+				},
+				FilterRead: func(r *http.Request) crudapi.FilterSet {
+					return crudapi.FilterSet{
+						Vals: map[string]string{"UserID": r.Header.Get("X-User-ID")},
+					}
+				},
 			},
 		},
 	})

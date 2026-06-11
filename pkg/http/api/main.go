@@ -33,6 +33,14 @@ var (
 	filterOpRegexp  = regexp.MustCompile("^filter_op_[a-zA-Z0-9_]+$")
 )
 
+// FilterSet holds server-side filters injected independently of client input.
+// Ops maps field names to op strings ("eq", "ne", "lt", …); an absent entry
+// defaults to "eq".
+type FilterSet struct {
+	Vals map[string]string
+	Ops  map[string]string
+}
+
 // Route maps a URL path segment to a service registry key and configures
 // per-operation behavior. When RegistryKey is empty the URL path segment is
 // used as the registry key.
@@ -48,6 +56,31 @@ type Route struct {
 	AllowUpdate func(obj interface{}, r *http.Request) error
 	AllowRead   func(obj interface{}, r *http.Request) error
 	AllowDelete func(obj interface{}, r *http.Request) error
+
+	// Pre hooks — called with the fully prepared object just before it is saved;
+	// the request body has already been applied and the ID is set. Return non-nil
+	// to abort the operation with 500.
+	PreCreate func(obj interface{}, r *http.Request) error
+	PreUpdate func(obj interface{}, r *http.Request) error
+
+	// PostRead is called on a single loaded record before it is serialised to
+	// JSON. Return non-nil to abort with 500.
+	PostRead func(obj interface{}, r *http.Request) error
+
+	// PostListItem is called on each item in a list response before it is
+	// serialised to JSON. Return non-nil to abort the entire list with 500.
+	PostListItem func(obj interface{}, r *http.Request) error
+
+	// FilterList returns server-side filters merged into every list request.
+	// Injected filters take precedence over client-supplied ones, so clients
+	// cannot override them.
+	FilterList func(r *http.Request) FilterSet
+
+	// FilterRead returns server-side filters applied when reading a single
+	// record by ID. The handler calls List(limit=1) with the injected filters
+	// plus the ID constraint; a mismatch returns 404 so record existence is
+	// not revealed to unauthorised callers.
+	FilterRead func(r *http.Request) FilterSet
 
 	// Per-operation constructor overrides. When nil the service's registered
 	// constructor for the key is used. Set to use a different struct type for

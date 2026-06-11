@@ -20,21 +20,52 @@ func (h *Handler) handleAPIRead(ctx context.Context, w http.ResponseWriter, r *h
 		return
 	}
 
-	obj, err := h.svc.Read(ctx, key, idInt, route.ReadConstructor)
-	if err != nil {
-		if errors.Is(err, svccrud.NotFoundError) {
+	var obj interface{}
+
+	if route.FilterRead != nil {
+		injected := route.FilterRead(r)
+		filterVals := make(map[string]string)
+		filterOps := make(map[string]string)
+		for k, v := range injected.Vals {
+			filterVals[k] = v
+		}
+		for k, v := range injected.Ops {
+			filterOps[k] = v
+		}
+		filterVals["ID"] = id // ID constraint always wins
+
+		objs, listErr := h.svc.List(ctx, key, 1, 0, "", "", filterVals, filterOps, nil, route.ReadConstructor)
+		if listErr != nil {
+			jsonresp.Write(w, http.StatusInternalServerError, &jsonresp.Response{
+				Ok:   true,
+				Code: CodeServiceError,
+			})
+			return
+		}
+		if len(objs) == 0 {
 			jsonresp.Write(w, http.StatusNotFound, &jsonresp.Response{
 				Ok:   true,
 				Code: jsonresp.CodeNotFound,
 			})
 			return
 		}
-
-		jsonresp.Write(w, http.StatusInternalServerError, &jsonresp.Response{
-			Ok:   true,
-			Code: CodeServiceError,
-		})
-		return
+		obj = objs[0]
+	} else {
+		obj, err = h.svc.Read(ctx, key, idInt, route.ReadConstructor)
+		if err != nil {
+			if errors.Is(err, svccrud.NotFoundError) {
+				jsonresp.Write(w, http.StatusNotFound, &jsonresp.Response{
+					Ok:   true,
+					Code: jsonresp.CodeNotFound,
+				})
+				return
+			}
+			jsonresp.Write(w, http.StatusInternalServerError, &jsonresp.Response{
+				Ok:   true,
+				Code: CodeServiceError,
+			})
+			return
+		}
 	}
 
 	if route.AllowRead != nil {
@@ -42,6 +73,16 @@ func (h *Handler) handleAPIRead(ctx context.Context, w http.ResponseWriter, r *h
 			jsonresp.Write(w, http.StatusForbidden, &jsonresp.Response{
 				Ok:   true,
 				Code: CodeForbidden,
+			})
+			return
+		}
+	}
+
+	if route.PostRead != nil {
+		if err := route.PostRead(obj, r); err != nil {
+			jsonresp.Write(w, http.StatusInternalServerError, &jsonresp.Response{
+				Ok:   true,
+				Code: CodeServiceError,
 			})
 			return
 		}

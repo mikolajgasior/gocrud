@@ -84,6 +84,25 @@ func (h *Handler) handleAPICreateUpdate(ctx context.Context, w http.ResponseWrit
 		gocrud.ObjSetIDValue(obj, idInt)
 	}
 
+	if id == "" && route.PreCreate != nil {
+		if err := route.PreCreate(obj, r); err != nil {
+			jsonresp.Write(w, http.StatusInternalServerError, &jsonresp.Response{
+				Ok:   true,
+				Code: CodeServiceError,
+			})
+			return
+		}
+	}
+	if id != "" && route.PreUpdate != nil {
+		if err := route.PreUpdate(obj, r); err != nil {
+			jsonresp.Write(w, http.StatusInternalServerError, &jsonresp.Response{
+				Ok:   true,
+				Code: CodeServiceError,
+			})
+			return
+		}
+	}
+
 	now := time.Now().UTC().Unix()
 	userID := uint64(0)
 	if h.options.UserIDFunc != nil {

@@ -57,6 +57,22 @@ func (h *Handler) handleAPIList(ctx context.Context, w http.ResponseWriter, r *h
 		}
 	}
 
+	if route.FilterList != nil {
+		injected := route.FilterList(r)
+		if filterVals == nil {
+			filterVals = make(map[string]string)
+		}
+		if filterOps == nil {
+			filterOps = make(map[string]string)
+		}
+		for k, v := range injected.Vals {
+			filterVals[k] = v
+		}
+		for k, v := range injected.Ops {
+			filterOps[k] = v
+		}
+	}
+
 	objs, err := h.svc.List(ctx, key, limit, offset, order, orderDirection, filterVals, filterOps, nil, route.ListConstructor)
 	if err != nil {
 		var validErr *svccrud.FilterValidationError
@@ -79,6 +95,15 @@ func (h *Handler) handleAPIList(ctx context.Context, w http.ResponseWriter, r *h
 
 	pwFields := h.svc.PasswordFieldNames(key)
 	for i, obj := range objs {
+		if route.PostListItem != nil {
+			if err := route.PostListItem(obj, r); err != nil {
+				jsonresp.Write(w, http.StatusInternalServerError, &jsonresp.Response{
+					Ok:   true,
+					Code: CodeServiceError,
+				})
+				return
+			}
+		}
 		objs[i] = responseData(obj, pwFields)
 	}
 
