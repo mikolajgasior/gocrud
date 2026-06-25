@@ -18,10 +18,7 @@ nav:
   #- Helper functions: helper-functions.md
   - Additional packages:
     - Service: pkgs/service.md
-    - HTTP handlers: pkgs/http.md
     - JWT: pkgs/jwt.md
-  #  - HTML elements: pkgs/ui.md
-  #  - SQL builder: sql-builder.md
   #- Development: development.md
 
 extra:
