@@ -25,7 +25,7 @@ import (
 	sqlfilters "codeberg.org/mikolajgasior/gocrud/pkg/filters"
 )
 
-// User represents the data model to be stored and exposed via the API.
+// User represents the data model to be stored in the database.
 type User struct {
 	ID         uint64 `json:"id"`
 	Username   string `json:"username" crud:"req len:3,30 crud_regexp:\"^[a-z0-9_-]+$\""`

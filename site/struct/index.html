@@ -710,7 +710,7 @@
 
 
 <h1 id="struct">Struct</h1>
-<p>To utilize the library's automatic CRUD capabilities, your Go structs must adhere to a specific naming convention and tagging strategy. These definitions allow the library to map your data structures to database records and RESTful API endpoints while enforcing validation rules automatically.</p>
+<p>To utilize the library's automatic CRUD capabilities, your Go structs must adhere to a specific naming convention and tagging strategy. These definitions allow the library to map your data structures to database records while enforcing validation rules automatically.</p>
 <h2 id="basic-requirements">Basic requirements</h2>
 <h3 id="1-the-id-field">1. The ID Field</h3>
 <p>Every struct intended for CRUD operations must include an ID field which must be uint64. This serves as the primary key for database operations.</p>
@@ -727,9 +727,9 @@
 <h2 id="tagging">Tagging</h2>
 <p>To configure field behavior, you will use two primary struct tags: json and crud.</p>
 <h3 id="the-json-tag">The <code>json</code> Tag</h3>
-<p>Use the <code>json</code> tag to define the field name as it appears in your RESTful API payloads. This ensures your API follows standard naming conventions (e.g., snake_case) while your Go code uses idiomatic naming (PascalCase).</p>
+<p>Use the <code>json</code> tag to define the field name as it appears in JSON serialisation. This ensures your output follows standard naming conventions (e.g., snake_case) while your Go code uses idiomatic naming (PascalCase).</p>
 <ul>
-<li><strong>Format</strong>: <code>json:"api_field_name"</code></li>
+<li><strong>Format</strong>: <code>json:"field_name"</code></li>
 <li><strong>Example</strong>: <code>json:"first_name"</code> maps the Go field FirstName to first_name in JSON.</li>
 </ul>
 <h3 id="the-crud-tag">The <code>crud</code> Tag</h3>
@@ -747,7 +747,7 @@
 <li><code>val:min,max</code>: Validates numeric range.</li>
 <li><code>email</code>: Validates that the string is a properly formatted email address.</li>
 <li><code>crud_regexp</code>:"pattern": Validates the field against a regular expression.</li>
-<li><code>pass</code>: Marks a <code>string</code> field as a password. On <strong>Save</strong> the plain-text value is automatically bcrypt-hashed before it is written to the database. On <strong>Load</strong> and <strong>Get</strong> the field is zeroed after the row is scanned so that bcrypt hashes never appear in memory after a read. The HTTP API (<code>pkg/http/api</code>) goes further and omits the field entirely from JSON responses.</li>
+<li><code>pass</code>: Marks a <code>string</code> field as a password. On <strong>Save</strong> the plain-text value is automatically bcrypt-hashed before it is written to the database. On <strong>Load</strong> and <strong>Get</strong> the field is zeroed after the row is scanned so that bcrypt hashes never appear in memory after a read. When using <a href="https://codeberg.org/mikolajgasior/gorestapi">gorestapi</a>, the field is omitted entirely from JSON responses.</li>
 </ul>
 <p>At least one of <code>min</code>, <code>max</code> must be specified.</p>
 <p><strong>Note on Special Characters:</strong> When using regular expressions inside struct tags, remember to escape double quotes. For example: <code>crud_regexp:"^[a-z]+$"</code>.</p>

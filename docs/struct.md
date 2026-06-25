@@ -1,6 +1,6 @@
 # Struct
 
-To utilize the library's automatic CRUD capabilities, your Go structs must adhere to a specific naming convention and tagging strategy. These definitions allow the library to map your data structures to database records and RESTful API endpoints while enforcing validation rules automatically.
+To utilize the library's automatic CRUD capabilities, your Go structs must adhere to a specific naming convention and tagging strategy. These definitions allow the library to map your data structures to database records while enforcing validation rules automatically.
 
 ## Basic requirements
 
@@ -26,9 +26,9 @@ To configure field behavior, you will use two primary struct tags: json and crud
 
 ### The `json` Tag
 
-Use the `json` tag to define the field name as it appears in your RESTful API payloads. This ensures your API follows standard naming conventions (e.g., snake_case) while your Go code uses idiomatic naming (PascalCase).
+Use the `json` tag to define the field name as it appears in JSON serialisation. This ensures your output follows standard naming conventions (e.g., snake_case) while your Go code uses idiomatic naming (PascalCase).
 
-* **Format**: `json:"api_field_name"`
+* **Format**: `json:"field_name"`
 * **Example**: `json:"first_name"` maps the Go field FirstName to first_name in JSON.
 
 ### The `crud` Tag
@@ -49,7 +49,7 @@ You can combine multiple rules within a single crud tag string.
 * `val:min,max`: Validates numeric range.
 * `email`: Validates that the string is a properly formatted email address.
 * `crud_regexp`:"pattern": Validates the field against a regular expression.
-* `pass`: Marks a `string` field as a password. On **Save** the plain-text value is automatically bcrypt-hashed before it is written to the database. On **Load** and **Get** the field is zeroed after the row is scanned so that bcrypt hashes never appear in memory after a read. The HTTP API (`pkg/http/api`) goes further and omits the field entirely from JSON responses.
+* `pass`: Marks a `string` field as a password. On **Save** the plain-text value is automatically bcrypt-hashed before it is written to the database. On **Load** and **Get** the field is zeroed after the row is scanned so that bcrypt hashes never appear in memory after a read. When using [gorestapi](https://codeberg.org/mikolajgasior/gorestapi), the field is omitted entirely from JSON responses.
 
 At least one of `min`, `max` must be specified.
 
