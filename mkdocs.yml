@@ -18,7 +18,6 @@ nav:
   #- Helper functions: helper-functions.md
   - Additional packages:
     - Service: pkgs/service.md
-    - JWT: pkgs/jwt.md
   #- Development: development.md
 
 extra:
