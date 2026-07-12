@@ -6,8 +6,8 @@ theme:
   name: material
   palette:
     scheme: slate
-    primary: teal
-    accent: red
+    primary: red
+    accent: yellow
 nav:
   - Overview: index.md
   - Demo: demo.md
