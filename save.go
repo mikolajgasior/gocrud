@@ -5,8 +5,8 @@ import (
 	"errors"
 	"strings"
 
-	sqlfilters "codeberg.org/mikolajgasior/gocrud/pkg/filters"
 	"github.com/lib/pq"
+	sqlfilters "github.com/mikolajgasior/gocrud/pkg/filters"
 	"golang.org/x/crypto/bcrypt"
 )
 

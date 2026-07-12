@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log/slog"
 
-	"codeberg.org/mikolajgasior/gocrud"
-	"codeberg.org/mikolajgasior/gocrud/pkg/logger"
+	"github.com/mikolajgasior/gocrud"
+	"github.com/mikolajgasior/gocrud/pkg/logger"
 )
 
 // Read loads a single record by id. When constructor is nil the registry's

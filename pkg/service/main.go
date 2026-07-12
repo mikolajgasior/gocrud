@@ -6,9 +6,9 @@ import (
 	"errors"
 	"log/slog"
 
-	"codeberg.org/mikolajgasior/gocrud"
-	sqlfilters "codeberg.org/mikolajgasior/gocrud/pkg/filters"
-	"codeberg.org/mikolajgasior/gocrud/pkg/logger"
+	"github.com/mikolajgasior/gocrud"
+	sqlfilters "github.com/mikolajgasior/gocrud/pkg/filters"
+	"github.com/mikolajgasior/gocrud/pkg/logger"
 	validator "github.com/mikolajgasior/struct-validator"
 )
 

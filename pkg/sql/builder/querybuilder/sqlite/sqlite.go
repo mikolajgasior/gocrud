@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"regexp"
 
-	"codeberg.org/mikolajgasior/gocrud/pkg/filters"
-	sqliteQueryContainer "codeberg.org/mikolajgasior/gocrud/pkg/sql/builder/querycontainer/sqlite"
-	"codeberg.org/mikolajgasior/gocrud/pkg/structinfo"
+	"github.com/mikolajgasior/gocrud/pkg/filters"
+	sqliteQueryContainer "github.com/mikolajgasior/gocrud/pkg/sql/builder/querycontainer/sqlite"
+	"github.com/mikolajgasior/gocrud/pkg/structinfo"
 )
 
 var regexpFieldInRaw = regexp.MustCompile(`\.[a-zA-Z0-9_]+`)

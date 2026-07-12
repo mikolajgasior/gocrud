@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	sqlfilters "codeberg.org/mikolajgasior/gocrud/pkg/filters"
-	"codeberg.org/mikolajgasior/gocrud/pkg/test"
+	sqlfilters "github.com/mikolajgasior/gocrud/pkg/filters"
+	"github.com/mikolajgasior/gocrud/pkg/test"
 )
 
 // TestUpdateMultiple tests if UpdateMultiple update objects from database based on specified filters

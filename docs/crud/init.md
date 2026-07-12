@@ -40,7 +40,7 @@ type Options struct {
 
 ```go
 import (
-    "codeberg.org/mikolajgasior/gocrud"
+    "github.com/mikolajgasior/gocrud"
     _ "github.com/lib/pq"
 )
 
@@ -58,7 +58,7 @@ crudInstance := gocrud.New(db, gocrud.Options{
 
 ```go
 import (
-    "codeberg.org/mikolajgasior/gocrud"
+    "github.com/mikolajgasior/gocrud"
     _ "modernc.org/sqlite"
 )
 

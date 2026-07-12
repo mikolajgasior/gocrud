@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"codeberg.org/mikolajgasior/gocrud/pkg/test"
+	"github.com/mikolajgasior/gocrud/pkg/test"
 )
 
 // TestSave tests if Save properly inserts and updates an object in the database

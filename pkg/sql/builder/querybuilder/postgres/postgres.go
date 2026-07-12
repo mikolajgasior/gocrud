@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"regexp"
 
-	"codeberg.org/mikolajgasior/gocrud/pkg/filters"
-	postgresQueryContainer "codeberg.org/mikolajgasior/gocrud/pkg/sql/builder/querycontainer/postgres"
-	"codeberg.org/mikolajgasior/gocrud/pkg/structinfo"
+	"github.com/mikolajgasior/gocrud/pkg/filters"
+	postgresQueryContainer "github.com/mikolajgasior/gocrud/pkg/sql/builder/querycontainer/postgres"
+	"github.com/mikolajgasior/gocrud/pkg/structinfo"
 )
 
 var (

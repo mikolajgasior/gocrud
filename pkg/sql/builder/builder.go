@@ -1,12 +1,12 @@
 package builder
 
 import (
-	"codeberg.org/mikolajgasior/gocrud/pkg/filters"
-	postgresQueryBuilder "codeberg.org/mikolajgasior/gocrud/pkg/sql/builder/querybuilder/postgres"
-	sqliteQueryBuilder "codeberg.org/mikolajgasior/gocrud/pkg/sql/builder/querybuilder/sqlite"
-	postgresQueryContainer "codeberg.org/mikolajgasior/gocrud/pkg/sql/builder/querycontainer/postgres"
-	sqliteQueryContainer "codeberg.org/mikolajgasior/gocrud/pkg/sql/builder/querycontainer/sqlite"
-	"codeberg.org/mikolajgasior/gocrud/pkg/structinfo"
+	"github.com/mikolajgasior/gocrud/pkg/filters"
+	postgresQueryBuilder "github.com/mikolajgasior/gocrud/pkg/sql/builder/querybuilder/postgres"
+	sqliteQueryBuilder "github.com/mikolajgasior/gocrud/pkg/sql/builder/querybuilder/sqlite"
+	postgresQueryContainer "github.com/mikolajgasior/gocrud/pkg/sql/builder/querycontainer/postgres"
+	sqliteQueryContainer "github.com/mikolajgasior/gocrud/pkg/sql/builder/querycontainer/sqlite"
+	"github.com/mikolajgasior/gocrud/pkg/structinfo"
 )
 
 const DefaultTagName = "sql"

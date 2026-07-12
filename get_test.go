@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	sqlfilters "codeberg.org/mikolajgasior/gocrud/pkg/filters"
-	"codeberg.org/mikolajgasior/gocrud/pkg/test"
+	sqlfilters "github.com/mikolajgasior/gocrud/pkg/filters"
+	"github.com/mikolajgasior/gocrud/pkg/test"
 )
 
 // TestGet tests if Get properly gets many objects from the database, filtered and ordered, with results limited to specific number

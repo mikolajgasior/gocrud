@@ -1,4 +1,4 @@
-module codeberg.org/mikolajgasior/gocrud
+module github.com/mikolajgasior/gocrud
 
 go 1.25.6
 

@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"codeberg.org/mikolajgasior/gocrud/pkg/structinfo"
+	"github.com/mikolajgasior/gocrud/pkg/structinfo"
 )
 
 var intRegex = regexp.MustCompile(`^-?\d+$`)

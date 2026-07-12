@@ -3,7 +3,7 @@ package gocrud
 import (
 	"context"
 
-	sqlfilters "codeberg.org/mikolajgasior/gocrud/pkg/filters"
+	sqlfilters "github.com/mikolajgasior/gocrud/pkg/filters"
 )
 
 type DeleteMultipleOptions struct {

@@ -3,8 +3,8 @@ package gocrud
 import (
 	"context"
 
-	sqlfilters "codeberg.org/mikolajgasior/gocrud/pkg/filters"
-	sqlbuilder "codeberg.org/mikolajgasior/gocrud/pkg/sql/builder"
+	sqlfilters "github.com/mikolajgasior/gocrud/pkg/filters"
+	sqlbuilder "github.com/mikolajgasior/gocrud/pkg/sql/builder"
 	validator "github.com/mikolajgasior/struct-validator"
 )
 

@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"codeberg.org/mikolajgasior/gocrud/pkg/test"
+	"github.com/mikolajgasior/gocrud/pkg/test"
 )
 
 func TestSave(t *testing.T) {

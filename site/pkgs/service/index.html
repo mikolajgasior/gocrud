@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="https://codeberg.org/mikolajgasior/gocrud/pkgs/service/">
+        <link rel="canonical" href="https://github.com/mikolajgasior/gocrud/pkgs/service/">
       
       
         <link rel="prev" href="../../crud/ops/">
@@ -750,8 +750,8 @@
 <p>The <code>pkg/service</code> package provides a higher-level wrapper around the core CRUD object. Where the core layer works directly with struct instances, the service layer is driven by a <strong>registry</strong> — a map of string keys to constructor functions — and accepts filter values as plain strings, making it a natural fit for wiring up to HTTP handlers.</p>
 <h2 id="initialization">Initialization</h2>
 <pre><code class="language-go">import (
-    &quot;codeberg.org/mikolajgasior/gocrud&quot;
-    svccrud    &quot;codeberg.org/mikolajgasior/gocrud/pkg/service&quot;
+    &quot;github.com/mikolajgasior/gocrud&quot;
+    svccrud    &quot;github.com/mikolajgasior/gocrud/pkg/service&quot;
 )
 
 svc := svccrud.New(
@@ -1033,7 +1033,7 @@ objs, err := svc.List(ctx, &quot;notes&quot;, 20, 0, &quot;CreatedAt&quot;, &quo
       
       
     
-    <a href="https://codeberg.org/mikolajgasior/gocrud" target="_blank" rel="noopener" title="codeberg.org" class="md-social__link">
+    <a href="https://github.com/mikolajgasior/gocrud" target="_blank" rel="noopener" title="github.com" class="md-social__link">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M392.8 1.2c-17-4.9-34.7 5-39.6 22l-128 448c-4.9 17 5 34.7 22 39.6s34.7-5 39.6-22l128-448c4.9-17-5-34.7-22-39.6m80.6 120.1c-12.5 12.5-12.5 32.8 0 45.3l89.3 89.4-89.4 89.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l112-112c12.5-12.5 12.5-32.8 0-45.3l-112-112c-12.5-12.5-32.8-12.5-45.3 0zm-306.7 0c-12.5-12.5-32.8-12.5-45.3 0l-112 112c-12.5 12.5-12.5 32.8 0 45.3l112 112c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256l89.4-89.4c12.5-12.5 12.5-32.8 0-45.3"/></svg>
     </a>
   

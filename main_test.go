@@ -7,8 +7,8 @@ import (
 	"os"
 	"testing"
 
-	"codeberg.org/mikolajgasior/gocrud/pkg/test"
 	_ "github.com/lib/pq"
+	"github.com/mikolajgasior/gocrud/pkg/test"
 	"github.com/ory/dockertest/v3"
 	_ "modernc.org/sqlite"
 )

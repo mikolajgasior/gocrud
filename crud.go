@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"sync"
 
-	sqlbuilder "codeberg.org/mikolajgasior/gocrud/pkg/sql/builder"
+	sqlbuilder "github.com/mikolajgasior/gocrud/pkg/sql/builder"
 )
 
 type CRUD struct {

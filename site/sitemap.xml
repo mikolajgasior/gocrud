@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://codeberg.org/mikolajgasior/gocrud/</loc>
+         <loc>https://github.com/mikolajgasior/gocrud/</loc>
          <lastmod>2026-07-12</lastmod>
     </url>
     <url>
-         <loc>https://codeberg.org/mikolajgasior/gocrud/demo/</loc>
+         <loc>https://github.com/mikolajgasior/gocrud/demo/</loc>
          <lastmod>2026-07-12</lastmod>
     </url>
     <url>
-         <loc>https://codeberg.org/mikolajgasior/gocrud/struct/</loc>
+         <loc>https://github.com/mikolajgasior/gocrud/struct/</loc>
          <lastmod>2026-07-12</lastmod>
     </url>
     <url>
-         <loc>https://codeberg.org/mikolajgasior/gocrud/crud/init/</loc>
+         <loc>https://github.com/mikolajgasior/gocrud/crud/init/</loc>
          <lastmod>2026-07-12</lastmod>
     </url>
     <url>
-         <loc>https://codeberg.org/mikolajgasior/gocrud/crud/ops/</loc>
+         <loc>https://github.com/mikolajgasior/gocrud/crud/ops/</loc>
          <lastmod>2026-07-12</lastmod>
     </url>
     <url>
-         <loc>https://codeberg.org/mikolajgasior/gocrud/pkgs/jwt/</loc>
+         <loc>https://github.com/mikolajgasior/gocrud/pkgs/jwt/</loc>
          <lastmod>2026-07-12</lastmod>
     </url>
     <url>
-         <loc>https://codeberg.org/mikolajgasior/gocrud/pkgs/service/</loc>
+         <loc>https://github.com/mikolajgasior/gocrud/pkgs/service/</loc>
          <lastmod>2026-07-12</lastmod>
     </url>
 </urlset>

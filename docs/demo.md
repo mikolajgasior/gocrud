@@ -20,9 +20,9 @@ import (
 	// "database/sql"
 	// _ "your-db-driver"
 	
-	"codeberg.org/mikolajgasior/gocrud"
+	"github.com/mikolajgasior/gocrud"
 	// Import the filters package for advanced querying
-	sqlfilters "codeberg.org/mikolajgasior/gocrud/pkg/filters"
+	sqlfilters "github.com/mikolajgasior/gocrud/pkg/filters"
 )
 
 // User represents the data model to be stored in the database.
@@ -222,7 +222,7 @@ Use the `Get` method to retrieve multiple records with pagination, sorting, and 
 |RowObjTransformFunc	|Transform each row into any type (e.g., string, HTML, CSV)|
 |ConvertFiltersFromString	|Auto-convert string filter values to target types|
 
-**Note**: To use filters, import: `sqlfilters "codeberg.org/mikolajgasior/gocrud/pkg/filters"`
+**Note**: To use filters, import: `sqlfilters "github.com/mikolajgasior/gocrud/pkg/filters"`
 
 ```go
 func listUsers(ctx context.Context, c *gocrud.Controller) {

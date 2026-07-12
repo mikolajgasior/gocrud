@@ -6,8 +6,8 @@ The `pkg/service` package provides a higher-level wrapper around the core CRUD o
 
 ```go
 import (
-    "codeberg.org/mikolajgasior/gocrud"
-    svccrud    "codeberg.org/mikolajgasior/gocrud/pkg/service"
+    "github.com/mikolajgasior/gocrud"
+    svccrud    "github.com/mikolajgasior/gocrud/pkg/service"
 )
 
 svc := svccrud.New(
