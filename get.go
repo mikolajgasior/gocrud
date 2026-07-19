@@ -131,7 +131,7 @@ func (c *CRUD) Get(ctx context.Context, newObjFunc func() interface{}, options G
 	}
 
 	verifiedPasswordFields := map[string]int{}
-	if len(returnValue) == 1 {
+	if len(options.VerifyPasswordFields) > 0 && len(returnValue) == 1 {
 		for fieldName, hash := range passwordHashesByRow[0] {
 			if bcrypt.CompareHashAndPassword([]byte(hash), []byte(options.VerifyPasswordFields[fieldName])) != nil {
 				verifiedPasswordFields[fieldName] = PassInvalid

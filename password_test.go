@@ -125,6 +125,37 @@ func TestLoad_VerifyPasswordFields(t *testing.T) {
 	}
 }
 
+// TestGet_SingleResultWithoutVerifyPasswordFields is a regression test: a
+// query matching exactly one record with VerifyPasswordFields left nil (the
+// common case) used to index into an empty slice and panic, because the
+// per-row hash capture was skipped whenever VerifyPasswordFields was empty
+// but the exactly-one-result branch didn't check for that.
+func TestGet_SingleResultWithoutVerifyPasswordFields(t *testing.T) {
+	recreatePasswordStructTable()
+
+	obj := &PasswordStruct{Name: "gina", Password: "correct-horse"}
+	if err := testCRUD.Save(context.Background(), obj, SaveOptions{}); err != nil {
+		t.Fatalf("Save failed: %s", err.Error())
+	}
+
+	results, passwordFields, err := testCRUD.Get(context.Background(), func() interface{} {
+		return &PasswordStruct{}
+	}, GetOptions{
+		Filters: &sqlfilters.Filters{
+			"Name": {Op: sqlfilters.OpEqual, Val: "gina"},
+		},
+	})
+	if err != nil {
+		t.Fatalf("Get failed: %s", err.Error())
+	}
+	if len(results) != 1 {
+		t.Fatalf("Get: expected 1 result, got %d", len(results))
+	}
+	if len(passwordFields) != 0 {
+		t.Errorf("expected no password verification when VerifyPasswordFields is nil, got %v", passwordFields)
+	}
+}
+
 // TestGet_VerifyPasswordFields verifies that Get reports PassOK/PassInvalid
 // the same way Load does, but only when the query matches exactly one
 // record; for any other result count the returned map is empty.
