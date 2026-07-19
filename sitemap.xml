@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://github.com/mikolajgasior/gocrud/</loc>
+         <lastmod>2026-07-19</lastmod>
+    </url>
+    <url>
+         <loc>https://github.com/mikolajgasior/gocrud/demo/</loc>
+         <lastmod>2026-07-19</lastmod>
+    </url>
+    <url>
+         <loc>https://github.com/mikolajgasior/gocrud/struct/</loc>
+         <lastmod>2026-07-19</lastmod>
+    </url>
+    <url>
+         <loc>https://github.com/mikolajgasior/gocrud/crud/init/</loc>
+         <lastmod>2026-07-19</lastmod>
+    </url>
+    <url>
+         <loc>https://github.com/mikolajgasior/gocrud/crud/ops/</loc>
+         <lastmod>2026-07-19</lastmod>
+    </url>
+    <url>
+         <loc>https://github.com/mikolajgasior/gocrud/pkgs/jwt/</loc>
+         <lastmod>2026-07-19</lastmod>
+    </url>
+    <url>
+         <loc>https://github.com/mikolajgasior/gocrud/pkgs/service/</loc>
+         <lastmod>2026-07-19</lastmod>
+    </url>
+</urlset>
