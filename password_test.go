@@ -30,8 +30,8 @@ func TestLoad_PasswordFieldIsZeroed(t *testing.T) {
 	}
 
 	loaded := &PasswordStruct{}
-	if err := testCRUD.Load(context.Background(), loaded, fmt.Sprintf("%d", obj.ID), LoadOptions{}); err != nil {
-		t.Fatalf("Load failed: %s", err.Error())
+	if output := testCRUD.Load(context.Background(), loaded, fmt.Sprintf("%d", obj.ID), LoadOptions{}); output.Error != nil {
+		t.Fatalf("Load failed: %s", output.Error.Error())
 	}
 
 	if loaded.Password != "" {
@@ -69,5 +69,56 @@ func TestGet_PasswordFieldIsZeroed(t *testing.T) {
 		if ps.Password != "" {
 			t.Errorf("Get: expected password field to be empty for %q, got %q", ps.Name, ps.Password)
 		}
+	}
+}
+
+// TestLoad_VerifyPasswordFields verifies that Load reports PassOK and
+// PassInvalid for the password fields listed in
+// LoadOptions.VerifyPasswordFields, and ignores keys that do not name an
+// actual password field.
+func TestLoad_VerifyPasswordFields(t *testing.T) {
+	recreatePasswordStructTable()
+
+	obj := &PasswordStruct{Name: "dave", Password: "correct-horse"}
+	if err := testCRUD.Save(context.Background(), obj, SaveOptions{}); err != nil {
+		t.Fatalf("Save failed: %s", err.Error())
+	}
+
+	loaded := &PasswordStruct{}
+	output := testCRUD.Load(context.Background(), loaded, fmt.Sprintf("%d", obj.ID), LoadOptions{
+		VerifyPasswordFields: map[string]string{
+			"Password": "correct-horse",
+			"Name":     "dave",
+		},
+	})
+	if output.Error != nil {
+		t.Fatalf("Load failed: %s", output.Error.Error())
+	}
+
+	if got := output.PasswordFields["Password"]; got != PassOK {
+		t.Errorf("expected PassOK for correct password, got %d", got)
+	}
+	if _, ok := output.PasswordFields["Name"]; ok {
+		t.Errorf("expected no entry for non-password field, got %d", output.PasswordFields["Name"])
+	}
+	if len(output.PasswordFields) != 1 {
+		t.Errorf("expected exactly 1 entry in PasswordFields, got %d", len(output.PasswordFields))
+	}
+
+	loaded2 := &PasswordStruct{}
+	output2 := testCRUD.Load(context.Background(), loaded2, fmt.Sprintf("%d", obj.ID), LoadOptions{
+		VerifyPasswordFields: map[string]string{
+			"Password": "wrong-password",
+		},
+	})
+	if output2.Error != nil {
+		t.Fatalf("Load failed: %s", output2.Error.Error())
+	}
+	if got := output2.PasswordFields["Password"]; got != PassInvalid {
+		t.Errorf("expected PassInvalid for wrong password, got %d", got)
+	}
+
+	if loaded2.Password != "" {
+		t.Errorf("Load: expected password field to be empty, got %q", loaded2.Password)
 	}
 }

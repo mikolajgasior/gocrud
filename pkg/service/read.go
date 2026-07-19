@@ -25,9 +25,9 @@ func (c *CRUD) Read(ctx context.Context, key string, id uint64, constructor func
 	}
 
 	obj := constructor()
-	err := c.crud.Load(ctx, obj, fmt.Sprintf("%d", id), gocrud.LoadOptions{})
-	if err != nil {
-		return nil, err
+	output := c.crud.Load(ctx, obj, fmt.Sprintf("%d", id), gocrud.LoadOptions{})
+	if output.Error != nil {
+		return nil, output.Error
 	}
 
 	objID := gocrud.ObjIDValue(obj)

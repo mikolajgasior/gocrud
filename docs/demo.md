@@ -165,9 +165,9 @@ Use the `Load` method to fetch a single record by its primary key into an empty 
 ```go
 func loadUser(ctx context.Context, c *gocrud.Controller) {
 	userFromDB := &User{}
-	err := c.crud.Load(ctx, userFromDB, 2, gocrud.LoadOptions{})
-	if err != nil {
-		slog.Error("failed to load user", slog.Any("error", err))
+	output := c.crud.Load(ctx, userFromDB, 2, gocrud.LoadOptions{})
+	if output.Error != nil {
+		slog.Error("failed to load user", slog.Any("error", output.Error))
 		os.Exit(1)
 	}
 	slog.Info("loaded user", slog.String("username", userFromDB.Username), slog.Uint64("id", userFromDB.ID))
@@ -185,9 +185,9 @@ func updateUser(ctx context.Context, c *gocrud.Controller) {
 
 	// First load the user
 	userFromDB := &User{}
-	err := c.crud.Load(ctx, userFromDB, 2, gocrud.LoadOptions{})
-	if err != nil {
-		slog.Error("failed to load user", slog.Any("error", err))
+	output := c.crud.Load(ctx, userFromDB, 2, gocrud.LoadOptions{})
+	if output.Error != nil {
+		slog.Error("failed to load user", slog.Any("error", output.Error))
 		os.Exit(1)
 	}
 
@@ -195,7 +195,7 @@ func updateUser(ctx context.Context, c *gocrud.Controller) {
 	userFromDB.LastName = "Updated"
 
 	// Save the changes
-	err = c.crud.Save(ctx, userFromDB, gocrud.SaveOptions{
+	err := c.crud.Save(ctx, userFromDB, gocrud.SaveOptions{
 		ModifiedAt: now,
 		ModifiedBy: userID,
 	})
@@ -268,13 +268,13 @@ Load a user and then call `Delete` to remove it from the database.
 ```go
 func deleteUser(ctx context.Context, c *gocrud.Controller) {
 	userToDelete := &User{}
-	err := c.crud.Load(ctx, userToDelete, 2, gocrud.LoadOptions{})
-	if err != nil {
-		slog.Error("failed to load user for deletion", slog.Any("error", err))
+	output := c.crud.Load(ctx, userToDelete, 2, gocrud.LoadOptions{})
+	if output.Error != nil {
+		slog.Error("failed to load user for deletion", slog.Any("error", output.Error))
 		os.Exit(1)
 	}
 
-	err = c.crud.Delete(ctx, userToDelete, gocrud.DeleteOptions{})
+	err := c.crud.Delete(ctx, userToDelete, gocrud.DeleteOptions{})
 	if err != nil {
 		slog.Error("failed to delete user", slog.Any("error", err))
 		os.Exit(1)

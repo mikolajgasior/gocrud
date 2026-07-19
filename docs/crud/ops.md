@@ -69,13 +69,14 @@ The `Load` method retrieves a record from the database based on a specific ID an
 **Signature**
 
 ```go
-func (c *CRUD) Load(ctx context.Context, obj interface{}, id string, options LoadOptions) error
+func (c *CRUD) Load(ctx context.Context, obj interface{}, id string, options LoadOptions) *LoadOutput
 ```
 
 **Behavior**
 
 * **Data Retrieval**: Fetches the row corresponding to the provided id and maps the database columns to the fields of the obj struct.
 * **Password Field Zeroing**: Any field tagged `crud:"pass"` is reset to `""` after the row is scanned. The bcrypt hash is never left in memory after a successful load.
+* **Password Verification**: For every field tagged `crud:"pass"` that also appears as a key in `options.VerifyPasswordFields`, the corresponding map value is checked as a plaintext password against the bcrypt hash stored in that field, and the result is recorded in the returned `LoadOutput.PasswordFields` map. Keys in `options.VerifyPasswordFields` that do not name an actual password field are ignored and do not appear in the result.
 * **Not Found Handling**: If no record exists with the given id, the method returns no error (typically), but the obj instance is zeroed out. This means all fields in the struct are reset to their default zero values (e.g., 0, "", nil, false), ensuring the caller receives a clean, empty object rather than partial or stale data.
 
 **Parameters**
@@ -83,15 +84,29 @@ func (c *CRUD) Load(ctx context.Context, obj interface{}, id string, options Loa
 * `ctx context.Context`: The execution context for the operation.
 * `obj interface{}`: The target struct instance to be populated with data. It must be a pointer to a struct.
 * `id string`: The unique identifier of the record to load.
-* `options LoadOptions`: Configuration options for the load operation (currently empty or reserved for future use).
+* `options LoadOptions`: Configuration options for the load operation.
 
 **LoadOptions**
 
 ```go
 type LoadOptions struct {
-    // Reserved for future options (e.g., loading related entities, specific column selection)
+    // VerifyPasswordFields maps a struct field name to a plaintext password
+    // to verify against the bcrypt hash stored in that field.
+    VerifyPasswordFields map[string]string
 }
 ```
+
+**LoadOutput**
+
+```go
+type LoadOutput struct {
+    Error          error
+    PasswordFields map[string]int // PassOK or PassInvalid, keyed by password field name
+}
+```
+
+* `PassOK`: the supplied plaintext matches the stored bcrypt hash.
+* `PassInvalid`: the supplied plaintext does not match the stored bcrypt hash.
 
 ## Get
 

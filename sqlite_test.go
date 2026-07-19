@@ -185,9 +185,9 @@ func TestSQLite_Load(t *testing.T) {
 	_ = testCRUDSQLite.Save(context.Background(), objSaved, SaveOptions{})
 
 	objLoaded := &test.TestStruct{}
-	err := testCRUDSQLite.Load(context.Background(), objLoaded, fmt.Sprintf("%d", objSaved.ID), LoadOptions{})
-	if err != nil {
-		t.Fatalf("SQLite Load failed: %s", err.Error())
+	output := testCRUDSQLite.Load(context.Background(), objLoaded, fmt.Sprintf("%d", objSaved.ID), LoadOptions{})
+	if output.Error != nil {
+		t.Fatalf("SQLite Load failed: %s", output.Error.Error())
 	}
 	if !test.AreTestStructObjectsSame(objSaved, objLoaded) {
 		t.Fatalf("SQLite Load returned different data than what was saved")

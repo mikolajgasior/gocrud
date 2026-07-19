@@ -4,21 +4,42 @@ import (
 	"context"
 	"database/sql"
 	"strconv"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type LoadOptions struct {
 	Unused bool
+
+	// VerifyPasswordFields maps a struct field name to a plaintext password
+	// to verify against the bcrypt hash stored in that field.
+	VerifyPasswordFields map[string]string
 }
 
-func (c *CRUD) Load(ctx context.Context, obj interface{}, id string, options LoadOptions) error {
+// LoadOutput is returned by Load. PasswordFields holds, for every password
+// field that also appears in LoadOptions.VerifyPasswordFields, either PassOK
+// or PassInvalid. Keys in VerifyPasswordFields that do not name an actual
+// password field are ignored.
+type LoadOutput struct {
+	Error          error
+	PasswordFields map[string]int
+}
+
+func (c *CRUD) Load(ctx context.Context, obj interface{}, id string, options LoadOptions) *LoadOutput {
+	output := &LoadOutput{
+		PasswordFields: map[string]int{},
+	}
+
 	idInt, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
-		return getConvertIDToIntCRUDError(err)
+		output.Error = getConvertIDToIntCRUDError(err)
+		return output
 	}
 
 	builder, err := c.builder(obj)
 	if err != nil {
-		return getBuilderObjectCRUDError(err)
+		output.Error = getBuilderObjectCRUDError(err)
+		return output
 	}
 
 	var query string
@@ -27,7 +48,8 @@ func (c *CRUD) Load(ctx context.Context, obj interface{}, id string, options Loa
 	if selectByIDerImpl, ok := obj.(selectByIDQueryBuilder); ok {
 		query, err = selectByIDerImpl.SelectByIDQuery()
 		if err != nil {
-			return getObjFuncCRUDError("select by id query", err)
+			output.Error = getObjFuncCRUDError("select by id query", err)
+			return output
 		}
 	} else {
 		query = builder.SelectByID()
@@ -38,13 +60,31 @@ func (c *CRUD) Load(ctx context.Context, obj interface{}, id string, options Loa
 	case err == sql.ErrNoRows:
 		ZeroObjFields(obj)
 
-		return nil
+		return output
 
 	case err != nil:
-		return getDBFuncCRUDError("query row", err)
+		output.Error = getDBFuncCRUDError("query row", err)
+		return output
 
 	default:
-		zeroPasswordFields(obj, builder.PasswordFields())
-		return nil
+		passwordFields := builder.PasswordFields()
+
+		for _, fieldName := range passwordFields {
+			password, ok := options.VerifyPasswordFields[fieldName]
+			if !ok {
+				continue
+			}
+
+			hash, _ := ObjFieldValue(obj, fieldName).(string)
+			if bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)) != nil {
+				output.PasswordFields[fieldName] = PassInvalid
+				continue
+			}
+
+			output.PasswordFields[fieldName] = PassOK
+		}
+
+		zeroPasswordFields(obj, passwordFields)
+		return output
 	}
 }
