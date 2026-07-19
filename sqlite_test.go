@@ -359,7 +359,7 @@ func TestSQLite_Get_WithFilters(t *testing.T) {
 		_ = testCRUDSQLite.Save(context.Background(), ts, SaveOptions{})
 	}
 
-	testStructs, err := testCRUDSQLite.Get(context.Background(), func() interface{} {
+	testStructs, _, err := testCRUDSQLite.Get(context.Background(), func() interface{} {
 		return &test.TestStruct{}
 	}, GetOptions{
 		Order:  []string{"Age", "asc", "Price", "asc"},
@@ -407,7 +407,7 @@ func TestSQLite_Get_WithStringFilters(t *testing.T) {
 		_ = testCRUDSQLite.Save(context.Background(), ts, SaveOptions{})
 	}
 
-	testStructs, err := testCRUDSQLite.Get(context.Background(), func() interface{} {
+	testStructs, _, err := testCRUDSQLite.Get(context.Background(), func() interface{} {
 		return &test.TestStruct{}
 	}, GetOptions{
 		Order:  []string{"Age", "asc", "Price", "asc"},
@@ -448,7 +448,7 @@ func TestSQLite_Get_WithoutFilters(t *testing.T) {
 		_ = testCRUDSQLite.Save(context.Background(), ts, SaveOptions{})
 	}
 
-	testStructs, err := testCRUDSQLite.Get(context.Background(), func() interface{} {
+	testStructs, _, err := testCRUDSQLite.Get(context.Background(), func() interface{} {
 		return &test.TestStruct{}
 	}, GetOptions{
 		Order:  []string{"Age", "asc"},

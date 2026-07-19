@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"testing"
+
+	sqlfilters "github.com/mikolajgasior/gocrud/pkg/filters"
 )
 
 // PasswordStruct is a minimal struct with a field tagged crud:"pass".
@@ -54,7 +56,7 @@ func TestGet_PasswordFieldIsZeroed(t *testing.T) {
 		}
 	}
 
-	results, err := testCRUD.Get(context.Background(), func() interface{} {
+	results, _, err := testCRUD.Get(context.Background(), func() interface{} {
 		return &PasswordStruct{}
 	}, GetOptions{})
 	if err != nil {
@@ -120,5 +122,107 @@ func TestLoad_VerifyPasswordFields(t *testing.T) {
 
 	if loaded2.Password != "" {
 		t.Errorf("Load: expected password field to be empty, got %q", loaded2.Password)
+	}
+}
+
+// TestGet_VerifyPasswordFields verifies that Get reports PassOK/PassInvalid
+// the same way Load does, but only when the query matches exactly one
+// record; for any other result count the returned map is empty.
+func TestGet_VerifyPasswordFields(t *testing.T) {
+	recreatePasswordStructTable()
+
+	obj := &PasswordStruct{Name: "erin", Password: "correct-horse"}
+	if err := testCRUD.Save(context.Background(), obj, SaveOptions{}); err != nil {
+		t.Fatalf("Save failed: %s", err.Error())
+	}
+
+	byName := func(name string) *sqlfilters.Filters {
+		return &sqlfilters.Filters{
+			"Name": {Op: sqlfilters.OpEqual, Val: name},
+		}
+	}
+
+	// exactly one match, correct password → PassOK, non-password key ignored
+	results, passwordFields, err := testCRUD.Get(context.Background(), func() interface{} {
+		return &PasswordStruct{}
+	}, GetOptions{
+		Filters: byName("erin"),
+		VerifyPasswordFields: map[string]string{
+			"Password": "correct-horse",
+			"Name":     "erin",
+		},
+	})
+	if err != nil {
+		t.Fatalf("Get failed: %s", err.Error())
+	}
+	if len(results) != 1 {
+		t.Fatalf("Get: expected 1 result, got %d", len(results))
+	}
+	if got := passwordFields["Password"]; got != PassOK {
+		t.Errorf("expected PassOK for correct password, got %d", got)
+	}
+	if _, ok := passwordFields["Name"]; ok {
+		t.Errorf("expected no entry for non-password field, got %d", passwordFields["Name"])
+	}
+	if len(passwordFields) != 1 {
+		t.Errorf("expected exactly 1 entry in passwordFields, got %d", len(passwordFields))
+	}
+	if ps := results[0].(*PasswordStruct); ps.Password != "" {
+		t.Errorf("Get: expected password field to be empty, got %q", ps.Password)
+	}
+
+	// exactly one match, wrong password → PassInvalid
+	_, passwordFields2, err := testCRUD.Get(context.Background(), func() interface{} {
+		return &PasswordStruct{}
+	}, GetOptions{
+		Filters: byName("erin"),
+		VerifyPasswordFields: map[string]string{
+			"Password": "wrong-password",
+		},
+	})
+	if err != nil {
+		t.Fatalf("Get failed: %s", err.Error())
+	}
+	if got := passwordFields2["Password"]; got != PassInvalid {
+		t.Errorf("expected PassInvalid for wrong password, got %d", got)
+	}
+
+	// a second record makes the match count 2, so no verification happens
+	obj2 := &PasswordStruct{Name: "frank", Password: "correct-horse"}
+	if err := testCRUD.Save(context.Background(), obj2, SaveOptions{}); err != nil {
+		t.Fatalf("Save failed: %s", err.Error())
+	}
+
+	multiResults, passwordFields3, err := testCRUD.Get(context.Background(), func() interface{} {
+		return &PasswordStruct{}
+	}, GetOptions{
+		VerifyPasswordFields: map[string]string{
+			"Password": "correct-horse",
+		},
+	})
+	if err != nil {
+		t.Fatalf("Get failed: %s", err.Error())
+	}
+	if len(multiResults) != 2 {
+		t.Fatalf("Get: expected 2 results, got %d", len(multiResults))
+	}
+	if len(passwordFields3) != 0 {
+		t.Errorf("expected no password verification for a multi-row result, got %v", passwordFields3)
+	}
+
+	// no match at all → no verification either
+	_, passwordFields4, err := testCRUD.Get(context.Background(), func() interface{} {
+		return &PasswordStruct{}
+	}, GetOptions{
+		Filters: byName("nobody"),
+		VerifyPasswordFields: map[string]string{
+			"Password": "correct-horse",
+		},
+	})
+	if err != nil {
+		t.Fatalf("Get failed: %s", err.Error())
+	}
+	if len(passwordFields4) != 0 {
+		t.Errorf("expected no password verification for a zero-row result, got %v", passwordFields4)
 	}
 }

@@ -6,6 +6,7 @@ import (
 	sqlfilters "github.com/mikolajgasior/gocrud/pkg/filters"
 	sqlbuilder "github.com/mikolajgasior/gocrud/pkg/sql/builder"
 	validator "github.com/mikolajgasior/struct-validator"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type GetOptions struct {
@@ -15,14 +16,24 @@ type GetOptions struct {
 	Filters                  *sqlfilters.Filters
 	RowObjTransformFunc      func(interface{}) interface{}
 	ConvertFiltersFromString bool
+
+	// VerifyPasswordFields maps a struct field name to a plaintext password
+	// to verify against the bcrypt hash stored in that field. Verification
+	// only happens when the query matches exactly one record; for any other
+	// result count the returned map is empty.
+	VerifyPasswordFields map[string]string
 }
 
-func (c *CRUD) Get(ctx context.Context, newObjFunc func() interface{}, options GetOptions) ([]interface{}, error) {
+// Get returns the matching records and, for every password field that also
+// appears in options.VerifyPasswordFields, either PassOK or PassInvalid —
+// but only when exactly one record was found. Keys in VerifyPasswordFields
+// that do not name an actual password field are ignored.
+func (c *CRUD) Get(ctx context.Context, newObjFunc func() interface{}, options GetOptions) ([]interface{}, map[string]int, error) {
 	obj := newObjFunc()
 
 	builder, err := c.builder(obj)
 	if err != nil {
-		return nil, getBuilderObjectCRUDError(err)
+		return nil, nil, getBuilderObjectCRUDError(err)
 	}
 
 	// Filter values can be passed as string. We do not want any use of reflect outside of CRUD.
@@ -37,14 +48,14 @@ func (c *CRUD) Get(ctx context.Context, newObjFunc func() interface{}, options G
 
 			valueAsString, ok := filterOpVal.Val.(string)
 			if !ok {
-				return nil, getObjInvalidCRUDError(map[string]uint64{
+				return nil, nil, getObjInvalidCRUDError(map[string]uint64{
 					filterName: validator.FailType,
 				})
 			}
 
 			ok, valueAsFieldType := sqlbuilder.StructFieldValueFromString(obj, filterName, valueAsString)
 			if !ok {
-				return nil, getObjInvalidCRUDError(map[string]uint64{
+				return nil, nil, getObjInvalidCRUDError(map[string]uint64{
 					filterName: validator.FailType,
 				})
 			}
@@ -60,10 +71,11 @@ func (c *CRUD) Get(ctx context.Context, newObjFunc func() interface{}, options G
 
 	err = ValidateFilters(obj, options.Filters, c.tagName)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	var returnValue []interface{}
+	var passwordHashesByRow []map[string]string
 
 	var query string
 
@@ -71,29 +83,42 @@ func (c *CRUD) Get(ctx context.Context, newObjFunc func() interface{}, options G
 	if selectedImpl, ok := obj.(selectQueryBuilder); ok {
 		query, err = selectedImpl.SelectQuery(options.Order, options.Limit, options.Offset, options.Filters)
 		if err != nil {
-			return nil, getObjFuncCRUDError("select query", err)
+			return nil, nil, getObjFuncCRUDError("select query", err)
 		}
 	} else {
 		query, err = builder.Select(options.Order, options.Limit, options.Offset, options.Filters)
 		if err != nil {
-			return nil, getBuilderFuncCRUDError("select", err)
+			return nil, nil, getBuilderFuncCRUDError("select", err)
 		}
 	}
 
 	rows, err := c.db.QueryContext(ctx, query, sqlfilters.FiltersInterfaces(options.Filters)...)
 	if err != nil {
-		return nil, getDBFuncCRUDError("query", err)
+		return nil, nil, getDBFuncCRUDError("query", err)
 	}
 	defer rows.Close()
+
+	passwordFields := builder.PasswordFields()
 
 	for rows.Next() {
 		newObj := newObjFunc()
 		err = rows.Scan(ObjFieldInterfaces(newObj, true)...)
 		if err != nil {
-			return nil, getDBFuncCRUDError("rows scan", err)
+			return nil, nil, getDBFuncCRUDError("rows scan", err)
 		}
 
-		zeroPasswordFields(newObj, builder.PasswordFields())
+		if len(options.VerifyPasswordFields) > 0 {
+			hashes := map[string]string{}
+			for _, fieldName := range passwordFields {
+				if _, ok := options.VerifyPasswordFields[fieldName]; !ok {
+					continue
+				}
+				hashes[fieldName], _ = ObjFieldValue(newObj, fieldName).(string)
+			}
+			passwordHashesByRow = append(passwordHashesByRow, hashes)
+		}
+
+		zeroPasswordFields(newObj, passwordFields)
 
 		// If options.RowObjTransformFunc is defined, then call it on the row.
 		if options.RowObjTransformFunc != nil {
@@ -105,5 +130,16 @@ func (c *CRUD) Get(ctx context.Context, newObjFunc func() interface{}, options G
 		returnValue = append(returnValue, newObj)
 	}
 
-	return returnValue, nil
+	verifiedPasswordFields := map[string]int{}
+	if len(returnValue) == 1 {
+		for fieldName, hash := range passwordHashesByRow[0] {
+			if bcrypt.CompareHashAndPassword([]byte(hash), []byte(options.VerifyPasswordFields[fieldName])) != nil {
+				verifiedPasswordFields[fieldName] = PassInvalid
+				continue
+			}
+			verifiedPasswordFields[fieldName] = PassOK
+		}
+	}
+
+	return returnValue, verifiedPasswordFields, nil
 }

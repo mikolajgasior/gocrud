@@ -34,7 +34,7 @@ func (c *CRUD) List(ctx context.Context, key string, limit, offset int, order, o
 		getOrder = append(getOrder, order, orderDirection)
 	}
 
-	objs, err := c.crud.Get(ctx, constructor, gocrud.GetOptions{
+	objs, _, err := c.crud.Get(ctx, constructor, gocrud.GetOptions{
 		Limit:                    limit,
 		Offset:                   offset,
 		Order:                    getOrder,

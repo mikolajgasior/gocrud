@@ -35,7 +35,7 @@ func TestGet_WithFilters(t *testing.T) {
 	}
 
 	// Get the data from the database
-	testStructs, err := testCRUD.Get(context.Background(), func() interface{} {
+	testStructs, _, err := testCRUD.Get(context.Background(), func() interface{} {
 		return &test.TestStruct{}
 	}, GetOptions{
 		Order:  []string{"Age", "asc", "Price", "asc"},
@@ -94,7 +94,7 @@ func TestGet_WithStringFilters(t *testing.T) {
 	}
 
 	// Get the data from the database
-	testStructs, err := testCRUD.Get(context.Background(), func() interface{} {
+	testStructs, _, err := testCRUD.Get(context.Background(), func() interface{} {
 		return &test.TestStruct{}
 	}, GetOptions{
 		Order:  []string{"Age", "asc", "Price", "asc"},
@@ -144,7 +144,7 @@ func TestGet_WithoutFilters(t *testing.T) {
 	}
 
 	// Get the data
-	testStructs, err := testCRUD.Get(context.Background(), func() interface{} {
+	testStructs, _, err := testCRUD.Get(context.Background(), func() interface{} {
 		return &test.TestStruct{}
 	}, GetOptions{
 		Order:  []string{"Age", "asc", "Price", "asc"},
@@ -177,7 +177,7 @@ func TestGet_WithRowObjTransformFunc(t *testing.T) {
 	}
 
 	// Get the data
-	testCustomList, err := testCRUD.Get(context.Background(), func() interface{} {
+	testCustomList, _, err := testCRUD.Get(context.Background(), func() interface{} {
 		return &test.TestStruct{}
 	}, GetOptions{
 		Order: []string{"Age", "asc"},
