@@ -34,13 +34,13 @@ func TestList_WithFilters(t *testing.T) {
 	}
 
 	// Get the data from the database
-	testStructs, err := testService.List(context.Background(), "teststruct", 10, 20, "Age", "asc", map[string]string{
+	testStructs, _, err := testService.List(context.Background(), "teststruct", 10, 20, "Age", "asc", map[string]string{
 		"Price":        "444",
 		"PrimaryEmail": "primary@example.com",
 	}, map[string]string{
 		"Price":        "eq",
 		"PrimaryEmail": "eq",
-	}, nil, nil)
+	}, nil, nil, nil)
 	if err != nil {
 		t.Fatalf("List failed to return list of objects: %s", err.Error())
 	}
@@ -64,7 +64,7 @@ func TestList_WithoutFilters(t *testing.T) {
 	}
 
 	// Get the data
-	testStructs, err := testService.List(context.Background(), "teststruct", 13, 14, "Age", "asc", nil, nil, nil, nil)
+	testStructs, _, err := testService.List(context.Background(), "teststruct", 13, 14, "Age", "asc", nil, nil, nil, nil, nil)
 	if err != nil {
 		t.Fatalf("Get failed to return list of objects: %s", err.Error())
 	}
@@ -89,7 +89,7 @@ func TestList_WithRowObjTransformFunc(t *testing.T) {
 	}
 
 	// Get the data
-	testCustomList, err := testService.List(context.Background(), "teststruct", 10, 0, "Age", "asc", nil, nil, func(obj interface{}) interface{} {
+	testCustomList, _, err := testService.List(context.Background(), "teststruct", 10, 0, "Age", "asc", nil, nil, func(obj interface{}) interface{} {
 		out := "<tr>"
 
 		v := reflect.ValueOf(obj)
@@ -124,7 +124,7 @@ func TestList_WithRowObjTransformFunc(t *testing.T) {
 		out += "</tr>"
 
 		return out
-	}, nil)
+	}, nil, nil)
 	if err != nil {
 		t.Fatalf("List failed to return list of objects modified with transform func: %s", err.Error())
 	}

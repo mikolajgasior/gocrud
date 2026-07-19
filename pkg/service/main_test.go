@@ -47,10 +47,18 @@ func createService() {
 		"teststruct": func() interface{} {
 			return &test.TestStruct{}
 		},
+		"passwordstruct": func() interface{} {
+			return &PasswordStruct{}
+		},
 	}, testDB, gocrud.DialectPostgres)
 }
 
 func recreateTestStructTable() {
 	_ = testCRUD.DropTable(context.Background(), &test.TestStruct{})
 	_ = testCRUD.CreateTable(context.Background(), &test.TestStruct{})
+}
+
+func recreatePasswordStructTable() {
+	_ = testCRUD.DropTable(context.Background(), &PasswordStruct{})
+	_ = testCRUD.CreateTable(context.Background(), &PasswordStruct{})
 }
