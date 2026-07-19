@@ -15,6 +15,15 @@ type PasswordStruct struct {
 	Password string `crud:"pass"`
 }
 
+// PasswordStruct_Touch is a projection of PasswordStruct with no Password
+// field, registered in testService under the "passwordstructtouch" key,
+// used only to exercise CreateTables' handling of underscore-named structs
+// that map onto a table another struct already owns.
+type PasswordStruct_Touch struct {
+	ID   uint64
+	Name string `crud:"req len:1,100"`
+}
+
 // TestList_VerifyPasswordFields verifies that List passes passFieldsToVerify
 // through to gocrud's Get, reporting PassOK/PassInvalid for a query that
 // matches exactly one record and ignoring keys that aren't password fields.
@@ -56,5 +65,26 @@ func TestList_VerifyPasswordFields(t *testing.T) {
 	}
 	if got := passwordFields2["Password"]; got != gocrud.PassInvalid {
 		t.Errorf("expected PassInvalid for wrong password, got %d", got)
+	}
+}
+
+// TestCreateTables_SkipsUnderscoreProjections is a regression test: with
+// both "passwordstruct" (PasswordStruct) and "passwordstructtouch"
+// (PasswordStruct_Touch) registered, CreateTables must always create
+// password_struct using PasswordStruct's full column set. Before the fix,
+// CreateTables iterated the registry map in unspecified order and called
+// CreateTable for every entry; if the projection's CreateTable call won the
+// "IF NOT EXISTS" race, the table would end up missing the Password column
+// entirely.
+func TestCreateTables_SkipsUnderscoreProjections(t *testing.T) {
+	_ = testCRUD.DropTable(context.Background(), &PasswordStruct{})
+
+	if err := testService.CreateTables(context.Background()); err != nil {
+		t.Fatalf("CreateTables failed: %s", err.Error())
+	}
+
+	obj := &PasswordStruct{Name: "table-check", Password: "whatever123"}
+	if err := testCRUD.Save(context.Background(), obj, gocrud.SaveOptions{}); err != nil {
+		t.Fatalf("Save failed, password_struct table is missing columns (projection likely won table creation): %s", err.Error())
 	}
 }

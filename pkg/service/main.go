@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"errors"
 	"log/slog"
+	"reflect"
+	"strings"
 
 	"github.com/mikolajgasior/gocrud"
 	sqlfilters "github.com/mikolajgasior/gocrud/pkg/filters"
@@ -28,12 +30,31 @@ func New(registry map[string]func() interface{}, dbConn *sql.DB, dialect string)
 	}
 }
 
+// CreateTables creates a table for every constructor in the registry, except
+// for structs whose type name contains an underscore. gocrud derives table
+// names from the part of the struct name before the first underscore, so a
+// struct like User_SaveLogIn is a projection mapping onto the table another
+// struct (User) already owns, exposing only a subset of its columns —
+// creating a table from that projection would define it with the wrong
+// (partial) column set. Since registry iteration order is unspecified, this
+// keeps CreateTables deterministic regardless of how many projections are
+// registered alongside the owning struct.
 func (c *CRUD) CreateTables(ctx context.Context) error {
 	logAttrService := logger.AttrService(c, "CreateTables")
 
 	var err error
 	for _, constructor := range c.registry {
-		err = c.crud.CreateTable(ctx, constructor())
+		obj := constructor()
+
+		typ := reflect.TypeOf(obj)
+		for typ.Kind() == reflect.Pointer {
+			typ = typ.Elem()
+		}
+		if strings.Contains(typ.Name(), "_") {
+			continue
+		}
+
+		err = c.crud.CreateTable(ctx, obj)
 		if err != nil {
 			slog.Error("error creating table", logAttrService, logger.AttrError(err))
 			return err
