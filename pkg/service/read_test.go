@@ -17,7 +17,7 @@ func TestRead_WhenObjectExists(t *testing.T) {
 	_ = testCRUD.Save(context.Background(), objSaved, gocrud.SaveOptions{})
 
 	// Get the object
-	objRead, err := testService.Read(context.Background(), "teststruct", objSaved.ID, nil)
+	objRead, _, err := testService.Read(context.Background(), "teststruct", objSaved.ID, nil, nil)
 	if err != nil {
 		t.Fatalf("Read failed to get object: %s", err.Error())
 	}
@@ -29,7 +29,7 @@ func TestRead_WhenObjectExists(t *testing.T) {
 func TestRead_WhenObjectDoesNotExist(t *testing.T) {
 	recreateTestStructTable()
 
-	_, err := testService.Read(context.Background(), "teststruct", 444, nil)
+	_, _, err := testService.Read(context.Background(), "teststruct", 444, nil, nil)
 	if err != nil {
 		if !errors.Is(err, NotFoundError) {
 			t.Fatalf("Read failed to get object: %s", err.Error())

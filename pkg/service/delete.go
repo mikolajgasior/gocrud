@@ -11,7 +11,7 @@ import (
 func (c *CRUD) Delete(ctx context.Context, key string, id uint64) error {
 	logAttrService := logger.AttrService(c, "Delete")
 
-	obj, err := c.Read(ctx, key, id, nil)
+	obj, _, err := c.Read(ctx, key, id, nil, nil)
 	if err != nil {
 		return err
 	}

@@ -63,12 +63,14 @@ Populates `obj` from `url.Values` (e.g. an HTTP form submission) before saving. 
 ### Read
 
 ```go
-obj, err := svc.Read(ctx, "users", id, nil)
+obj, passwordFields, err := svc.Read(ctx, "users", id, nil, nil)
 ```
 
 Loads a single record by `id`. Returns `NotFoundError` if no record with that ID exists.
 
-The last argument is an optional constructor (`func() interface{}`). When `nil` the key's registered constructor is used. Pass a non-nil constructor to load the record into a different struct type — for example a read-specific projection with fewer fields, which will generate a narrower `SELECT`.
+The fourth argument is an optional constructor (`func() interface{}`). When `nil` the key's registered constructor is used. Pass a non-nil constructor to load the record into a different struct type — for example a read-specific projection with fewer fields, which will generate a narrower `SELECT`.
+
+The fifth argument, `passFieldsToVerify`, maps a struct field name to a plaintext password to check against the stored hash. The returned `passwordFields` (`map[string]int`) holds `gocrud.PassOK` or `gocrud.PassInvalid` for each password field named in `passFieldsToVerify`; keys that do not name an actual password field are ignored.
 
 ```go
 // The "_" suffix is stripped when deriving the table name:
@@ -78,7 +80,17 @@ type User_Summary struct {
     Email string
 }
 
-obj, err := svc.Read(ctx, "users", id, func() interface{} { return &User_Summary{} })
+obj, _, err := svc.Read(ctx, "users", id, func() interface{} { return &User_Summary{} }, nil)
+```
+
+```go
+// Verify a login password while loading the user record:
+obj, passwordFields, err := svc.Read(ctx, "users", id, nil, map[string]string{
+    "Password": submittedPassword,
+})
+if err == nil && passwordFields["Password"] == gocrud.PassOK {
+    // password matches
+}
 ```
 
 ---
